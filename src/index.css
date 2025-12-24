@@ -1,0 +1,634 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@layer base {
+  :root {
+    /* GW2 Light Mode HSL - Parchment Theme */
+    --background: 45 50% 96%;
+    --foreground: 0 0% 10%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 10%;
+    --primary: 45 65% 50%;
+    --primary-foreground: 0 0% 5%;
+    --secondary: 45 40% 93%;
+    --secondary-foreground: 0 0% 10%;
+    --muted: 45 35% 90%;
+    --muted-foreground: 0 0% 45%;
+    --accent: 45 70% 55%;
+    --accent-foreground: 0 0% 5%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 45 30% 80%;
+    --input: 45 40% 93%;
+    --ring: 45 65% 50%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    /* GW2 Dark Mode HSL - Near Black with Gold */
+    --background: 0 0% 4%;
+    --foreground: 0 0% 100%;
+    --card: 0 0% 8%;
+    --card-foreground: 0 0% 100%;
+    --popover: 0 0% 8%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 45 65% 50%;
+    --primary-foreground: 0 0% 4%;
+    --secondary: 0 0% 12%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 0 0% 12%;
+    --muted-foreground: 0 0% 60%;
+    --accent: 45 70% 55%;
+    --accent-foreground: 0 0% 4%;
+    --destructive: 0 98% 33%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 15%;
+    --input: 0 0% 12%;
+    --ring: 45 65% 50%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  /* GW2 Extended Color Mappings */
+  --color-gw2-gold: var(--gw2-gold);
+  --color-gw2-gold-light: var(--gw2-gold-light);
+  --color-gw2-gold-dark: var(--gw2-gold-dark);
+  --color-gw2-gold-muted: var(--gw2-gold-muted);
+  --color-surface-elevated: var(--surface-elevated);
+  --color-surface-sunken: var(--surface-sunken);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-text-gold: var(--text-gold);
+}
+
+:root {
+  --radius: 0.25rem;
+  /* GW2 Red Color Variants */
+  --gw2-red: #aa0404;
+  --gw2-red-hover: #c41f1f;
+  --gw2-red-dark: #8b0000;
+
+  /* GW2 Extended Gold Palette */
+  --gw2-gold: oklch(0.72 0.14 85);
+  --gw2-gold-light: oklch(0.82 0.10 85);
+  --gw2-gold-dark: oklch(0.55 0.15 85);
+  --gw2-gold-muted: oklch(0.65 0.06 85);
+
+  /* Surface Colors - Light Mode */
+  --surface-elevated: oklch(1 0 0);
+  --surface-sunken: oklch(0.94 0.015 85);
+
+  /* Text Colors - Light Mode */
+  --text-primary: oklch(0.15 0 0);
+  --text-secondary: oklch(0.45 0 0);
+  --text-muted: oklch(0.55 0 0);
+  --text-gold: oklch(0.55 0.15 85);
+
+  /* GW2 Light Mode - Parchment Theme */
+  --background: oklch(0.96 0.015 85);
+  --foreground: oklch(0.2 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.2 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.2 0 0);
+  /* GW2 Gold Primary */
+  --primary: oklch(0.65 0.15 85);
+  --primary-foreground: oklch(0.1 0 0);
+  --secondary: oklch(0.95 0.01 85);
+  --secondary-foreground: oklch(0.2 0 0);
+  --muted: oklch(0.93 0.01 85);
+  --muted-foreground: oklch(0.5 0 0);
+  /* GW2 Gold Accent */
+  --accent: oklch(0.7 0.15 85);
+  --accent-foreground: oklch(0.1 0 0);
+  --destructive: oklch(0.55 0.22 27);
+  --destructive-foreground: oklch(1 0 0);
+  --border: oklch(0.85 0.02 85);
+  --input: oklch(0.95 0.01 85);
+  --ring: oklch(0.65 0.15 85);
+  --chart-1: oklch(0.65 0.15 85);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.5 0.12 27);
+  --chart-4: oklch(0.7 0.15 85);
+  --chart-5: oklch(0.55 0.15 75);
+  --sidebar: oklch(0.97 0.01 85);
+  --sidebar-foreground: oklch(0.2 0 0);
+  --sidebar-primary: oklch(0.65 0.15 85);
+  --sidebar-primary-foreground: oklch(0.1 0 0);
+  --sidebar-accent: oklch(0.93 0.02 85);
+  --sidebar-accent-foreground: oklch(0.2 0 0);
+  --sidebar-border: oklch(0.85 0.02 85);
+  --sidebar-ring: oklch(0.65 0.15 85);
+}
+
+.dark {
+  /* Surface Colors - Dark Mode */
+  --surface-elevated: oklch(0.18 0 0);
+  --surface-sunken: oklch(0.06 0 0);
+
+  /* Text Colors - Dark Mode */
+  --text-primary: oklch(0.98 0 0);
+  --text-secondary: oklch(0.75 0 0);
+  --text-muted: oklch(0.55 0 0);
+  --text-gold: oklch(0.72 0.14 85);
+
+  /* GW2 Dark Mode - Near Black with Gold Accents */
+  --background: oklch(0.08 0 0);
+  --foreground: oklch(1 0 0);
+  --card: oklch(0.12 0 0);
+  --card-foreground: oklch(1 0 0);
+  --popover: oklch(0.12 0 0);
+  --popover-foreground: oklch(1 0 0);
+  /* GW2 Gold Primary */
+  --primary: oklch(0.65 0.15 85);
+  --primary-foreground: oklch(0.08 0 0);
+  --secondary: oklch(0.16 0 0);
+  --secondary-foreground: oklch(1 0 0);
+  --muted: oklch(0.16 0 0);
+  --muted-foreground: oklch(0.63 0 0);
+  /* GW2 Gold Accent */
+  --accent: oklch(0.7 0.15 85);
+  --accent-foreground: oklch(0.08 0 0);
+  --destructive: oklch(0.5 0.25 27);
+  --destructive-foreground: oklch(1 0 0);
+  --border: oklch(0.2 0 0);
+  --input: oklch(0.16 0 0);
+  --ring: oklch(0.65 0.15 85);
+  --chart-1: oklch(0.65 0.15 85);
+  --chart-2: oklch(0.6 0.15 162);
+  --chart-3: oklch(0.55 0.12 27);
+  --chart-4: oklch(0.7 0.15 75);
+  --chart-5: oklch(0.6 0.18 95);
+  --sidebar: oklch(0.12 0 0);
+  --sidebar-foreground: oklch(1 0 0);
+  --sidebar-primary: oklch(0.65 0.15 85);
+  --sidebar-primary-foreground: oklch(0.08 0 0);
+  --sidebar-accent: oklch(0.16 0 0);
+  --sidebar-accent-foreground: oklch(1 0 0);
+  --sidebar-border: oklch(0.2 0 0);
+  --sidebar-ring: oklch(0.65 0.15 85);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* GW2 Theme Enhancements */
+@layer components {
+  /* Card base styling with transition (prevents flashing) */
+  [class*="card"],
+  [class*="Card"] {
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    border-color: transparent;
+  }
+
+  /* Card hover effects with gold glow */
+  [class*="card"]:hover,
+  [class*="Card"]:hover {
+    border-color: hsl(var(--primary) / 0.5);
+    box-shadow: 0 0 12px hsl(var(--primary) / 0.15);
+  }
+
+  /* Gold accent for links */
+  a:not([class*="button"]):not([class*="btn"]) {
+    color: hsl(var(--primary));
+    transition: color 0.2s ease;
+  }
+
+  a:not([class*="button"]):not([class*="btn"]):hover {
+    color: hsl(var(--accent));
+  }
+
+  /* Enhanced input focus with gold ring */
+  input:focus,
+  select:focus,
+  textarea:focus {
+    outline: none;
+    border-color: hsl(var(--primary));
+    box-shadow: 0 0 0 2px hsl(var(--primary) / 0.2);
+  }
+
+  /* Gold borders for focused buttons */
+  button:focus-visible {
+    outline: 2px solid hsl(var(--primary));
+    outline-offset: 2px;
+  }
+
+  /* GW2 Gold Utilities */
+  .text-gw2-gold {
+    color: var(--gw2-gold);
+  }
+
+  .bg-gw2-gold {
+    background-color: var(--gw2-gold);
+  }
+
+  .border-gw2-gold {
+    border-color: var(--gw2-gold);
+  }
+
+  /* Gold Glow Effects */
+  .glow-gold {
+    box-shadow: 0 0 20px oklch(0.72 0.14 85 / 0.3);
+  }
+
+  .glow-gold-sm {
+    box-shadow: 0 0 10px oklch(0.72 0.14 85 / 0.2);
+  }
+
+  .glow-gold-lg {
+    box-shadow: 0 0 30px oklch(0.72 0.14 85 / 0.4);
+  }
+
+  /* GW2 Profession Color Utilities */
+  .profession-guardian {
+    --profession-color: #72C1D9;
+  }
+
+  .profession-revenant {
+    --profession-color: #D16E5A;
+  }
+
+  .profession-warrior {
+    --profession-color: #FFD166;
+  }
+
+  .profession-engineer {
+    --profession-color: #D09C59;
+  }
+
+  .profession-ranger {
+    --profession-color: #8CDC82;
+  }
+
+  .profession-thief {
+    --profession-color: #C08F95;
+  }
+
+  .profession-elementalist {
+    --profession-color: #F68A87;
+  }
+
+  .profession-mesmer {
+    --profession-color: #B679D5;
+  }
+
+  .profession-necromancer {
+    --profession-color: #52A76F;
+  }
+
+  .bg-profession {
+    background-color: var(--profession-color);
+  }
+
+  .text-profession {
+    color: var(--profession-color);
+  }
+
+  .border-profession {
+    border-color: var(--profession-color);
+  }
+
+  /* GW2 Rarity Utilities */
+  .rarity-junk {
+    --rarity-color: #828282;
+  }
+
+  .rarity-basic {
+    --rarity-color: #FFFFFF;
+  }
+
+  .rarity-fine {
+    --rarity-color: #62A4DA;
+  }
+
+  .rarity-masterwork {
+    --rarity-color: #1A9306;
+  }
+
+  .rarity-rare {
+    --rarity-color: #FCD00B;
+  }
+
+  .rarity-exotic {
+    --rarity-color: #FFA405;
+  }
+
+  .rarity-ascended {
+    --rarity-color: #FB3E8D;
+  }
+
+  .rarity-legendary {
+    --rarity-color: #974EFF;
+  }
+
+  .border-rarity {
+    border-color: var(--rarity-color);
+  }
+
+  .text-rarity {
+    color: var(--rarity-color);
+  }
+
+  .bg-rarity {
+    background-color: var(--rarity-color);
+  }
+
+  .glow-rarity {
+    box-shadow: 0 0 12px var(--rarity-color);
+  }
+
+  /* Animation Utilities */
+  .animate-glow-pulse {
+    animation: glow-pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes glow-pulse {
+    0%, 100% {
+      box-shadow: 0 0 10px oklch(0.72 0.14 85 / 0.2);
+    }
+    50% {
+      box-shadow: 0 0 20px oklch(0.72 0.14 85 / 0.4);
+    }
+  }
+
+  .animate-fade-in {
+    animation: fade-in 0.2s ease-out;
+  }
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(-4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Card Variants */
+  .card-interactive {
+    transition: all 0.2s ease;
+    cursor: pointer;
+  }
+
+  .card-interactive:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px oklch(0 0 0 / 0.15);
+  }
+
+  .card-featured {
+    border: 1px solid oklch(0.72 0.14 85 / 0.5);
+    background: linear-gradient(135deg, oklch(0.72 0.14 85 / 0.05), transparent);
+  }
+
+  .dark .card-featured {
+    background: linear-gradient(135deg, oklch(0.72 0.14 85 / 0.1), transparent);
+  }
+
+  /* Stat Display Utilities */
+  .stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--text-gold);
+  }
+
+  .stat-label {
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+  }
+
+  /* Item Slot Styling */
+  .item-slot {
+    aspect-ratio: 1;
+    border: 2px solid var(--border);
+    border-radius: 4px;
+    background: var(--surface-sunken);
+    transition: all 0.15s ease;
+  }
+
+  .item-slot:hover {
+    border-color: var(--gw2-gold);
+    box-shadow: 0 0 8px oklch(0.72 0.14 85 / 0.3);
+  }
+
+  .item-slot.has-item {
+    border-color: var(--rarity-color, var(--border));
+  }
+}
+
+/* GW2 Red Accent Color */
+.gw2-red {
+  color: #aa0404;
+}
+
+.bg-gw2-red {
+  background-color: #aa0404;
+}
+
+.bg-gw2-red:hover {
+  background-color: #c41f1f;
+}
+
+.border-gw2-red {
+  border-color: #aa0404;
+}
+
+/* GW2 Red Button Variant */
+.btn-gw2-red {
+  background-color: #aa0404 !important;
+  color: white !important;
+  border-color: #aa0404 !important;
+  transition: all 0.2s ease;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.btn-gw2-red:hover {
+  background-color: #c41f1f !important;
+  box-shadow: 0 0 12px rgba(170, 4, 4, 0.3);
+}
+
+.btn-gw2-red:active {
+  background-color: #8b0000 !important;
+}
+
+/* Red accent for active navigation */
+.nav-active-red {
+  border-bottom: 3px solid #aa0404;
+  color: #aa0404;
+}
+
+/* Red text utility */
+.text-gw2-red {
+  color: #aa0404 !important;
+}
+
+.dark .text-gw2-red {
+  color: #ff4444 !important;
+}
+
+/* Red glow effect */
+.glow-red {
+  box-shadow: 0 0 15px rgba(170, 4, 4, 0.5);
+}
+
+/* Red badge */
+.badge-gw2-red {
+  background-color: #aa0404;
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+/* Red alert/banner */
+.alert-gw2-red {
+  background-color: rgba(170, 4, 4, 0.1);
+  border-left: 4px solid #aa0404;
+  color: #aa0404;
+  padding: 1rem;
+  border-radius: 0.375rem;
+}
+
+.dark .alert-gw2-red {
+  background-color: rgba(170, 4, 4, 0.15);
+  color: #ff4444;
+  border-left-color: #ff4444;
+}
+
+/* Red divider */
+.divider-gw2-red {
+  border-top: 2px solid #aa0404;
+  margin: 1rem 0;
+}
+
+/* Red hover state for cards */
+.card-hover-red:hover {
+  border-color: #aa0404 !important;
+  box-shadow: 0 0 20px rgba(170, 4, 4, 0.2) !important;
+}
+
+/* Red accent border */
+.border-t-gw2-red {
+  border-top: 2px solid #aa0404;
+}
+
+.border-l-gw2-red {
+  border-left: 3px solid #aa0404;
+}
+
+/* Red icon color */
+.icon-gw2-red {
+  color: #aa0404;
+}
+
+.dark .icon-gw2-red {
+  color: #ff4444;
+}
+
+/* Flat UI utilities */
+.rounded-flat {
+  border-radius: 0.125rem;
+}
+
+/* Active nav with red underline */
+.nav-link-active {
+  position: relative;
+}
+
+.nav-link-active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: #aa0404;
+}
+
+/* Section headers with red accent */
+.section-header-red {
+  border-left: 3px solid #aa0404;
+  padding-left: 0.75rem;
+}
+
+/* Optional heading accent utility */
+.heading-accent {
+  border-left: 3px solid var(--gw2-red);
+  padding-left: 0.75rem;
+}
+
+/* Tab active state with red */
+[data-state="active"][role="tab"] {
+  border-bottom: 2px solid #aa0404 !important;
+}
