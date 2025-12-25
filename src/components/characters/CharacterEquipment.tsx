@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
-import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
-import { useItems } from '@/api/hooks/useGW2Api';
+import { Card, CardContent } from '@/components/ui/card';
+import { useItems, useItemStats } from '@/api/hooks/useGW2Api';
+import { ItemPopover } from '@/components/shared/ItemPopover';
 import type { Character, Item } from '@/api/types';
 import { getRarityColor } from '@/lib/professionColors';
 
@@ -39,28 +40,6 @@ const SLOT_LABELS: Record<string, string> = {
   Relic: 'Relic',
 };
 
-const ATTRIBUTE_NAMES: Record<string, string> = {
-  Power: 'Power',
-  Precision: 'Precision',
-  Toughness: 'Toughness',
-  Vitality: 'Vitality',
-  Ferocity: 'Ferocity',
-  CritDamage: 'Ferocity',
-  ConditionDamage: 'Condition Damage',
-  ConditionDuration: 'Expertise',
-  Healing: 'Healing Power',
-  HealingPower: 'Healing Power',
-  BoonDuration: 'Concentration',
-  Concentration: 'Concentration',
-  Expertise: 'Expertise',
-  AgonyResistance: 'Agony Resistance',
-  Armor: 'Armor',
-  Health: 'Health',
-  CritChance: 'Critical Chance',
-};
-
-const getAttributeName = (attr: string): string => ATTRIBUTE_NAMES[attr] || attr;
-
 export function CharacterEquipment({ character }: CharacterEquipmentProps) {
   const allItemIds = useMemo(() => {
     const ids = new Set<number>();
@@ -82,6 +61,20 @@ export function CharacterEquipment({ character }: CharacterEquipmentProps) {
     if (!items) return new Map<number, Item>();
     return new Map(items.map((item) => [item.id, item]));
   }, [items]);
+
+  const statIds = useMemo(() =>
+    character.equipment?.map(eq => eq.stats?.id).filter(Boolean) as number[] || [],
+    [character]
+  );
+
+  const { data: itemStats } = useItemStats(statIds, {
+    enabled: statIds.length > 0
+  });
+
+  const statsMap = useMemo(() =>
+    new Map(itemStats?.map(s => [s.id, s.name]) || []),
+    [itemStats]
+  );
 
   const getEquipmentBySlot = (slot: string) =>
     character.equipment?.find((eq) => eq.slot === slot);
@@ -112,10 +105,10 @@ export function CharacterEquipment({ character }: CharacterEquipmentProps) {
     const rarityColor = item ? getRarityColor(item.rarity) : undefined;
     const upgradeItems = equipment?.upgrades?.map((id) => itemsMap.get(id)).filter(Boolean);
     const infusionItems = equipment?.infusions?.map((id) => itemsMap.get(id)).filter(Boolean);
+    const statName = equipment?.stats?.id ? statsMap.get(equipment.stats.id) : undefined;
 
     // Get stats - either from equipped item's selected stats or from item's default stats
     const equipmentStats = equipment?.stats?.attributes;
-    const itemStats = item?.details?.infix_upgrade?.attributes;
 
     if (!item) {
       return (
@@ -135,122 +128,41 @@ export function CharacterEquipment({ character }: CharacterEquipmentProps) {
     }
 
     return (
-      <HoverCard key={slot}>
-        <HoverCardTrigger asChild>
-          <button className="flex items-center gap-3 py-1 w-full hover:bg-muted/50 rounded px-2 -mx-2 transition-colors text-left cursor-pointer">
-            <div
-              className="w-10 h-10 rounded overflow-hidden flex items-center justify-center flex-shrink-0"
-              style={{
-                borderWidth: '2px',
-                borderStyle: 'solid',
-                borderColor: rarityColor,
-                backgroundColor: 'hsl(var(--muted))',
-              }}
-            >
-              <img
-                loading="lazy"
-                src={item.icon}
-                alt={item.name}
-                className="w-full h-full object-cover"
-              />
-            </div>
+      <ItemPopover
+        key={slot}
+        item={item}
+        statName={statName}
+        stats={equipmentStats}
+        upgrades={upgradeItems as Item[]}
+        infusions={infusionItems as Item[]}
+      >
+        <button className="flex items-center gap-3 py-1 w-full hover:bg-muted/50 rounded px-2 -mx-2 transition-colors text-left cursor-pointer">
+          <div
+            className="w-10 h-10 rounded overflow-hidden flex items-center justify-center flex-shrink-0"
+            style={{
+              borderWidth: '2px',
+              borderStyle: 'solid',
+              borderColor: rarityColor,
+              backgroundColor: 'hsl(var(--muted))',
+            }}
+          >
+            <img
+              loading="lazy"
+              src={item.icon}
+              alt={item.name}
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <div className="flex flex-col">
             <span className="text-sm font-medium" style={{ color: rarityColor }}>
               {item.name}
             </span>
-          </button>
-        </HoverCardTrigger>
-        <HoverCardContent className="w-72">
-          <div className="space-y-3">
-            <div>
-              <h4 className="font-semibold" style={{ color: rarityColor }}>
-                {item.name}
-              </h4>
-              <p className="text-sm text-muted-foreground">
-                {SLOT_LABELS[slot] || slot}
-              </p>
-            </div>
-
-            {item.type && (
-              <div className="text-sm">
-                <span className="text-muted-foreground">Type: </span>
-                {item.type}
-              </div>
-            )}
-
-            {item.level && (
-              <div className="text-sm">
-                <span className="text-muted-foreground">Level: </span>
-                {item.level}
-              </div>
-            )}
-
-            {(equipmentStats || (itemStats && itemStats.length > 0)) && (
-              <div>
-                <p className="text-sm font-semibold mb-1">Stats:</p>
-                <div className="text-sm space-y-0.5">
-                  {equipmentStats ? (
-                    Object.entries(equipmentStats).map(([attr, value], idx) => (
-                      <div key={idx} className="flex justify-between">
-                        <span className="text-muted-foreground">{getAttributeName(attr)}:</span>
-                        <span>+{value}</span>
-                      </div>
-                    ))
-                  ) : (
-                    itemStats?.map((attr, idx) => (
-                      <div key={idx} className="flex justify-between">
-                        <span className="text-muted-foreground">{getAttributeName(attr.attribute)}:</span>
-                        <span>+{attr.modifier}</span>
-                      </div>
-                    ))
-                  )}
-                </div>
-              </div>
-            )}
-
-            {upgradeItems && upgradeItems.length > 0 && (
-              <div>
-                <p className="text-sm font-semibold mb-2">Upgrades:</p>
-                <div className="space-y-2">
-                  {upgradeItems.map((upgrade, idx) =>
-                    upgrade ? (
-                      <div key={`upgrade-${idx}`} className="flex items-center gap-2">
-                        <img
-                          loading="lazy"
-                          src={upgrade.icon}
-                          alt={upgrade.name}
-                          className="w-6 h-6 rounded border border-border"
-                        />
-                        <span className="text-sm">{upgrade.name}</span>
-                      </div>
-                    ) : null
-                  )}
-                </div>
-              </div>
-            )}
-
-            {infusionItems && infusionItems.length > 0 && (
-              <div>
-                <p className="text-sm font-semibold mb-2">Infusions:</p>
-                <div className="space-y-2">
-                  {infusionItems.map((infusion, idx) =>
-                    infusion ? (
-                      <div key={`infusion-${idx}`} className="flex items-center gap-2">
-                        <img
-                          loading="lazy"
-                          src={infusion.icon}
-                          alt={infusion.name}
-                          className="w-6 h-6 rounded border border-purple-500"
-                        />
-                        <span className="text-sm">{infusion.name}</span>
-                      </div>
-                    ) : null
-                  )}
-                </div>
-              </div>
+            {statName && (
+              <span className="text-xs text-muted-foreground">{statName}</span>
             )}
           </div>
-        </HoverCardContent>
-      </HoverCard>
+        </button>
+      </ItemPopover>
     );
   };
 

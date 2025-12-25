@@ -163,8 +163,8 @@ export function ItemPriceChecker({ itemId }: { itemId: number }) {
 
   if (!itemData) return <div>Loading item...</div>;
 
-  const buyPrice = price ? price.buys.unit_price : 0;
-  const sellPrice = price ? price.sells.unit_price : 0;
+  const buyPrice = price?.buys.unit_price ?? 0;
+  const sellPrice = price?.sells.unit_price ?? 0;
 
   // Convert copper to gold/silver/copper
   const formatPrice = (copper: number) => {
@@ -184,8 +184,8 @@ export function ItemPriceChecker({ itemId }: { itemId: number }) {
         <div>
           <p>Buy Price: {formatPrice(buyPrice)}</p>
           <p>Sell Price: {formatPrice(sellPrice)}</p>
-          <p>Buy Orders: {price.buys.quantity}</p>
-          <p>Sell Orders: {price.sells.quantity}</p>
+          <p>Buy Orders: {price.buys?.quantity ?? 0}</p>
+          <p>Sell Orders: {price.sells?.quantity ?? 0}</p>
         </div>
       )}
     </div>

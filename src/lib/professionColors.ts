@@ -1,4 +1,4 @@
-import { Profession } from '@/api/types';
+import type { Profession } from '@/api/types';
 
 export const PROFESSION_COLORS: Record<string, { primary: string; dark: string; light: string }> = {
   Guardian: {

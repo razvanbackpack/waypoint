@@ -6,79 +6,27 @@
 /**
  * Item rarity levels from lowest to highest quality
  */
-export enum Rarity {
-  Junk = 'Junk',
-  Basic = 'Basic',
-  Fine = 'Fine',
-  Masterwork = 'Masterwork',
-  Rare = 'Rare',
-  Exotic = 'Exotic',
-  Ascended = 'Ascended',
-  Legendary = 'Legendary',
-}
+export type Rarity = 'Junk' | 'Basic' | 'Fine' | 'Masterwork' | 'Rare' | 'Exotic' | 'Ascended' | 'Legendary';
 
 /**
  * Playable professions (classes) in Guild Wars 2
  */
-export enum Profession {
-  Guardian = 'Guardian',
-  Warrior = 'Warrior',
-  Engineer = 'Engineer',
-  Ranger = 'Ranger',
-  Thief = 'Thief',
-  Elementalist = 'Elementalist',
-  Mesmer = 'Mesmer',
-  Necromancer = 'Necromancer',
-  Revenant = 'Revenant',
-}
+export type Profession = 'Guardian' | 'Warrior' | 'Engineer' | 'Ranger' | 'Thief' | 'Elementalist' | 'Mesmer' | 'Necromancer' | 'Revenant';
 
 /**
  * Playable races in Guild Wars 2
  */
-export enum Race {
-  Asura = 'Asura',
-  Charr = 'Charr',
-  Human = 'Human',
-  Norn = 'Norn',
-  Sylvari = 'Sylvari',
-}
+export type Race = 'Asura' | 'Charr' | 'Human' | 'Norn' | 'Sylvari';
 
 /**
  * Game modes where items or content can be used
  */
-export enum GameType {
-  Activity = 'Activity',
-  Dungeon = 'Dungeon',
-  Pve = 'Pve',
-  Pvp = 'Pvp',
-  PvpLobby = 'PvpLobby',
-  Wvw = 'Wvw',
-}
+export type GameType = 'Activity' | 'Dungeon' | 'Pve' | 'Pvp' | 'PvpLobby' | 'Wvw';
 
 /**
  * Item type categories
  */
-export enum ItemType {
-  Armor = 'Armor',
-  Back = 'Back',
-  Bag = 'Bag',
-  Consumable = 'Consumable',
-  Container = 'Container',
-  CraftingMaterial = 'CraftingMaterial',
-  Gathering = 'Gathering',
-  Gizmo = 'Gizmo',
-  JadeTechModule = 'JadeTechModule',
-  Key = 'Key',
-  MiniPet = 'MiniPet',
-  PowerCore = 'PowerCore',
-  Relic = 'Relic',
-  Tool = 'Tool',
-  Trait = 'Trait',
-  Trinket = 'Trinket',
-  Trophy = 'Trophy',
-  UpgradeComponent = 'UpgradeComponent',
-  Weapon = 'Weapon',
-}
+export type ItemType = 'Armor' | 'Back' | 'Bag' | 'Consumable' | 'Container' | 'CraftingMaterial' | 'Gathering' | 'Gizmo' | 'JadeTechModule' | 'Key' | 'MiniPet' | 'PowerCore' | 'Relic' | 'Tool' | 'Trait' | 'Trinket' | 'Trophy' | 'UpgradeComponent' | 'Weapon';
 
 /**
  * Item binding types

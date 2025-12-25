@@ -4,6 +4,8 @@ import { TradingPost } from './pages/TradingPost'
 import { Dailies } from './pages/Dailies'
 import { Characters } from './pages/Characters'
 import { Timers } from './pages/Timers'
+import { Crafting } from './pages/Crafting'
+import { Settings } from './pages/Settings'
 
 // Root route component
 const RootComponent = () => {
@@ -47,12 +49,28 @@ const timersRoute = createRoute({
   component: Timers,
 })
 
+// Crafting route
+const craftingRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/crafting',
+  component: Crafting,
+})
+
+// Settings route
+const settingsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/settings',
+  component: Settings,
+})
+
 // Create the route tree
 const routeTree = rootRoute.addChildren([
   indexRoute,
   tradingPostRoute,
   dailiesRoute,
   timersRoute,
+  craftingRoute,
+  settingsRoute,
 ])
 
 // Create the router

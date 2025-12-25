@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { DailyAchievements } from '@/components/achievements/DailyAchievements';
 import { AchievementCard } from '@/components/achievements/AchievementCard';
 import { CategoryBrowser } from '@/components/achievements/CategoryBrowser';

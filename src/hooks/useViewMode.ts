@@ -5,12 +5,12 @@ import { useViewModeStore } from '../store/viewModeStore';
  * Provides easy access to current view mode and selected character
  */
 export function useViewMode() {
-  const { viewMode, selectedCharacter } = useViewModeStore();
+  const selectedCharacter = useViewModeStore((state) => state.selectedCharacter);
 
   return {
-    viewMode,
+    viewMode: selectedCharacter ? 'character' : 'account',
     selectedCharacter,
-    isAccountView: viewMode === 'account',
-    isCharacterView: viewMode === 'character',
+    isAccountView: !selectedCharacter,
+    isCharacterView: !!selectedCharacter,
   };
 }

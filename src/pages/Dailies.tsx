@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
 import {
   useWizardsVaultDaily,
   useWizardsVaultWeekly,
@@ -349,7 +348,6 @@ export function Dailies() {
           completed={specialCompleted}
           total={specialTotal}
           color="purple"
-          reward={vaultSpecial?.meta_reward_astral}
         />
       </div>
 
@@ -498,13 +496,6 @@ export function Dailies() {
 
               return (
                 <div className="space-y-4">
-                  <MetaRewardCard
-                    title="Special Meta Reward"
-                    progressCurrent={vaultSpecial.meta_progress_current}
-                    progressComplete={vaultSpecial.meta_progress_complete}
-                    rewardAstral={vaultSpecial.meta_reward_astral}
-                    claimed={vaultSpecial.meta_reward_claimed}
-                  />
                   {/* Incomplete first */}
                   {incomplete.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">

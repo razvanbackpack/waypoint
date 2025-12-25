@@ -79,7 +79,7 @@ export function ItemTooltip({ itemId, open, onOpenChange }: ItemTooltipProps) {
                 <div className="border-t pt-3">
                   <div className="text-xs font-semibold mb-2">Stats</div>
                   <div className="space-y-1">
-                    {item.details.infix_upgrade.attributes.map((attr, idx) => (
+                    {item.details.infix_upgrade.attributes.map((attr: { attribute: string; modifier: number }, idx: number) => (
                       <div key={idx} className="text-sm">
                         +{attr.modifier} {attr.attribute}
                       </div>
@@ -88,17 +88,25 @@ export function ItemTooltip({ itemId, open, onOpenChange }: ItemTooltipProps) {
                 </div>
               )}
 
-              {(item.details?.upgrades || item.details?.infusions) && (
-                <div className="border-t pt-3">
-                  <div className="text-xs font-semibold mb-2">Modifications</div>
-                  {item.details.upgrades && item.details.upgrades.length > 0 && (
-                    <div className="text-sm">Upgrades: {item.details.upgrades.length}</div>
-                  )}
-                  {item.details.infusions && item.details.infusions.length > 0 && (
-                    <div className="text-sm">Infusions: {item.details.infusions.length}</div>
-                  )}
-                </div>
-              )}
+              {(() => {
+                const upgrades = item.details?.upgrades as number[] | undefined;
+                const infusions = item.details?.infusions as number[] | undefined;
+                const hasModifications = (upgrades && upgrades.length > 0) || (infusions && infusions.length > 0);
+
+                if (!hasModifications) return null;
+
+                return (
+                  <div className="border-t pt-3">
+                    <div className="text-xs font-semibold mb-2">Modifications</div>
+                    {upgrades && upgrades.length > 0 && (
+                      <div className="text-sm">Upgrades: {upgrades.length}</div>
+                    )}
+                    {infusions && infusions.length > 0 && (
+                      <div className="text-sm">Infusions: {infusions.length}</div>
+                    )}
+                  </div>
+                );
+              })()}
 
               {priceLoading ? (
                 <div className="border-t pt-3 flex items-center justify-center py-4">

@@ -37,7 +37,7 @@ export function BankView({ searchTerm = '' }: BankViewProps) {
     enabled: itemIds.length > 0,
   });
 
-  const { data: prices, isLoading: pricesLoading } = useTradingPostPrices(itemIds, {
+  const { data: prices, isLoading: _pricesLoading } = useTradingPostPrices(itemIds, {
     enabled: itemIds.length > 0,
   }) as { data: TradingPostPrice[] | undefined; isLoading: boolean };
 
