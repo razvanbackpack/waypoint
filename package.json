@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "update-data": "node scripts/update-gw2-data.js"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.15",
@@ -20,9 +21,11 @@
     "@tanstack/react-query": "^5.90.12",
     "@tanstack/react-router": "^1.143.2",
     "@tanstack/react-virtual": "^3.13.13",
+    "agent": "^0.2.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
+    "list": "^2.0.19",
     "lucide-react": "^0.562.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",

@@ -10,7 +10,6 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { ChevronDown } from 'lucide-react';
-import type { InventoryItem } from '@/api/types';
 
 const rarityColors: Record<string, string> = {
   Junk: '#AAA',

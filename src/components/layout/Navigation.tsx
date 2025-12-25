@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useRouterState, useNavigate } from '@tanstack/react-router';
-import { Settings, Check, X, Menu, XIcon, User, TrendingUp, Clock, CalendarCheck } from 'lucide-react';
+import { Check, X, Menu, XIcon, User, TrendingUp, Clock, CalendarCheck, Hammer, Database } from 'lucide-react';
 import { Button } from '../ui/button';
-import { ApiKeyDialog } from './ApiKeyDialog';
 import { useApiKey } from '../../api/hooks/useApiKey';
 import { useCharacters } from '../../api/hooks/useGW2Api';
 import { useViewModeStore } from '../../store/viewModeStore';
@@ -17,7 +16,6 @@ import {
 import { cn } from '../../lib/utils';
 
 export function Navigation() {
-  const [isApiKeyDialogOpen, setIsApiKeyDialogOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { hasApiKey } = useApiKey();
   const routerState = useRouterState();
@@ -56,11 +54,6 @@ export function Navigation() {
     return selectedCharacter || 'Select Character';
   };
 
-  const navLinks = [
-    { path: '/timers', label: 'Events' },
-    { path: '/dailies', label: 'Daily' },
-  ];
-
   const isActive = (path: string) => currentPath === path;
 
   return (
@@ -78,8 +71,89 @@ export function Navigation() {
               </span>
             </Link>
 
-            {/* Desktop Actions */}
-            <div className="hidden md:flex items-center gap-2">
+            {/* Center: Navigation Links */}
+            <div className="hidden md:flex items-center gap-1 lg:gap-2">
+              {/* Trading Post Button - Desktop Only */}
+              <Button variant="ghost" size="sm" asChild className="h-9 w-9 md:w-auto md:px-2 lg:px-3 lg:gap-2">
+                <Link
+                  to="/trading-post"
+                  className={cn(
+                    "transition-all duration-200 relative",
+                    isActive('/trading-post') && "text-gw2-gold after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-primary after:glow-gold-sm"
+                  )}
+                >
+                  <TrendingUp className="h-4 w-4" />
+                  <span className="hidden lg:inline text-sm font-medium">TP</span>
+                </Link>
+              </Button>
+
+              {/* Crafting Button */}
+              <Button variant="ghost" size="sm" asChild className="h-9 w-9 md:w-auto md:px-2 lg:px-3 lg:gap-2">
+                <Link
+                  to="/crafting"
+                  className={cn(
+                    "transition-all duration-200 relative",
+                    isActive('/crafting') && "text-gw2-gold after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-primary after:glow-gold-sm"
+                  )}
+                >
+                  <Hammer className="h-4 w-4" />
+                  <span className="hidden lg:inline text-sm font-medium">Craft</span>
+                </Link>
+              </Button>
+
+              {/* Events Button */}
+              <Button variant="ghost" size="sm" asChild className="h-9 w-9 md:w-auto md:px-2 lg:px-3 lg:gap-2">
+                <Link
+                  to="/timers"
+                  className={cn(
+                    "transition-all duration-200 relative",
+                    isActive('/timers') && "text-gw2-gold after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-primary after:glow-gold-sm"
+                  )}
+                >
+                  <Clock className="h-4 w-4" />
+                  <span className="hidden lg:inline text-sm font-medium">Events</span>
+                </Link>
+              </Button>
+
+              {/* Dailies Button */}
+              <Button variant="ghost" size="sm" asChild className="h-9 w-9 md:w-auto md:px-2 lg:px-3 lg:gap-2">
+                <Link
+                  to="/dailies"
+                  className={cn(
+                    "transition-all duration-200 relative",
+                    isActive('/dailies') && "text-gw2-gold after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-primary after:glow-gold-sm"
+                  )}
+                >
+                  <CalendarCheck className="h-4 w-4" />
+                  <span className="hidden lg:inline text-sm font-medium">Daily</span>
+                </Link>
+              </Button>
+
+              {/* Settings Button with Connection Status */}
+              <Button variant="ghost" size="sm" asChild className="h-9 w-9 md:w-auto md:px-2 lg:px-3 lg:gap-2 relative">
+                <Link
+                  to="/settings"
+                  className={cn(
+                    "transition-all duration-200 relative",
+                    isActive('/settings') && "text-gw2-gold after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-primary after:glow-gold-sm"
+                  )}
+                >
+                  <Database className="h-4 w-4" />
+                  <span className="hidden lg:inline text-sm font-medium">Settings</span>
+                  {/* Connection Status Indicator */}
+                  <span
+                    className={cn(
+                      "absolute top-1 right-1 h-2 w-2 rounded-full ring-1 ring-card",
+                      hasApiKey ? "bg-green-500" : "bg-red-500"
+                    )}
+                    aria-label={hasApiKey ? "Connected" : "Not Connected"}
+                  />
+                </Link>
+              </Button>
+            </div>
+
+            {/* Right: Utilities */}
+            <div className="hidden md:flex items-center gap-1 lg:gap-2">
               {/* Character Selector */}
               {hasApiKey && (
                 <Select
@@ -87,10 +161,10 @@ export function Navigation() {
                   onValueChange={handleViewChange}
                   disabled={isLoadingCharacters}
                 >
-                  <SelectTrigger className="w-auto min-w-[160px] h-9 bg-muted/50 hover:bg-muted transition-colors">
+                  <SelectTrigger className="w-auto min-w-[100px] max-w-[120px] lg:min-w-[160px] lg:max-w-none h-9 bg-muted/50 hover:bg-muted transition-colors">
                     <div className="flex items-center gap-2">
-                      <User className="h-4 w-4" />
-                      <SelectValue>
+                      <User className="h-4 w-4 hidden lg:inline" />
+                      <SelectValue className="truncate text-sm">
                         {getDisplayValue()}
                       </SelectValue>
                     </div>
@@ -108,68 +182,8 @@ export function Navigation() {
                 </Select>
               )}
 
-              {/* Trading Post Button - Desktop Only */}
-              <Button variant="ghost" size="sm" asChild className="h-9 gap-2">
-                <Link
-                  to="/trading-post"
-                  className={cn(
-                    "transition-all duration-200 relative",
-                    isActive('/trading-post') && "text-gw2-gold after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-primary after:glow-gold-sm"
-                  )}
-                >
-                  <TrendingUp className="h-4 w-4" />
-                  <span className="text-sm font-medium">TP</span>
-                </Link>
-              </Button>
-
-              {/* Events Button */}
-              <Button variant="ghost" size="sm" asChild className="h-9 gap-2">
-                <Link
-                  to="/timers"
-                  className={cn(
-                    "transition-all duration-200 relative",
-                    isActive('/timers') && "text-gw2-gold after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-primary after:glow-gold-sm"
-                  )}
-                >
-                  <Clock className="h-4 w-4" />
-                  <span className="text-sm font-medium">Events</span>
-                </Link>
-              </Button>
-
-              {/* Dailies Button */}
-              <Button variant="ghost" size="sm" asChild className="h-9 gap-2">
-                <Link
-                  to="/dailies"
-                  className={cn(
-                    "transition-all duration-200 relative",
-                    isActive('/dailies') && "text-gw2-gold after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-primary after:glow-gold-sm"
-                  )}
-                >
-                  <CalendarCheck className="h-4 w-4" />
-                  <span className="text-sm font-medium">Daily</span>
-                </Link>
-              </Button>
-
               {/* Theme Toggle */}
               <ThemeToggle />
-
-              {/* Settings Button with Connection Status */}
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setIsApiKeyDialogOpen(true)}
-                className="h-9 w-9 relative"
-              >
-                <Settings className="h-4 w-4" />
-                {/* Connection Status Indicator */}
-                <span
-                  className={cn(
-                    "absolute top-1 right-1 h-2 w-2 rounded-full ring-1 ring-card",
-                    hasApiKey ? "bg-green-500" : "bg-red-500"
-                  )}
-                  aria-label={hasApiKey ? "Connected" : "Not Connected"}
-                />
-              </Button>
             </div>
 
             {/* Mobile Menu Button */}
@@ -189,34 +203,72 @@ export function Navigation() {
 
           {/* Mobile Menu */}
           {isMobileMenuOpen && (
-            <div className="md:hidden py-4 space-y-3 border-t border-border animate-fade-in">
+            <div className="md:hidden py-4 space-y-2 border-t border-border animate-fade-in">
               <Link
                 to="/trading-post"
                 onClick={() => setIsMobileMenuOpen(false)}
                 className={cn(
-                  "block px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200",
+                  "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors duration-200",
                   isActive('/trading-post')
                     ? 'bg-primary/10 text-gw2-gold'
                     : 'text-foreground/80 hover:bg-muted'
                 )}
               >
-                Trading Post
+                <TrendingUp className="h-4 w-4" />
+                <span>Trading Post</span>
               </Link>
-              {navLinks.map((link) => (
-                <Link
-                  key={link.path}
-                  to={link.path}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className={cn(
-                    "block px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200",
-                    isActive(link.path)
-                      ? 'bg-primary/10 text-gw2-gold'
-                      : 'text-foreground/80 hover:bg-muted'
-                  )}
-                >
-                  {link.label}
-                </Link>
-              ))}
+              <Link
+                to="/crafting"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className={cn(
+                  "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors duration-200",
+                  isActive('/crafting')
+                    ? 'bg-primary/10 text-gw2-gold'
+                    : 'text-foreground/80 hover:bg-muted'
+                )}
+              >
+                <Hammer className="h-4 w-4" />
+                <span>Crafting</span>
+              </Link>
+              <Link
+                to="/timers"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className={cn(
+                  "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors duration-200",
+                  isActive('/timers')
+                    ? 'bg-primary/10 text-gw2-gold'
+                    : 'text-foreground/80 hover:bg-muted'
+                )}
+              >
+                <Clock className="h-4 w-4" />
+                <span>Events</span>
+              </Link>
+              <Link
+                to="/dailies"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className={cn(
+                  "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors duration-200",
+                  isActive('/dailies')
+                    ? 'bg-primary/10 text-gw2-gold'
+                    : 'text-foreground/80 hover:bg-muted'
+                )}
+              >
+                <CalendarCheck className="h-4 w-4" />
+                <span>Daily</span>
+              </Link>
+              <Link
+                to="/settings"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className={cn(
+                  "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors duration-200",
+                  isActive('/settings')
+                    ? 'bg-primary/10 text-gw2-gold'
+                    : 'text-foreground/80 hover:bg-muted'
+                )}
+              >
+                <Database className="h-4 w-4" />
+                <span>Settings</span>
+              </Link>
 
               <div className="px-3 pt-3 border-t border-border space-y-3">
                 {/* Mobile Character Selector */}
@@ -269,30 +321,11 @@ export function Navigation() {
                     </>
                   )}
                 </div>
-
-                {/* Mobile Settings Button */}
-                <Button
-                  variant="outline"
-                  className="w-full gap-2"
-                  onClick={() => {
-                    setIsApiKeyDialogOpen(true);
-                    setIsMobileMenuOpen(false);
-                  }}
-                >
-                  <Settings className="h-4 w-4" />
-                  Settings
-                </Button>
               </div>
             </div>
           )}
         </div>
       </nav>
-
-      {/* API Key Dialog */}
-      <ApiKeyDialog
-        open={isApiKeyDialogOpen}
-        onOpenChange={setIsApiKeyDialogOpen}
-      />
     </>
   );
 }

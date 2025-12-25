@@ -5,11 +5,11 @@ import { useViewMode } from '@/hooks/useViewMode';
 import { ApiKeySetup } from '@/components/inventory/ApiKeySetup';
 import { CharacterInventory } from '@/components/characters/CharacterInventory';
 import { CharacterEquipment } from '@/components/characters/CharacterEquipment';
-import { CharacterAchievements } from '@/components/characters/CharacterAchievements';
+import { CharacterBank } from '@/components/characters/CharacterBank';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
-import { Search, Coins, Star, Swords, Hammer, TrendingUp, User, Package, Trophy } from 'lucide-react';
+import { Search, Coins, Star, Swords, Hammer, TrendingUp, User, Package, Vault } from 'lucide-react';
 import { getProfessionColor } from '@/lib/professionColors';
 import { getApiClient } from '@/api/client';
 import { guildEndpoints } from '@/api/endpoints';
@@ -234,11 +234,11 @@ export function Characters() {
         </Card>
       ) : (
         <>
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-            <TabsList className="sticky top-0 z-10 grid w-full grid-cols-3 lg:w-auto bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b-2 border-border/40 shadow-sm">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+            <TabsList className="w-full grid grid-cols-3 h-auto bg-transparent gap-1 p-0">
               <TabsTrigger
                 value="overview"
-                className="flex items-center gap-2 px-6 py-3 font-semibold data-[state=active]:text-gw2-gold data-[state=active]:border-b-2 data-[state=active]:border-gw2-gold data-[state=active]:shadow-[0_2px_0_0_rgba(201,162,39,0.3)] rounded-b-none transition-all duration-200 hover:text-gw2-gold/70"
+                className="flex items-center justify-center gap-2 px-3 py-1.5 text-sm font-medium text-muted-foreground rounded-md border border-transparent hover:text-foreground data-[state=active]:bg-muted data-[state=active]:text-gw2-gold data-[state=active]:border-border transition-colors"
               >
                 <User className="h-4 w-4" />
                 <span className="hidden sm:inline">Equipment</span>
@@ -246,18 +246,17 @@ export function Characters() {
               </TabsTrigger>
               <TabsTrigger
                 value="inventory"
-                className="flex items-center gap-2 px-6 py-3 font-semibold data-[state=active]:text-gw2-gold data-[state=active]:border-b-2 data-[state=active]:border-gw2-gold data-[state=active]:shadow-[0_2px_0_0_rgba(201,162,39,0.3)] rounded-b-none transition-all duration-200 hover:text-gw2-gold/70"
+                className="flex items-center justify-center gap-2 px-3 py-1.5 text-sm font-medium text-muted-foreground rounded-md border border-transparent hover:text-foreground data-[state=active]:bg-muted data-[state=active]:text-gw2-gold data-[state=active]:border-border transition-colors"
               >
                 <Package className="h-4 w-4" />
                 <span>Inventory</span>
               </TabsTrigger>
               <TabsTrigger
-                value="achievements"
-                className="flex items-center gap-2 px-6 py-3 font-semibold data-[state=active]:text-gw2-gold data-[state=active]:border-b-2 data-[state=active]:border-gw2-gold data-[state=active]:shadow-[0_2px_0_0_rgba(201,162,39,0.3)] rounded-b-none transition-all duration-200 hover:text-gw2-gold/70"
+                value="bank"
+                className="flex items-center justify-center gap-2 px-3 py-1.5 text-sm font-medium text-muted-foreground rounded-md border border-transparent hover:text-foreground data-[state=active]:bg-muted data-[state=active]:text-gw2-gold data-[state=active]:border-border transition-colors"
               >
-                <Trophy className="h-4 w-4" />
-                <span className="hidden sm:inline">Achievements</span>
-                <span className="sm:hidden">Achieve</span>
+                <Vault className="h-4 w-4" />
+                <span>Bank</span>
               </TabsTrigger>
             </TabsList>
 
@@ -281,8 +280,8 @@ export function Characters() {
               <CharacterInventory character={character} searchTerm={searchTerm} />
             </TabsContent>
 
-            <TabsContent value="achievements" className="space-y-6 animate-fade-in">
-              <CharacterAchievements character={character} />
+            <TabsContent value="bank" className="space-y-6 animate-fade-in">
+              <CharacterBank character={character} />
             </TabsContent>
           </Tabs>
         </>

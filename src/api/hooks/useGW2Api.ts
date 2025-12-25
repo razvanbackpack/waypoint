@@ -8,6 +8,7 @@ import type {
   MaterialStorage,
   WalletCurrency,
   Item,
+  ItemStat,
   TradingPostPrice,
   TradingPostListing,
   Achievement,
@@ -23,6 +24,7 @@ import type {
   WizardsVaultWeekly,
   WizardsVaultSpecial,
 } from '../types';
+import type { Recipe, CharacterCrafting } from '../types/crafting';
 
 // Query key factory for consistent cache key generation
 export const queryKeys = {
@@ -48,6 +50,11 @@ export const queryKeys = {
   wizardsVaultDaily: ['wizardsVaultDaily'] as const,
   wizardsVaultWeekly: ['wizardsVaultWeekly'] as const,
   wizardsVaultSpecial: ['wizardsVaultSpecial'] as const,
+  recipes: (ids: number[]) => ['recipes', ...ids] as const,
+  recipeSearch: (outputItemId: number) => ['recipeSearch', outputItemId] as const,
+  accountRecipes: ['accountRecipes'] as const,
+  characterCrafting: (name: string) => ['character', name, 'crafting'] as const,
+  legendaryArmory: ['legendaryArmory'] as const,
 } as const;
 
 // Default cache configuration
@@ -240,6 +247,25 @@ export function useItem(
     },
     staleTime: LONG_STALE_TIME,
     enabled: !!id,
+    ...options,
+  });
+}
+
+/**
+ * Fetch item stat combinations
+ * Does not require authentication
+ */
+export function useItemStats(
+  ids: number[],
+  options?: Omit<UseQueryOptions<ItemStat[]>, 'queryKey' | 'queryFn'>
+): UseQueryResult<ItemStat[]> {
+  const client = getApiClient();
+
+  return useQuery({
+    queryKey: ['itemstats', ids],
+    queryFn: () => client.getWithIds<ItemStat[]>(itemsEndpoints.itemstats(), ids),
+    staleTime: LONG_STALE_TIME,
+    enabled: ids.length > 0,
     ...options,
   });
 }
@@ -573,6 +599,99 @@ export function useWizardsVaultSpecial(
     queryKey: queryKeys.wizardsVaultSpecial,
     queryFn: () => client.get<WizardsVaultSpecial>(accountEndpoints.wizardsvault.special()),
     staleTime: LONG_STALE_TIME,
+    enabled: client.isAuthenticated(),
+    ...options,
+  });
+}
+
+/**
+ * Fetch recipe details by IDs
+ * Does not require authentication
+ */
+export function useRecipes(
+  ids: number[],
+  options?: Omit<UseQueryOptions<Recipe[]>, 'queryKey' | 'queryFn'>
+): UseQueryResult<Recipe[]> {
+  const client = getApiClient();
+
+  return useQuery({
+    queryKey: queryKeys.recipes(ids),
+    queryFn: () => client.getWithIds<Recipe[]>(itemsEndpoints.recipes(), ids),
+    staleTime: LONG_STALE_TIME,
+    enabled: ids.length > 0,
+    ...options,
+  });
+}
+
+/**
+ * Fetch recipe IDs by output item ID
+ * Does not require authentication
+ */
+export function useRecipeSearch(
+  outputItemId: number | undefined,
+  options?: Omit<UseQueryOptions<number[]>, 'queryKey' | 'queryFn'>
+): UseQueryResult<number[]> {
+  const client = getApiClient();
+
+  return useQuery({
+    queryKey: queryKeys.recipeSearch(outputItemId!),
+    queryFn: () => client.get<number[]>(itemsEndpoints.recipeSearch.byOutput(outputItemId!)),
+    staleTime: LONG_STALE_TIME,
+    enabled: outputItemId !== undefined,
+    ...options,
+  });
+}
+
+/**
+ * Fetch account's learned recipes
+ * Requires authentication
+ */
+export function useAccountRecipes(
+  options?: Omit<UseQueryOptions<number[]>, 'queryKey' | 'queryFn'>
+): UseQueryResult<number[]> {
+  const client = getApiClient();
+
+  return useQuery({
+    queryKey: queryKeys.accountRecipes,
+    queryFn: () => client.get<number[]>(accountEndpoints.recipes()),
+    staleTime: DEFAULT_STALE_TIME,
+    enabled: client.isAuthenticated(),
+    ...options,
+  });
+}
+
+/**
+ * Fetch character's crafting disciplines
+ * Requires authentication
+ */
+export function useCharacterCrafting(
+  characterName: string | undefined,
+  options?: Omit<UseQueryOptions<CharacterCrafting[]>, 'queryKey' | 'queryFn'>
+): UseQueryResult<CharacterCrafting[]> {
+  const client = getApiClient();
+
+  return useQuery({
+    queryKey: queryKeys.characterCrafting(characterName!),
+    queryFn: () => client.get<CharacterCrafting[]>(accountEndpoints.crafting(characterName!)),
+    staleTime: DEFAULT_STALE_TIME,
+    enabled: client.isAuthenticated() && characterName !== undefined,
+    ...options,
+  });
+}
+
+/**
+ * Fetch account's legendary armory items
+ * Requires authentication
+ */
+export function useLegendaryArmory(
+  options?: Omit<UseQueryOptions<{ id: number; count: number }[]>, 'queryKey' | 'queryFn'>
+): UseQueryResult<{ id: number; count: number }[]> {
+  const client = getApiClient();
+
+  return useQuery({
+    queryKey: queryKeys.legendaryArmory,
+    queryFn: () => client.get<{ id: number; count: number }[]>(accountEndpoints.legendaryarmory()),
+    staleTime: DEFAULT_STALE_TIME,
     enabled: client.isAuthenticated(),
     ...options,
   });

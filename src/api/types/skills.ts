@@ -286,7 +286,7 @@ export type SkillFact =
 /**
  * Traited fact that requires a trait to be equipped
  */
-export interface TraitedFact extends SkillFact {
+export type TraitedFact = SkillFact & {
   /** Trait ID that enables this fact */
   requires_trait: number;
   /** Fact index this replaces (0-indexed) */

@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
-import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
-import { useItems } from '@/api/hooks/useGW2Api';
+import { useItems, useItemStats } from '@/api/hooks/useGW2Api';
+import { ItemPopover } from '@/components/shared/ItemPopover';
 import type { Character, Item } from '@/api/types';
 import { getRarityColor } from '@/lib/professionColors';
 
@@ -8,25 +8,6 @@ interface CharacterInventoryProps {
   character: Character;
   searchTerm?: string;
 }
-
-const ATTRIBUTE_NAMES: Record<string, string> = {
-  Power: 'Power',
-  Precision: 'Precision',
-  Toughness: 'Toughness',
-  Vitality: 'Vitality',
-  Ferocity: 'Ferocity',
-  CritDamage: 'Ferocity',
-  ConditionDamage: 'Condition Damage',
-  ConditionDuration: 'Expertise',
-  Healing: 'Healing Power',
-  HealingPower: 'Healing Power',
-  BoonDuration: 'Concentration',
-  Concentration: 'Concentration',
-  Expertise: 'Expertise',
-  AgonyResistance: 'Agony Resistance',
-};
-
-const getAttributeName = (attr: string): string => ATTRIBUTE_NAMES[attr] || attr;
 
 export function CharacterInventory({ character, searchTerm = '' }: CharacterInventoryProps) {
   const allItemIds = useMemo(() => {
@@ -56,6 +37,29 @@ export function CharacterInventory({ character, searchTerm = '' }: CharacterInve
     if (!items) return new Map<number, Item>();
     return new Map(items.map((item) => [item.id, item]));
   }, [items]);
+
+  const statIds = useMemo(() => {
+    const ids = new Set<number>();
+    character.bags?.forEach((bag) => {
+      if (bag) {
+        bag.inventory.forEach((item) => {
+          if (item?.stats?.id) {
+            ids.add(item.stats.id);
+          }
+        });
+      }
+    });
+    return Array.from(ids);
+  }, [character]);
+
+  const { data: itemStats } = useItemStats(statIds, {
+    enabled: statIds.length > 0
+  });
+
+  const statsMap = useMemo(() =>
+    new Map(itemStats?.map(s => [s.id, s.name]) || []),
+    [itemStats]
+  );
 
   const filteredBags = useMemo(() => {
     if (!character.bags || !searchTerm) return character.bags || [];
@@ -145,59 +149,38 @@ export function CharacterInventory({ character, searchTerm = '' }: CharacterInve
               }
 
               const rarityColor = getRarityColor(itemData.rarity);
+              const statName = item.stats?.id ? statsMap.get(item.stats.id) : undefined;
+              const upgradeItems = item.upgrades?.map((id) => itemsMap.get(id)).filter(Boolean) as Item[];
+              const infusionItems = item.infusions?.map((id) => itemsMap.get(id)).filter(Boolean) as Item[];
 
               return (
-                <HoverCard key={key}>
-                  <HoverCardTrigger asChild>
-                    <button
-                      className="aspect-square relative cursor-pointer hover:scale-110 hover:z-10 transition-transform"
+                <ItemPopover
+                  key={key}
+                  item={itemData}
+                  statName={statName}
+                  count={item.count}
+                  stats={item.stats?.attributes}
+                  upgrades={upgradeItems}
+                  infusions={infusionItems}
+                >
+                  <button
+                    className="aspect-square relative cursor-pointer hover:scale-110 hover:z-10 transition-transform"
+                  >
+                    <div
+                      className="w-full h-full overflow-hidden"
+                      style={{ border: `2px solid ${rarityColor}` }}
                     >
-                      <div
-                        className="w-full h-full overflow-hidden"
-                        style={{ border: `2px solid ${rarityColor}` }}
-                      >
-                        {itemData.icon && (
-                          <img loading="lazy" src={itemData.icon} alt={itemData.name} className="w-full h-full object-cover" />
-                        )}
-                      </div>
-                      {item.count > 1 && (
-                        <div className="absolute bottom-0 right-0 bg-black/75 text-white text-[10px] px-0.5 leading-tight">
-                          {item.count}
-                        </div>
-                      )}
-                    </button>
-                  </HoverCardTrigger>
-                  <HoverCardContent className="w-64">
-                    <div className="space-y-2">
-                      <h4 className="font-semibold" style={{ color: rarityColor }}>{itemData.name}</h4>
-                      {itemData.type && (
-                        <p className="text-sm text-muted-foreground">{itemData.type}</p>
-                      )}
-                      {itemData.level > 0 && (
-                        <p className="text-sm"><span className="text-muted-foreground">Level:</span> {itemData.level}</p>
-                      )}
-                      {itemData.rarity && (
-                        <p className="text-sm"><span className="text-muted-foreground">Rarity:</span> {itemData.rarity}</p>
-                      )}
-                      {item.count > 1 && (
-                        <p className="text-sm"><span className="text-muted-foreground">Count:</span> {item.count}</p>
-                      )}
-                      {itemData.details?.infix_upgrade?.attributes && itemData.details.infix_upgrade.attributes.length > 0 && (
-                        <div className="pt-1 border-t border-border/50">
-                          <p className="text-sm font-semibold mb-1">Stats:</p>
-                          <div className="text-sm space-y-0.5">
-                            {itemData.details.infix_upgrade.attributes.map((attr: { attribute: string; modifier: number }, idx: number) => (
-                              <div key={idx} className="flex justify-between">
-                                <span className="text-muted-foreground">{getAttributeName(attr.attribute)}:</span>
-                                <span>+{attr.modifier}</span>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
+                      {itemData.icon && (
+                        <img loading="lazy" src={itemData.icon} alt={itemData.name} className="w-full h-full object-cover" />
                       )}
                     </div>
-                  </HoverCardContent>
-                </HoverCard>
+                    {item.count > 1 && (
+                      <div className="absolute bottom-0 right-0 bg-black/75 text-white text-[10px] px-0.5 leading-tight">
+                        {item.count}
+                      </div>
+                    )}
+                  </button>
+                </ItemPopover>
               );
             });
           })}

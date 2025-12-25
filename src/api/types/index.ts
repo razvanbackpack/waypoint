@@ -3,7 +3,36 @@
 // Re-export common types, enums, and utilities
 export * from './common';
 export * from './commerce';
+export * from './crafting';
 export * from './skills';
+
+// Import types used in this file's interfaces
+import type {
+  AccountAccess,
+  Race,
+  Gender,
+  Profession,
+  CraftingDiscipline,
+  EquipmentSlot,
+  Binding,
+  ItemType,
+  Rarity,
+  ItemFlag,
+  GameType,
+  UpgradePath,
+  WeightClass,
+  DamageType,
+  InfusionSlot,
+  InfixUpgrade,
+  UpgradeFlag,
+  InfusionUpgradeFlag,
+  Language,
+} from './common';
+
+import type {
+  CommercePrice,
+  CommerceListing,
+} from './commerce';
 
 /**
  * API error response
@@ -425,6 +454,19 @@ export interface ItemDetails {
   vendor_ids?: number[];
   // Additional item type specific fields
   [key: string]: unknown;
+}
+
+/**
+ * Item stat combination (e.g., "Berserker's", "Assassin's")
+ */
+export interface ItemStat {
+  id: number;
+  name: string;
+  attributes: {
+    attribute: string;
+    multiplier: number;
+    value: number;
+  }[];
 }
 
 /**

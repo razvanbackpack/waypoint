@@ -5,9 +5,6 @@ import { loadConfig, updateConfig } from '../../utils/config';
 // API key format: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXXXXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
 const API_KEY_REGEX = /^[A-F0-9]{8}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{20}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{12}$/i;
 
-// Default API key for development
-const DEFAULT_API_KEY = 'E4DA7782-E8C6-9E45-80A9-F42BB73CFFC037EC53DB-BB66-4982-AE88-182652A6F7EB';
-
 export interface UseApiKeyReturn {
   apiKey: string | null;
   setApiKey: (key: string) => void;
@@ -21,12 +18,13 @@ export function useApiKey(): UseApiKeyReturn {
   const [apiKey, setApiKeyState] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  // Load API key from localStorage or use default
+  // Load API key from localStorage
   useEffect(() => {
     const config = loadConfig();
-    const key = config.apiKey || DEFAULT_API_KEY;
-    setApiKeyState(key);
-    setClientApiKey(key);
+    if (config.apiKey) {
+      setApiKeyState(config.apiKey);
+      setClientApiKey(config.apiKey);
+    }
   }, []);
 
   const isValidKey = useCallback((key: string): boolean => {

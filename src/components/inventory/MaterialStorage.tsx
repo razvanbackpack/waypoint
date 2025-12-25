@@ -46,7 +46,7 @@ export function MaterialStorage({ searchTerm = '' }: MaterialStorageProps) {
     enabled: itemIds.length > 0,
   });
 
-  const { data: prices, isLoading: pricesLoading } = useTradingPostPrices(itemIds, {
+  const { data: prices, isLoading: _pricesLoading } = useTradingPostPrices(itemIds, {
     enabled: itemIds.length > 0,
   }) as { data: TradingPostPrice[] | undefined; isLoading: boolean };
 
@@ -150,7 +150,7 @@ export function MaterialStorage({ searchTerm = '' }: MaterialStorageProps) {
               <div key={categoryId} className="space-y-3">
                 <h3 className="text-sm font-semibold border-b pb-2">{categoryName}</h3>
                 <div className="grid gap-2">
-                  {categoryMaterials.map((mat) => {
+                  {categoryMaterials.map((mat: { id: number; category: number; count: number }) => {
                     const item = itemsMap.get(mat.id);
                     if (!item) {
                       return (
