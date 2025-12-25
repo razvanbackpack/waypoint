@@ -86,7 +86,7 @@ function ensureDirectoryExists(dirPath) {
 // Save JSON file
 function saveJsonFile(filename, data) {
   const filePath = path.join(OUTPUT_DIR, filename);
-  fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
+  fs.writeFileSync(filePath, JSON.stringify(data));
 }
 
 // Main execution
@@ -117,8 +117,13 @@ async function main() {
     // Save files
     console.log('Saving files...');
 
-    saveJsonFile('items.json', items);
-    console.log(`  ✓ Saved items.json`);
+    // Split items into 3 files (Cloudflare Pages has 25MB limit per file)
+    const chunkSize = Math.ceil(items.length / 3);
+    for (let i = 0; i < 3; i++) {
+      const chunk = items.slice(i * chunkSize, (i + 1) * chunkSize);
+      saveJsonFile(`items-${i + 1}.json`, chunk);
+      console.log(`  ✓ Saved items-${i + 1}.json (${formatNumber(chunk.length)} items)`);
+    }
 
     saveJsonFile('recipes.json', recipes);
     console.log(`  ✓ Saved recipes.json`);

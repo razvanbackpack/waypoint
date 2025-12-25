@@ -18,11 +18,7 @@ import type { Item } from '@/api/types';
 const WATCHLIST_KEY = 'gw2-tools-watchlist';
 const REFRESH_INTERVAL = 30000; // 30 seconds
 
-interface WatchlistProps {
-  onAddItem?: (itemId: number) => void;
-}
-
-export function Watchlist({ onAddItem }: WatchlistProps) {
+export function Watchlist() {
   const [watchedItemIds, setWatchedItemIds] = useState<number[]>([]);
   const [autoRefresh, setAutoRefresh] = useState(true);
 
@@ -72,13 +68,6 @@ export function Watchlist({ onAddItem }: WatchlistProps) {
   const handleManualRefresh = () => {
     refetch();
   };
-
-  // Expose addItem function to parent
-  useEffect(() => {
-    if (onAddItem) {
-      // This is a workaround - in real implementation, you'd use a ref or context
-    }
-  }, [onAddItem]);
 
   if (watchedItemIds.length === 0) {
     return (

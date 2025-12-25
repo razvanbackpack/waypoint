@@ -28,22 +28,26 @@ export function GameDataProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     async function loadData() {
       try {
-        const [itemsRes, recipesRes] = await Promise.all([
-          fetch('/data/items.json'),
+        const [items1Res, items2Res, items3Res, recipesRes] = await Promise.all([
+          fetch('/data/items-1.json'),
+          fetch('/data/items-2.json'),
+          fetch('/data/items-3.json'),
           fetch('/data/recipes.json')
         ]);
 
-        if (!itemsRes.ok || !recipesRes.ok) {
+        if (!items1Res.ok || !items2Res.ok || !items3Res.ok || !recipesRes.ok) {
           setError('Failed to load game data');
           return;
         }
 
-        const [itemsData, recipesData] = await Promise.all([
-          itemsRes.json(),
+        const [items1, items2, items3, recipesData] = await Promise.all([
+          items1Res.json(),
+          items2Res.json(),
+          items3Res.json(),
           recipesRes.json()
         ]);
 
-        setItems(itemsData);
+        setItems([...items1, ...items2, ...items3]);
         setRecipes(recipesData);
       } catch (err) {
         setError('Failed to load game data');
