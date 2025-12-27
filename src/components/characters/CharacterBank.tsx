@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { useBank, useMaterials, useItems, useTradingPostPrices } from '@/api/hooks/useGW2Api';
 import { CoinDisplay } from '@/components/trading-post/PriceDisplay';
 import type { Character, Item, MaterialStorage, TradingPostPrice } from '@/api/types';
-import { getRarityColor } from '@/lib/professionColors';
+import { cn } from '@/lib/utils';
 
 interface CharacterBankProps {
   character: Character;
@@ -203,7 +203,7 @@ export function CharacterBank({ character: _character }: CharacterBankProps) {
                   return (
                     <div
                       key={index}
-                      className="aspect-square bg-muted/30 border border-border/50"
+                      className="item-slot bg-surface-sunken border-muted"
                     />
                   );
                 }
@@ -213,23 +213,27 @@ export function CharacterBank({ character: _character }: CharacterBankProps) {
                   return (
                     <div
                       key={index}
-                      className="aspect-square bg-muted border border-border/50 flex items-center justify-center"
+                      className="item-slot bg-muted border-border/50 flex items-center justify-center"
                     >
                       <div className="animate-spin h-3 w-3 border-2 border-primary border-t-transparent rounded-full" />
                     </div>
                   );
                 }
 
-                const rarityColor = getRarityColor(itemData.rarity);
+                const rarityClass = `rarity-${itemData.rarity.toLowerCase()}`;
                 const price = pricesMap.get(slot.id);
 
                 return (
                   <HoverCard key={index}>
                     <HoverCardTrigger asChild>
-                      <button className="aspect-square relative cursor-pointer hover:scale-110 hover:z-10 transition-transform">
+                      <button className="aspect-square relative cursor-pointer hover:scale-105 hover:z-10 transition-transform">
                         <div
-                          className="w-full h-full overflow-hidden"
-                          style={{ border: `2px solid ${rarityColor}` }}
+                          className={cn(
+                            "item-slot w-full h-full overflow-hidden",
+                            rarityClass,
+                            "border-rarity",
+                            "hover:border-gw2-gold hover:glow-gold-sm"
+                          )}
                         >
                           {itemData.icon && (
                             <img
@@ -261,7 +265,7 @@ export function CharacterBank({ character: _character }: CharacterBankProps) {
                     </HoverCardTrigger>
                     <HoverCardContent className="w-64">
                       <div className="space-y-2">
-                        <h4 className="font-semibold" style={{ color: rarityColor }}>
+                        <h4 className={cn("font-semibold", rarityClass, "text-rarity")}>
                           {itemData.name}
                         </h4>
                         {itemData.type && (
@@ -430,23 +434,27 @@ export function CharacterBank({ character: _character }: CharacterBankProps) {
                             return (
                               <div
                                 key={mat.id}
-                                className="aspect-square bg-muted border border-border/50 flex items-center justify-center"
+                                className="item-slot bg-muted border-border/50 flex items-center justify-center"
                               >
                                 <div className="animate-spin h-3 w-3 border-2 border-primary border-t-transparent rounded-full" />
                               </div>
                             );
                           }
 
-                          const rarityColor = getRarityColor(item.rarity);
+                          const rarityClass = `rarity-${item.rarity.toLowerCase()}`;
                           const price = pricesMap.get(mat.id);
 
                           return (
                             <HoverCard key={mat.id}>
                               <HoverCardTrigger asChild>
-                                <button className="aspect-square relative cursor-pointer hover:scale-110 hover:z-10 transition-transform">
+                                <button className="aspect-square relative cursor-pointer hover:scale-105 hover:z-10 transition-transform">
                                   <div
-                                    className="w-full h-full overflow-hidden"
-                                    style={{ border: `2px solid ${rarityColor}` }}
+                                    className={cn(
+                                      "item-slot w-full h-full overflow-hidden",
+                                      rarityClass,
+                                      "border-rarity",
+                                      "hover:border-gw2-gold hover:glow-gold-sm"
+                                    )}
                                   >
                                     {item.icon && (
                                       <img
@@ -478,7 +486,7 @@ export function CharacterBank({ character: _character }: CharacterBankProps) {
                               </HoverCardTrigger>
                               <HoverCardContent className="w-64">
                                 <div className="space-y-2">
-                                  <h4 className="font-semibold" style={{ color: rarityColor }}>
+                                  <h4 className={cn("font-semibold", rarityClass, "text-rarity")}>
                                     {item.name}
                                   </h4>
                                   {item.type && (

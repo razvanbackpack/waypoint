@@ -9,15 +9,16 @@ interface ItemTooltipProps {
   onOpenChange: (open: boolean) => void;
 }
 
-const rarityColors: Record<string, string> = {
-  Junk: '#AAA',
-  Basic: '#000',
-  Fine: '#62A4DA',
-  Masterwork: '#1a9306',
-  Rare: '#fcd00b',
-  Exotic: '#ffa405',
-  Ascended: '#fb3e8d',
-  Legendary: '#4C139D',
+// Rarity class mapping for CSS-based styling
+const rarityClasses: Record<string, string> = {
+  Junk: 'rarity-junk',
+  Basic: 'rarity-basic',
+  Fine: 'rarity-fine',
+  Masterwork: 'rarity-masterwork',
+  Rare: 'rarity-rare',
+  Exotic: 'rarity-exotic',
+  Ascended: 'rarity-ascended',
+  Legendary: 'rarity-legendary',
 };
 
 export function ItemTooltip({ itemId, open, onOpenChange }: ItemTooltipProps) {
@@ -31,9 +32,11 @@ export function ItemTooltip({ itemId, open, onOpenChange }: ItemTooltipProps) {
 
   if (!open) return null;
 
+  const rarityClass = item ? (rarityClasses[item.rarity] || 'rarity-junk') : '';
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-md shadow-xl animate-in fade-in-0 duration-150">
         {itemLoading ? (
           <div className="flex items-center justify-center py-8">
             <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" />
@@ -47,18 +50,12 @@ export function ItemTooltip({ itemId, open, onOpenChange }: ItemTooltipProps) {
                     loading="lazy"
                     src={item.icon}
                     alt={item.name}
-                    className="w-12 h-12 rounded"
-                    style={{
-                      borderWidth: '2px',
-                      borderStyle: 'solid',
-                      borderColor: rarityColors[item.rarity] || '#AAA',
-                    }}
+                    className={`w-12 h-12 rounded border-2 ${rarityClass} border-rarity`}
                   />
                 )}
                 <div className="flex-1">
                   <DialogTitle
-                    className="text-lg"
-                    style={{ color: rarityColors[item.rarity] || '#FFF' }}
+                    className={`text-lg ${rarityClass} text-rarity`}
                   >
                     {item.name}
                   </DialogTitle>

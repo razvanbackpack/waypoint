@@ -22,32 +22,42 @@ const formatGold = (copper: number) => {
 };
 
 const formatAge = (seconds: number): string => {
+  const totalHours = Math.floor(seconds / 3600);
   const days = Math.floor(seconds / 86400);
   const hours = Math.floor((seconds % 86400) / 3600);
-  const minutes = Math.floor((seconds % 3600) / 60);
 
-  if (days > 365) {
+  if (days >= 365) {
     const years = Math.floor(days / 365);
-    return `${years} year${years > 1 ? 's' : ''}`;
+    const remainingDays = days % 365;
+    if (remainingDays > 0) {
+      return `${years}y ${remainingDays}d`;
+    }
+    return `${years}y`;
   }
-  if (days > 0) {
-    return `${days}d ${hours}h`;
+  if (days >= 1) {
+    if (hours > 0) {
+      return `${days}d ${hours}h`;
+    }
+    return `${days}d`;
   }
-  if (hours > 0) {
-    return `${hours}h ${minutes}m`;
-  }
-  return `${minutes}m`;
+  return `${totalHours}h`;
 };
 
 const formatCharacterAge = (createdDate: string): string => {
   const created = new Date(createdDate);
   const now = new Date();
-  const days = Math.floor((now.getTime() - created.getTime()) / (1000 * 60 * 60 * 24));
-  if (days > 365) {
-    const years = Math.floor(days / 365);
-    return `${years}y ago`;
+  const totalDays = Math.floor((now.getTime() - created.getTime()) / (1000 * 60 * 60 * 24));
+
+  if (totalDays >= 365) {
+    const years = Math.floor(totalDays / 365);
+    const remainingDays = totalDays % 365;
+    const months = Math.floor(remainingDays / 30);
+    if (months > 0) {
+      return `${years}y ${months}mo`;
+    }
+    return `${years}y`;
   }
-  return `${days}d ago`;
+  return `${totalDays} days`;
 };
 
 export function Characters() {
@@ -99,119 +109,164 @@ export function Characters() {
     );
   }
 
-  const professionColor = character ? getProfessionColor(character.profession) : '#C9A227';
+  const professionColor = character ? getProfessionColor(character.profession) : 'var(--gw2-gold)';
 
   return (
     <div className="space-y-6 animate-fade-in">
-      {/* Enhanced Page Header */}
-      <Card variant="featured" className="border-l-4" style={{ borderLeftColor: professionColor }}>
-        <CardContent className="py-4">
-          <div className="space-y-3">
-            <div className="flex items-center justify-between gap-4">
-              <div className="space-y-2">
-                <h1 className="text-2xl font-bold" style={{ color: professionColor }}>
-                  {character?.name || 'Character Viewer'}
-                </h1>
-                {character && (
-                  <div className="flex flex-wrap items-center gap-1.5">
-                    <span className="px-2 py-0.5 rounded-full bg-background border border-border text-xs font-semibold">
-                      Level {character.level}
-                    </span>
-                    <span className="px-2 py-0.5 rounded-full bg-background border border-border text-xs font-semibold">
-                      {character.race}
-                    </span>
-                    <span
-                      className="px-2 py-0.5 rounded-full border text-xs font-semibold"
-                      style={{
-                        borderColor: professionColor,
-                        color: professionColor,
-                        backgroundColor: `${professionColor}10`
-                      }}
-                    >
-                      {character.profession}
-                    </span>
-                    {guildName && (
-                      <span className="px-2 py-0.5 rounded-full bg-gw2-gold/10 border border-gw2-gold/20 text-xs font-semibold text-gw2-gold">
-                        {guildName}
-                      </span>
-                    )}
-                    {character.age && (
-                      <span className="text-xs text-muted-foreground font-medium">
-                        Played {formatAge(character.age)}
-                      </span>
-                    )}
-                    {character.created && (
-                      <span className="text-xs text-muted-foreground font-medium">
-                        Created {formatCharacterAge(character.created)}
-                      </span>
-                    )}
-                    {account?.age && (
-                      <span className="text-xs text-muted-foreground font-medium">
-                        Account {formatAge(account.age)}
-                      </span>
-                    )}
-                  </div>
-                )}
-              </div>
-            </div>
+      {/* Page Header - Enhanced with profession-colored accents */}
+      <div
+        className="relative rounded-xl p-4 overflow-hidden backdrop-blur-sm"
+        style={{
+          background: `linear-gradient(135deg, ${professionColor}15 0%, ${professionColor}08 50%, transparent 100%)`,
+          borderLeft: `4px solid ${professionColor}`,
+          boxShadow: `0 4px 20px ${professionColor}15, inset 0 1px 0 rgba(255,255,255,0.1)`,
+        }}
+      >
+        {/* Subtle radial accent in corner */}
+        <div
+          className="absolute top-0 right-0 w-32 h-32 opacity-30 pointer-events-none"
+          style={{
+            background: `radial-gradient(circle at 100% 0%, ${professionColor}40 0%, transparent 70%)`,
+          }}
+        />
 
-            {character && (
-              <div className="flex flex-wrap gap-1.5 pt-2 border-t border-border/40">
-              {/* Gold */}
-              {goldCurrency && (
-                <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-lg bg-[#C59C61]/10 border border-[#C59C61]/20">
-                  <Coins className="h-3 w-3 text-[#C59C61]" />
-                  <span className="text-[11px] font-semibold">{formatGold(goldCurrency.value)}</span>
-                </div>
-              )}
-              {/* WvW Rank */}
-              {account?.wvw_rank && (
-                <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-lg bg-[#C59C61]/10 border border-[#C59C61]/20">
-                  <Swords className="h-3 w-3 text-[#C59C61]" />
-                  <span className="text-[11px] font-semibold">WvW {account.wvw_rank}</span>
-                </div>
-              )}
-              {/* Fractal Level */}
-              {account?.fractal_level && (
-                <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-lg bg-[#C59C61]/10 border border-[#C59C61]/20">
-                  <Star className="h-3 w-3 text-[#C59C61]" />
-                  <span className="text-[11px] font-semibold">Fractal {account.fractal_level}</span>
-                </div>
-              )}
-              {/* Mastery */}
-              {totalMastery > 0 && (
-                <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-lg bg-[#C59C61]/10 border border-[#C59C61]/20">
-                  <TrendingUp className="h-3 w-3 text-[#C59C61]" />
-                  <span className="text-[11px] font-semibold">Mastery {totalMastery}</span>
-                </div>
-              )}
-              {/* Crafting Disciplines */}
-              {character?.crafting?.map((craft) => (
-                <div
-                  key={craft.discipline}
-                  className={`flex items-center gap-1 px-1.5 py-0.5 rounded-lg border ${
-                    craft.active
-                      ? 'bg-[#C59C61]/10 border-[#C59C61]/20'
-                      : 'bg-muted/30 border-border/40 opacity-60'
-                  }`}
-                >
-                  <Hammer className={`h-3 w-3 ${craft.active ? 'text-[#C59C61]' : 'text-muted-foreground'}`} />
-                  <span className="text-[11px] font-semibold">{craft.discipline} {craft.rating}</span>
-                </div>
-              ))}
+        <div className="relative z-10 space-y-3">
+          <div className="flex items-center gap-3">
+            {/* Icon with glow container */}
+            <div
+              className="p-2 rounded-lg"
+              style={{
+                backgroundColor: `${professionColor}20`,
+                boxShadow: `0 0 12px ${professionColor}40`,
+              }}
+            >
+              <User className="h-6 w-6" style={{ color: professionColor }} />
             </div>
-            )}
+            {/* Character name - larger with text shadow glow */}
+            <h1
+              className="text-3xl font-bold tracking-tight"
+              style={{
+                color: professionColor,
+                textShadow: `0 0 20px ${professionColor}50, 0 0 40px ${professionColor}30`,
+              }}
+            >
+              {character?.name || 'Character Viewer'}
+            </h1>
           </div>
-        </CardContent>
-      </Card>
+
+          {character && (
+            <div className="flex flex-wrap items-center gap-2">
+              {/* Level badge with profession accent */}
+              <span
+                className="px-2.5 py-1 rounded-full text-xs font-bold"
+                style={{
+                  backgroundColor: `${professionColor}20`,
+                  color: professionColor,
+                  border: `1px solid ${professionColor}40`,
+                  boxShadow: `0 0 8px ${professionColor}20`,
+                }}
+              >
+                Level {character.level}
+              </span>
+              {/* Race badge */}
+              <span className="px-2.5 py-1 rounded-full bg-background/80 border border-border text-xs font-semibold">
+                {character.race}
+              </span>
+              {/* Profession badge with enhanced glow */}
+              <span
+                className="px-2.5 py-1 rounded-full text-xs font-bold"
+                style={{
+                  borderWidth: '2px',
+                  borderStyle: 'solid',
+                  borderColor: professionColor,
+                  color: professionColor,
+                  backgroundColor: `${professionColor}25`,
+                  boxShadow: `0 0 12px ${professionColor}40, inset 0 0 8px ${professionColor}20`,
+                }}
+              >
+                {character.profession}
+              </span>
+              {/* Guild name with gold glow */}
+              {guildName && (
+                <span className="px-2.5 py-1 rounded-full bg-gw2-gold/15 border border-gw2-gold/40 text-xs font-semibold text-gw2-gold glow-gold-sm">
+                  {guildName}
+                </span>
+              )}
+              {/* Age info pushed to right */}
+              {(character.created || account?.created) && (
+                <div className="flex flex-col gap-0.5 ml-auto text-right">
+                  {character.created && (
+                    <span className="text-xs text-muted-foreground font-medium">
+                      {formatCharacterAge(character.created)} old ({new Date(character.created).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })})
+                    </span>
+                  )}
+                  {account?.created && (
+                    <span className="text-xs text-muted-foreground font-medium">
+                      Account: {formatCharacterAge(account.created)} ({new Date(account.created).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })})
+                    </span>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Stats Bar */}
+      {character && (
+        <div className="flex flex-wrap gap-1.5">
+          {/* Gold */}
+          {goldCurrency && (
+            <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-lg bg-gw2-gold/10 border border-gw2-gold/20">
+              <Coins className="h-3 w-3 text-gw2-gold" />
+              <span className="text-[11px] font-semibold">{formatGold(goldCurrency.value)}</span>
+            </div>
+          )}
+          {/* WvW Rank */}
+          {account?.wvw_rank && (
+            <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-lg bg-gw2-gold/10 border border-gw2-gold/20">
+              <Swords className="h-3 w-3 text-gw2-gold" />
+              <span className="text-[11px] font-semibold">WvW {account.wvw_rank}</span>
+            </div>
+          )}
+          {/* Fractal Level */}
+          {account?.fractal_level && (
+            <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-lg bg-gw2-gold/10 border border-gw2-gold/20">
+              <Star className="h-3 w-3 text-gw2-gold" />
+              <span className="text-[11px] font-semibold">Fractal {account.fractal_level}</span>
+            </div>
+          )}
+          {/* Mastery */}
+          {totalMastery > 0 && (
+            <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-lg bg-gw2-gold/10 border border-gw2-gold/20">
+              <TrendingUp className="h-3 w-3 text-gw2-gold" />
+              <span className="text-[11px] font-semibold">Mastery {totalMastery}</span>
+            </div>
+          )}
+          {/* Crafting Disciplines */}
+          {character?.crafting?.map((craft) => (
+            <div
+              key={craft.discipline}
+              className={`flex items-center gap-1 px-1.5 py-0.5 rounded-lg border ${
+                craft.active
+                  ? 'bg-gw2-gold/10 border-gw2-gold/20'
+                  : 'bg-muted/30 border-border/40 opacity-60'
+              }`}
+            >
+              <Hammer className={`h-3 w-3 ${craft.active ? 'text-gw2-gold' : 'text-muted-foreground'}`} />
+              <span className="text-[11px] font-semibold">{craft.discipline} {craft.rating}</span>
+            </div>
+          ))}
+        </div>
+      )}
 
       {!selectedCharacter ? (
         <Card variant="interactive" className="hover:border-gw2-gold/50 transition-all duration-300">
-          <CardContent className="py-16">
-            <div className="text-center space-y-4">
-              <User className="h-16 w-16 mx-auto text-gw2-gold/50" />
+          <CardContent className="py-10">
+            <div className="text-center space-y-3">
+              <User className="h-12 w-12 mx-auto text-gw2-gold/50" />
               <div>
-                <h3 className="text-2xl font-bold mb-2 text-gw2-gold">Select a Character</h3>
+                <h3 className="text-xl font-bold mb-2 text-gw2-gold">Select a Character</h3>
                 <p className="text-muted-foreground max-w-md mx-auto">
                   Choose a character from the dropdown in the navigation bar to view their details, equipment, inventory, and achievements
                 </p>
@@ -220,21 +275,21 @@ export function Characters() {
           </CardContent>
         </Card>
       ) : characterLoading ? (
-        <div className="flex flex-col items-center justify-center py-16 space-y-4">
-          <div className="animate-spin h-12 w-12 border-4 border-gw2-gold border-t-transparent rounded-full" />
+        <div className="flex flex-col items-center justify-center py-10 space-y-3">
+          <div className="animate-spin h-10 w-10 border-4 border-gw2-gold border-t-transparent rounded-full" />
           <p className="text-sm text-muted-foreground">Loading character data...</p>
         </div>
       ) : !character ? (
         <Card>
-          <CardContent className="py-12">
+          <CardContent className="py-8">
             <div className="text-center">
-              <p className="text-lg text-muted-foreground">Character not found</p>
+              <p className="text-base text-muted-foreground">Character not found</p>
             </div>
           </CardContent>
         </Card>
       ) : (
         <>
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-2">
             <TabsList className="w-full grid grid-cols-3 h-auto bg-transparent gap-1 p-0">
               <TabsTrigger
                 value="overview"
@@ -260,11 +315,11 @@ export function Characters() {
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="overview" className="space-y-6 animate-fade-in">
+            <TabsContent value="overview" className="space-y-3 animate-fade-in">
               <CharacterEquipment character={character} />
             </TabsContent>
 
-            <TabsContent value="inventory" className="space-y-4 animate-fade-in">
+            <TabsContent value="inventory" className="space-y-2 animate-fade-in">
               <div className="flex items-center gap-2">
                 <div className="relative flex-1 max-w-sm">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gw2-gold" />
@@ -280,7 +335,7 @@ export function Characters() {
               <CharacterInventory character={character} searchTerm={searchTerm} />
             </TabsContent>
 
-            <TabsContent value="bank" className="space-y-6 animate-fade-in">
+            <TabsContent value="bank" className="space-y-3 animate-fade-in">
               <CharacterBank character={character} />
             </TabsContent>
           </Tabs>

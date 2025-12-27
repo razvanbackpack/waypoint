@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { EventTimer } from '@/components/timers/EventTimer';
 import { EventSidebar } from '@/components/timers/EventSidebar';
 import { getTimeUntilDailyReset } from '@/data/eventSchedule';
-import { Clock } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Clock, Bell, BellOff } from 'lucide-react';
 
 export function Timers() {
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -11,6 +12,7 @@ export function Timers() {
     const saved = localStorage.getItem('gw2-event-favorites');
     return saved ? new Set(JSON.parse(saved)) : new Set();
   });
+  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -37,13 +39,29 @@ export function Timers() {
     <div className="space-y-6 animate-fade-in">
       {/* Page Header */}
       <div className="space-y-1">
-        <div className="flex items-center gap-2">
-          <Clock className="h-6 w-6 text-gw2-gold" />
-          <h1 className="text-2xl font-bold text-gw2-gold">Event Timers</h1>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Clock className="h-6 w-6 text-gw2-gold" />
+            <h1 className="text-2xl font-bold text-gw2-gold">Event Timers</h1>
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-8"
+            onClick={() => {
+              if (!notificationsEnabled && 'Notification' in window) {
+                Notification.requestPermission().then(p => {
+                  if (p === 'granted') setNotificationsEnabled(true);
+                });
+              } else {
+                setNotificationsEnabled(!notificationsEnabled);
+              }
+            }}
+          >
+            {notificationsEnabled ? <Bell className="h-4 w-4 mr-2" /> : <BellOff className="h-4 w-4 mr-2" />}
+            <span className="text-xs">{notificationsEnabled ? 'Notifications On' : 'Notifications Off'}</span>
+          </Button>
         </div>
-        <p className="text-muted-foreground text-sm">
-          Track world bosses and meta events across Tyria. Never miss a spawn again.
-        </p>
       </div>
 
       {/* Main Content Area */}
@@ -56,7 +74,7 @@ export function Timers() {
         {/* Sidebar - sticky on scroll */}
         <div className="hidden lg:block w-72 shrink-0">
           <div className="sticky top-20 space-y-4">
-            <EventSidebar currentTime={currentTime} resetTime={resetTime} favorites={favorites} toggleFavorite={toggleFavorite} />
+            <EventSidebar currentTime={currentTime} favorites={favorites} toggleFavorite={toggleFavorite} />
           </div>
         </div>
       </div>

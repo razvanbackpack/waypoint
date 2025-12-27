@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ChevronDown, ChevronRight } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 
 interface Category {
   id: number;
@@ -101,14 +101,12 @@ export function CategoryBrowser({ onSelectAchievements }: CategoryBrowserProps) 
               <div key={group.name}>
                 <Button
                   variant="ghost"
-                  className="w-full justify-start gap-2 font-semibold"
+                  className="w-full justify-start gap-2 font-semibold heading-accent"
                   onClick={() => toggleGroup(group.name)}
                 >
-                  {isExpanded ? (
-                    <ChevronDown className="h-4 w-4" />
-                  ) : (
-                    <ChevronRight className="h-4 w-4" />
-                  )}
+                  <ChevronRight
+                    className={`h-4 w-4 transition-transform duration-200 ${isExpanded ? 'rotate-90' : ''}`}
+                  />
                   {group.name}
                 </Button>
                 {isExpanded && (
@@ -117,7 +115,9 @@ export function CategoryBrowser({ onSelectAchievements }: CategoryBrowserProps) 
                       <Button
                         key={category.id}
                         variant={selectedCategory === category.id ? 'secondary' : 'ghost'}
-                        className="w-full justify-start text-sm"
+                        className={`w-full justify-start text-sm transition-colors ${
+                          selectedCategory === category.id ? 'text-gw2-gold' : 'hover:text-gw2-gold'
+                        }`}
                         onClick={() => selectCategory(category)}
                       >
                         {category.name}

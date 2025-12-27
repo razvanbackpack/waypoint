@@ -1,4 +1,4 @@
-import { Check } from 'lucide-react';
+import { CheckCircle2, Circle } from 'lucide-react';
 import type { Achievement, AccountAchievement } from '@/api/types';
 
 interface DailyCardProps {
@@ -25,9 +25,9 @@ export function DailyCard({
   if (compact) {
     return (
       <div
-        className={`flex items-center gap-2 p-2 rounded border transition-colors cursor-pointer ${
+        className={`flex items-center gap-2 p-2 rounded border transition-all duration-200 cursor-pointer ${
           isCompleted
-            ? 'bg-green-500/10 border-green-500/30'
+            ? 'bg-success/10 border-success/30'
             : 'bg-card hover:bg-muted/50'
         }`}
         onClick={onToggle}
@@ -46,16 +46,20 @@ export function DailyCard({
             {achievement.name}
           </p>
         </div>
-        {isCompleted && <Check className="h-4 w-4 text-green-500 flex-shrink-0" />}
+        {isCompleted ? (
+          <CheckCircle2 className="h-4 w-4 text-success flex-shrink-0" />
+        ) : (
+          <Circle className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+        )}
       </div>
     );
   }
 
   return (
     <div
-      className={`flex items-start gap-3 p-4 rounded-lg border transition-colors ${
+      className={`flex items-start gap-3 p-4 rounded-lg border transition-all duration-200 ${
         isCompleted
-          ? 'bg-green-500/10 border-green-500/30'
+          ? 'bg-success/10 border-success/30'
           : 'bg-card hover:bg-muted/50'
       }`}
     >
@@ -75,11 +79,11 @@ export function DailyCard({
           </h4>
           <div className="flex items-center gap-2 flex-shrink-0">
             {showLevelBadge && (
-              <span className="text-xs px-2 py-0.5 rounded bg-blue-500/20 text-blue-400 font-medium">
+              <span className="text-xs px-2 py-0.5 rounded bg-blue-700/20 text-blue-700 dark:bg-blue-500/20 dark:text-blue-400 font-medium">
                 Lvl {levelReq.min}-{levelReq.max}
               </span>
             )}
-            <span className="text-sm font-bold" style={{ color: '#C9A227' }}>
+            <span className="text-sm font-bold text-gw2-gold">
               {points} AP
             </span>
           </div>
@@ -98,7 +102,11 @@ export function DailyCard({
         )}
       </div>
 
-      {isCompleted && <Check className="h-5 w-5 text-green-500 flex-shrink-0" />}
+      {isCompleted ? (
+        <CheckCircle2 className="h-5 w-5 text-success flex-shrink-0" />
+      ) : (
+        <Circle className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+      )}
     </div>
   );
 }

@@ -16,7 +16,7 @@ export function AchievementObjectiveCard({ objective }: AchievementObjectiveCard
       <CardContent className="p-3">
         <div className="flex items-start gap-2">
           {isComplete ? (
-            <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
+            <CheckCircle2 className="h-4 w-4 text-success mt-0.5 flex-shrink-0" />
           ) : (
             <Circle className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" />
           )}
@@ -35,10 +35,10 @@ export function AchievementObjectiveCard({ objective }: AchievementObjectiveCard
               </div>
 
               <div className="text-right flex-shrink-0">
-                <div className="text-xs font-medium" style={{ color: '#C9A227' }}>
+                <div className="text-xs font-medium text-gw2-gold">
                   {objective.acclaim}
                 </div>
-                <div className="text-xs text-muted-foreground">
+                <div className="text-xs text-muted-foreground font-mono">
                   {objective.progress_current}/{objective.progress_complete}
                 </div>
               </div>

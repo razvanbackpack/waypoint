@@ -3,7 +3,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { useItems, useItemStats } from '@/api/hooks/useGW2Api';
 import { ItemPopover } from '@/components/shared/ItemPopover';
 import type { Character, Item } from '@/api/types';
-import { getRarityColor } from '@/lib/professionColors';
+import { cn } from '@/lib/utils';
 
 interface CharacterEquipmentProps {
   character: Character;
@@ -102,7 +102,7 @@ export function CharacterEquipment({ character }: CharacterEquipmentProps) {
   const renderSlotItem = (slot: string) => {
     const equipment = getEquipmentBySlot(slot);
     const item = equipment ? itemsMap.get(equipment.id) : undefined;
-    const rarityColor = item ? getRarityColor(item.rarity) : undefined;
+    const rarityClass = item ? `rarity-${item.rarity.toLowerCase()}` : '';
     const upgradeItems = equipment?.upgrades?.map((id) => itemsMap.get(id)).filter(Boolean);
     const infusionItems = equipment?.infusions?.map((id) => itemsMap.get(id)).filter(Boolean);
     const statName = equipment?.stats?.id ? statsMap.get(equipment.stats.id) : undefined;
@@ -113,13 +113,7 @@ export function CharacterEquipment({ character }: CharacterEquipmentProps) {
     if (!item) {
       return (
         <div key={slot} className="flex items-center gap-3 py-1">
-          <div
-            className="w-10 h-10 rounded flex items-center justify-center flex-shrink-0"
-            style={{
-              border: '1px solid hsl(var(--border))',
-              backgroundColor: 'hsl(var(--muted))',
-            }}
-          >
+          <div className="item-slot w-10 h-10 flex items-center justify-center flex-shrink-0 bg-surface-sunken border-muted">
             <div className="text-xs text-muted-foreground">-</div>
           </div>
           <span className="text-sm text-muted-foreground">{SLOT_LABELS[slot] || slot}</span>
@@ -138,13 +132,12 @@ export function CharacterEquipment({ character }: CharacterEquipmentProps) {
       >
         <button className="flex items-center gap-3 py-1 w-full hover:bg-muted/50 rounded px-2 -mx-2 transition-colors text-left cursor-pointer">
           <div
-            className="w-10 h-10 rounded overflow-hidden flex items-center justify-center flex-shrink-0"
-            style={{
-              borderWidth: '2px',
-              borderStyle: 'solid',
-              borderColor: rarityColor,
-              backgroundColor: 'hsl(var(--muted))',
-            }}
+            className={cn(
+              "item-slot w-10 h-10 overflow-hidden flex items-center justify-center flex-shrink-0",
+              rarityClass,
+              "border-rarity",
+              "hover:scale-105 hover:border-gw2-gold hover:glow-gold-sm"
+            )}
           >
             <img
               loading="lazy"
@@ -154,7 +147,7 @@ export function CharacterEquipment({ character }: CharacterEquipmentProps) {
             />
           </div>
           <div className="flex flex-col">
-            <span className="text-sm font-medium" style={{ color: rarityColor }}>
+            <span className={cn("text-sm font-medium", rarityClass, "text-rarity")}>
               {item.name}
             </span>
             {statName && (
@@ -173,14 +166,14 @@ export function CharacterEquipment({ character }: CharacterEquipmentProps) {
           <div className="space-y-4">
             {/* Armor Section */}
             <div className="space-y-1">
-              <h4 className="font-semibold text-sm text-muted-foreground mb-2">ARMOR</h4>
+              <h4 className="heading-accent font-semibold text-sm text-muted-foreground mb-2">ARMOR</h4>
               {EQUIPMENT_SLOTS.armor.map(renderSlotItem)}
             </div>
 
             {/* Aquatic Section - only show if equipped */}
             {(getEquipmentBySlot('WeaponAquaticA') || getEquipmentBySlot('WeaponAquaticB')) && (
               <div className="space-y-1">
-                <h4 className="font-semibold text-sm text-muted-foreground mb-2">AQUATIC</h4>
+                <h4 className="heading-accent font-semibold text-sm text-muted-foreground mb-2">AQUATIC</h4>
                 {renderSlotItem('WeaponAquaticA')}
                 {renderSlotItem('WeaponAquaticB')}
               </div>
@@ -191,13 +184,13 @@ export function CharacterEquipment({ character }: CharacterEquipmentProps) {
           <div className="space-y-4">
             {/* Trinkets Section */}
             <div className="space-y-1">
-              <h4 className="font-semibold text-sm text-muted-foreground mb-2">TRINKETS</h4>
+              <h4 className="heading-accent font-semibold text-sm text-muted-foreground mb-2">TRINKETS</h4>
               {EQUIPMENT_SLOTS.trinkets.map(renderSlotItem)}
             </div>
 
             {/* Weapons Section - only show equipped weapons */}
             <div className="space-y-1">
-              <h4 className="font-semibold text-sm text-muted-foreground mb-2">WEAPONS</h4>
+              <h4 className="heading-accent font-semibold text-sm text-muted-foreground mb-2">WEAPONS</h4>
               {EQUIPMENT_SLOTS.weapons.filter(slot => {
                 // Hide WeaponA2 or WeaponB2 if they're empty
                 if (slot === 'WeaponA2' || slot === 'WeaponB2') {

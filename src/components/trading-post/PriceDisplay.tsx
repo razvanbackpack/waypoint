@@ -18,31 +18,31 @@ export function CoinDisplay({ copper, className = '' }: CoinDisplayProps) {
   return (
     <span className={`inline-flex items-center gap-1 ${className}`}>
       {gold > 0 && (
-        <span className="inline-flex items-center">
-          <span className="font-semibold" style={{ color: '#FFD700' }}>
+        <span className="inline-flex items-center text-coin-gold">
+          <span className="font-semibold font-mono">
             {gold}
           </span>
-          <span className="text-xs ml-0.5" style={{ color: '#FFD700' }}>
+          <span className="text-xs ml-0.5">
             g
           </span>
         </span>
       )}
       {silver > 0 && (
-        <span className="inline-flex items-center">
-          <span className="font-semibold" style={{ color: '#C0C0C0' }}>
+        <span className="inline-flex items-center text-coin-silver">
+          <span className="font-semibold font-mono">
             {silver}
           </span>
-          <span className="text-xs ml-0.5" style={{ color: '#C0C0C0' }}>
+          <span className="text-xs ml-0.5">
             s
           </span>
         </span>
       )}
       {(remainingCopper > 0 || (gold === 0 && silver === 0)) && (
-        <span className="inline-flex items-center">
-          <span className="font-semibold" style={{ color: '#B87333' }}>
+        <span className="inline-flex items-center text-coin-copper">
+          <span className="font-semibold font-mono">
             {remainingCopper}
           </span>
-          <span className="text-xs ml-0.5" style={{ color: '#B87333' }}>
+          <span className="text-xs ml-0.5">
             c
           </span>
         </span>

@@ -5,15 +5,16 @@ import { ItemTooltip } from './ItemTooltip';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import type { TradingPostPrice } from '@/api/types';
 
-const rarityColors: Record<string, string> = {
-  Junk: '#AAA',
-  Basic: '#000',
-  Fine: '#62A4DA',
-  Masterwork: '#1a9306',
-  Rare: '#fcd00b',
-  Exotic: '#ffa405',
-  Ascended: '#fb3e8d',
-  Legendary: '#4C139D',
+// Rarity class mapping for CSS-based styling
+const rarityClasses: Record<string, string> = {
+  Junk: 'rarity-junk',
+  Basic: 'rarity-basic',
+  Fine: 'rarity-fine',
+  Masterwork: 'rarity-masterwork',
+  Rare: 'rarity-rare',
+  Exotic: 'rarity-exotic',
+  Ascended: 'rarity-ascended',
+  Legendary: 'rarity-legendary',
 };
 
 interface BankViewProps {
@@ -121,13 +122,13 @@ export function BankView({ searchTerm = '' }: BankViewProps) {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-8 md:grid-cols-12 lg:grid-cols-16 gap-1">
+          <div className="grid grid-cols-8 sm:grid-cols-10 md:grid-cols-12 lg:grid-cols-14 xl:grid-cols-16 gap-1">
             {filteredSlots.map((slot, index) => {
               if (!slot) {
                 return (
                   <div
                     key={index}
-                    className="aspect-square bg-muted/30 border border-border rounded flex items-center justify-center"
+                    className="item-slot flex items-center justify-center"
                   >
                     <div className="w-full h-full opacity-20" />
                   </div>
@@ -139,28 +140,23 @@ export function BankView({ searchTerm = '' }: BankViewProps) {
                 return (
                   <div
                     key={index}
-                    className="aspect-square bg-muted border border-border rounded flex items-center justify-center"
+                    className="item-slot flex items-center justify-center"
                   >
                     <div className="animate-spin h-4 w-4 border-2 border-primary border-t-transparent rounded-full" />
                   </div>
                 );
               }
 
+              const rarityClass = rarityClasses[item.rarity] || 'rarity-junk';
+
               return (
                 <button
                   key={index}
                   onClick={() => setSelectedItemId(item.id)}
-                  className="aspect-square relative group cursor-pointer hover:scale-105 transition-transform"
+                  className={`item-slot has-item relative group cursor-pointer transition-all duration-150 hover:scale-105 hover:border-gw2-gold hover:glow-gold-sm ${rarityClass} border-rarity`}
                   title={item.name}
                 >
-                  <div
-                    className="w-full h-full rounded overflow-hidden"
-                    style={{
-                      borderWidth: '2px',
-                      borderStyle: 'solid',
-                      borderColor: rarityColors[item.rarity] || '#AAA',
-                    }}
-                  >
+                  <div className="w-full h-full overflow-hidden">
                     {item.icon && (
                       <img
                         loading="lazy"
@@ -171,7 +167,7 @@ export function BankView({ searchTerm = '' }: BankViewProps) {
                     )}
                   </div>
                   {slot.count > 1 && (
-                    <div className="absolute bottom-0 right-0 bg-black/75 text-white text-xs px-1 rounded-tl">
+                    <div className="absolute bottom-0 right-0 bg-black/75 text-white text-xs px-1 rounded-tl font-mono">
                       {slot.count}
                     </div>
                   )}

@@ -45,15 +45,15 @@ export function TradingPost() {
     addToWatchlist(itemId);
   };
 
-  const rarityColors: Record<string, string> = {
-    Junk: '#AAA',
-    Basic: '#000',
-    Fine: '#62A4DA',
-    Masterwork: '#1a9306',
-    Rare: '#fcd00b',
-    Exotic: '#ffa405',
-    Ascended: '#fb3e8d',
-    Legendary: '#4C139D',
+  const rarityClasses: Record<string, string> = {
+    Junk: 'rarity-junk',
+    Basic: 'rarity-basic',
+    Fine: 'rarity-fine',
+    Masterwork: 'rarity-masterwork',
+    Rare: 'rarity-rare',
+    Exotic: 'rarity-exotic',
+    Ascended: 'rarity-ascended',
+    Legendary: 'rarity-legendary',
   };
 
   return (
@@ -98,19 +98,13 @@ export function TradingPost() {
                     <img
                       src={selectedItem.icon}
                       alt={selectedItem.name}
-                      className="w-16 h-16 rounded-lg"
-                      style={{
-                        borderWidth: '3px',
-                        borderStyle: 'solid',
-                        borderColor: rarityColors[selectedItem.rarity] || '#AAA',
-                      }}
+                      className={`w-16 h-16 rounded-lg border-3 border-rarity ${rarityClasses[selectedItem.rarity] || 'rarity-junk'}`}
                     />
                   </div>
                 )}
                 <div>
                   <CardTitle
-                    className="text-2xl"
-                    style={{ color: rarityColors[selectedItem.rarity] || '#FFF' }}
+                    className={`text-2xl text-rarity ${rarityClasses[selectedItem.rarity] || 'rarity-junk'}`}
                   >
                     {selectedItem.name}
                   </CardTitle>

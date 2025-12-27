@@ -31,8 +31,8 @@ export function StatCard({
   return (
     <Card
       className={cn(
-        "flex",
-        isFeatured && "card-featured",
+        "flex hover:scale-[1.02] transition-transform duration-200",
+        isFeatured && "glow-gold-sm border-primary/30",
         isCompact
           ? "flex-row items-center gap-3 py-3"
           : "flex-col items-start gap-4",
@@ -49,10 +49,8 @@ export function StatCard({
         {icon && (
           <div
             className={cn(
-              "flex items-center justify-center rounded-lg",
-              isCompact
-                ? "h-10 w-10 bg-primary/10 text-primary"
-                : "h-12 w-12 bg-primary/10 text-primary"
+              "flex items-center justify-center bg-primary/15 text-primary rounded-lg p-3",
+              isCompact ? "h-10 w-10" : "h-12 w-12"
             )}
           >
             {icon}
@@ -63,16 +61,15 @@ export function StatCard({
           {/* Value */}
           <div
             className={cn(
-              "stat-value",
-              isCompact && "text-2xl",
-              !isCompact && "text-4xl"
+              "text-gw2-gold font-bold",
+              isCompact ? "text-2xl" : "text-4xl"
             )}
           >
             {typeof value === "number" ? value.toLocaleString() : value}
           </div>
 
           {/* Title */}
-          <div className="stat-label">{title}</div>
+          <div className="text-xs uppercase tracking-wider text-muted-foreground font-medium">{title}</div>
         </div>
       </div>
 

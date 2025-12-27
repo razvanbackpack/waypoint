@@ -19,27 +19,17 @@ interface RecipeCardProps {
   onToggleTrack?: (recipeId: number) => void;
 }
 
-const rarityColors: Record<string, string> = {
-  Junk: 'text-gray-500',
-  Basic: 'text-gray-300',
-  Fine: 'text-blue-400',
-  Masterwork: 'text-green-400',
-  Rare: 'text-yellow-400',
-  Exotic: 'text-orange-400',
-  Ascended: 'text-pink-400',
-  Legendary: 'text-purple-400',
+const rarityClasses: Record<string, string> = {
+  Junk: 'rarity-junk',
+  Basic: 'rarity-basic',
+  Fine: 'rarity-fine',
+  Masterwork: 'rarity-masterwork',
+  Rare: 'rarity-rare',
+  Exotic: 'rarity-exotic',
+  Ascended: 'rarity-ascended',
+  Legendary: 'rarity-legendary',
 };
 
-const rarityBorderColors: Record<string, string> = {
-  Junk: '#AAA',
-  Basic: '#000',
-  Fine: '#62A4DA',
-  Masterwork: '#1a9306',
-  Rare: '#fcd00b',
-  Exotic: '#ffa405',
-  Ascended: '#fb3e8d',
-  Legendary: '#4C139D',
-};
 
 export function RecipeCard({
   recipe,
@@ -59,9 +49,9 @@ export function RecipeCard({
 
   // Determine progress bar color
   const getProgressColor = () => {
-    if (progressPercentage >= 100) return 'bg-green-500';
-    if (progressPercentage > 0) return 'bg-yellow-500';
-    return 'bg-red-500';
+    if (progressPercentage >= 100) return 'bg-success';
+    if (progressPercentage > 0) return 'bg-warning';
+    return 'bg-destructive';
   };
 
   const handleToggleTrack = () => {
@@ -71,28 +61,27 @@ export function RecipeCard({
   };
 
   return (
-    <Card>
+    <Card className="card-interactive">
       <CardHeader>
         <div className="flex items-start gap-3">
           {outputItem.icon && (
             <img
               src={outputItem.icon}
               alt={outputItem.name}
-              className="w-8 h-8 rounded"
-              style={{
-                borderWidth: '2px',
-                borderStyle: 'solid',
-                borderColor: rarityBorderColors[outputItem.rarity] || '#AAA',
-              }}
+              className={cn('w-8 h-8 rounded border-2 border-rarity', rarityClasses[outputItem.rarity])}
             />
           )}
           <div className="flex-1 min-w-0">
-            <CardTitle className={cn('text-base truncate', rarityColors[outputItem.rarity])}>
+            <CardTitle className={cn('text-base truncate text-rarity', rarityClasses[outputItem.rarity])}>
               {outputItem.name}
             </CardTitle>
             <div className="flex flex-wrap items-center gap-2 mt-1">
               {recipe.disciplines.map((discipline) => (
-                <Badge key={discipline} variant="outline" className="text-xs">
+                <Badge
+                  key={discipline}
+                  variant="outline"
+                  className={cn('text-xs text-discipline border-discipline/50', `discipline-${discipline.toLowerCase()}`)}
+                >
                   {discipline}
                 </Badge>
               ))}
@@ -110,7 +99,7 @@ export function RecipeCard({
               variant="ghost"
               size="icon-sm"
               onClick={handleToggleTrack}
-              className={cn(isTracked && 'text-yellow-500')}
+              className={cn(isTracked && 'text-gw2-gold')}
               aria-label={isTracked ? 'Untrack recipe' : 'Track recipe'}
             >
               <Star className={cn('w-4 h-4', isTracked && 'fill-current')} />
@@ -132,19 +121,17 @@ export function RecipeCard({
                     <img
                       src={ingredient.item.icon}
                       alt={ingredient.item.name}
-                      className="w-6 h-6 rounded"
-                      style={{
-                        borderWidth: '1px',
-                        borderStyle: 'solid',
-                        borderColor: rarityBorderColors[ingredient.item.rarity] || '#AAA',
-                      }}
+                      className={cn(
+                        'w-6 h-6 rounded border border-rarity',
+                        rarityClasses[ingredient.item.rarity]
+                      )}
                     />
                   )}
                   <div className="flex-1 min-w-0">
                     <div
                       className={cn(
-                        'text-sm truncate',
-                        rarityColors[ingredient.item.rarity]
+                        'text-sm truncate text-rarity',
+                        rarityClasses[ingredient.item.rarity]
                       )}
                     >
                       {ingredient.item.name}
@@ -153,7 +140,7 @@ export function RecipeCard({
                   <div
                     className={cn(
                       'text-sm font-medium',
-                      hasEnough ? 'text-green-400' : 'text-red-400'
+                      hasEnough ? 'text-success' : 'text-destructive'
                     )}
                   >
                     {ingredient.owned}/{ingredient.required}

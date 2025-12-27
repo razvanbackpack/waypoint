@@ -94,10 +94,10 @@ export function ApiKeyDialog({ open, onOpenChange }: ApiKeyDialogProps) {
                 setInputValue(e.target.value);
                 setLocalError(null);
               }}
-              className="font-mono text-xs"
+              className="text-xs"
             />
             {displayError && (
-              <p className="text-sm text-red-500">{displayError}</p>
+              <p className="text-sm text-destructive">{displayError}</p>
             )}
           </div>
 
@@ -127,7 +127,6 @@ export function ApiKeyDialog({ open, onOpenChange }: ApiKeyDialogProps) {
               <li>tradingpost - View trading post transactions</li>
               <li>wallet - View wallet currencies</li>
               <li>progression - View achievements and progression</li>
-              <li>builds - View character builds and equipment</li>
             </ul>
           </div>
         </div>
@@ -155,7 +154,6 @@ export function ApiKeyDialog({ open, onOpenChange }: ApiKeyDialogProps) {
           <Button
             onClick={handleSave}
             disabled={!inputValue.trim()}
-            className="bg-[#C59C61] hover:bg-[#B08C51] text-black"
           >
             Save Key
           </Button>

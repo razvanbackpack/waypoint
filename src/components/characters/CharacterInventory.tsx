@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useItems, useItemStats } from '@/api/hooks/useGW2Api';
 import { ItemPopover } from '@/components/shared/ItemPopover';
 import type { Character, Item } from '@/api/types';
-import { getRarityColor } from '@/lib/professionColors';
+import { cn } from '@/lib/utils';
 
 interface CharacterInventoryProps {
   character: Character;
@@ -105,13 +105,16 @@ export function CharacterInventory({ character, searchTerm = '' }: CharacterInve
         {filteredBags.map((bag, bagIdx) => {
           if (!bag) return null;
           const bagItem = itemsMap.get(bag.id);
-          const bagRarity = bagItem ? getRarityColor(bagItem.rarity) : undefined;
+          const bagRarityClass = bagItem ? `rarity-${bagItem.rarity.toLowerCase()}` : '';
 
           return (
             <div
               key={bagIdx}
-              className="w-10 h-10 rounded flex-shrink-0 relative"
-              style={bagRarity ? { border: `2px solid ${bagRarity}` } : { border: '2px solid hsl(var(--border))' }}
+              className={cn(
+                "item-slot w-10 h-10 flex-shrink-0 relative",
+                bagRarityClass,
+                bagItem ? "border-rarity" : "border-muted"
+              )}
               title={bagItem?.name || `Bag ${bagIdx + 1}`}
             >
               {bagItem?.icon && (
@@ -127,7 +130,7 @@ export function CharacterInventory({ character, searchTerm = '' }: CharacterInve
 
       {/* Right column - all slots in one continuous grid */}
       <div className="flex-1">
-        <div className="grid grid-cols-10 md:grid-cols-12 lg:grid-cols-16 xl:grid-cols-20">
+        <div className="grid grid-cols-10 md:grid-cols-12 lg:grid-cols-16 xl:grid-cols-20 gap-0.5">
           {filteredBags.flatMap((bag, bagIdx) => {
             if (!bag) return [];
             return bag.inventory.map((item, slotIdx) => {
@@ -135,20 +138,20 @@ export function CharacterInventory({ character, searchTerm = '' }: CharacterInve
 
               if (!item) {
                 return (
-                  <div key={key} className="aspect-square bg-muted/30 border border-border/50" />
+                  <div key={key} className="item-slot bg-surface-sunken border-muted" />
                 );
               }
 
               const itemData = itemsMap.get(item.id);
               if (!itemData) {
                 return (
-                  <div key={key} className="aspect-square bg-muted border border-border/50 flex items-center justify-center">
+                  <div key={key} className="item-slot bg-muted border-border/50 flex items-center justify-center">
                     <div className="animate-spin h-3 w-3 border-2 border-primary border-t-transparent rounded-full" />
                   </div>
                 );
               }
 
-              const rarityColor = getRarityColor(itemData.rarity);
+              const rarityClass = `rarity-${itemData.rarity.toLowerCase()}`;
               const statName = item.stats?.id ? statsMap.get(item.stats.id) : undefined;
               const upgradeItems = item.upgrades?.map((id) => itemsMap.get(id)).filter(Boolean) as Item[];
               const infusionItems = item.infusions?.map((id) => itemsMap.get(id)).filter(Boolean) as Item[];
@@ -164,11 +167,15 @@ export function CharacterInventory({ character, searchTerm = '' }: CharacterInve
                   infusions={infusionItems}
                 >
                   <button
-                    className="aspect-square relative cursor-pointer hover:scale-110 hover:z-10 transition-transform"
+                    className="aspect-square relative cursor-pointer hover:scale-105 hover:z-10 transition-transform"
                   >
                     <div
-                      className="w-full h-full overflow-hidden"
-                      style={{ border: `2px solid ${rarityColor}` }}
+                      className={cn(
+                        "item-slot w-full h-full overflow-hidden",
+                        rarityClass,
+                        "border-rarity",
+                        "hover:border-gw2-gold hover:glow-gold-sm"
+                      )}
                     >
                       {itemData.icon && (
                         <img loading="lazy" src={itemData.icon} alt={itemData.name} className="w-full h-full object-cover" />

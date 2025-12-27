@@ -106,6 +106,7 @@ export class GW2ApiClient {
         headers: {
           'Accept': 'application/json',
         },
+        cache: 'no-store',
       });
 
       return await this.handleResponse<T>(response);

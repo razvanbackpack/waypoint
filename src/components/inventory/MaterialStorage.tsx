@@ -5,15 +5,16 @@ import { ItemTooltip } from './ItemTooltip';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import type { TradingPostPrice } from '@/api/types';
 
-const rarityColors: Record<string, string> = {
-  Junk: '#AAA',
-  Basic: '#000',
-  Fine: '#62A4DA',
-  Masterwork: '#1a9306',
-  Rare: '#fcd00b',
-  Exotic: '#ffa405',
-  Ascended: '#fb3e8d',
-  Legendary: '#4C139D',
+// Rarity class mapping for CSS-based styling
+const rarityClasses: Record<string, string> = {
+  Junk: 'rarity-junk',
+  Basic: 'rarity-basic',
+  Fine: 'rarity-fine',
+  Masterwork: 'rarity-masterwork',
+  Rare: 'rarity-rare',
+  Exotic: 'rarity-exotic',
+  Ascended: 'rarity-ascended',
+  Legendary: 'rarity-legendary',
 };
 
 const MATERIAL_CATEGORIES: Record<number, string> = {
@@ -148,7 +149,7 @@ export function MaterialStorage({ searchTerm = '' }: MaterialStorageProps) {
 
             return (
               <div key={categoryId} className="space-y-3">
-                <h3 className="text-sm font-semibold border-b pb-2">{categoryName}</h3>
+                <h3 className="text-sm font-semibold heading-accent pb-2">{categoryName}</h3>
                 <div className="grid gap-2">
                   {categoryMaterials.map((mat: { id: number; category: number; count: number }) => {
                     const item = itemsMap.get(mat.id);
@@ -167,6 +168,7 @@ export function MaterialStorage({ searchTerm = '' }: MaterialStorageProps) {
                     const price = pricesMap.get(mat.id);
                     const maxStorage = [38, 45].includes(mat.category) ? 250 : 250;
                     const percentage = (mat.count / maxStorage) * 100;
+                    const rarityClass = rarityClasses[item.rarity] || 'rarity-junk';
 
                     return (
                       <button
@@ -175,12 +177,7 @@ export function MaterialStorage({ searchTerm = '' }: MaterialStorageProps) {
                         className="flex items-center gap-3 p-2 hover:bg-muted/50 rounded transition-colors cursor-pointer text-left"
                       >
                         <div
-                          className="w-10 h-10 rounded flex-shrink-0"
-                          style={{
-                            borderWidth: '2px',
-                            borderStyle: 'solid',
-                            borderColor: rarityColors[item.rarity] || '#AAA',
-                          }}
+                          className={`w-10 h-10 rounded flex-shrink-0 border-2 ${rarityClass} border-rarity`}
                         >
                           {item.icon && (
                             <img
@@ -195,12 +192,11 @@ export function MaterialStorage({ searchTerm = '' }: MaterialStorageProps) {
                         <div className="flex-1 min-w-0">
                           <div className="flex items-baseline justify-between gap-2 mb-1">
                             <span
-                              className="text-sm font-medium truncate"
-                              style={{ color: rarityColors[item.rarity] || '#FFF' }}
+                              className={`text-sm font-medium truncate ${rarityClass} text-rarity`}
                             >
                               {item.name}
                             </span>
-                            <span className="text-sm font-semibold whitespace-nowrap">
+                            <span className="text-sm font-semibold whitespace-nowrap font-mono">
                               {mat.count.toLocaleString()} / {maxStorage}
                             </span>
                           </div>

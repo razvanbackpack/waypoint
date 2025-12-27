@@ -74,14 +74,14 @@ export function Achievements() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-3xl font-bold mb-2" style={{ color: '#C9A227' }}>
+      <header className="mb-6 md:mb-8">
+        <h1 className="text-2xl md:text-3xl font-bold text-gw2-gold">
           Achievements
-        </h2>
-        <p className="text-muted-foreground">
+        </h1>
+        <p className="text-muted-foreground mt-1">
           Track your achievement progress and earn rewards
         </p>
-      </div>
+      </header>
 
       {isAuthenticated && account && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -91,7 +91,7 @@ export function Achievements() {
               <Trophy className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold" style={{ color: '#C9A227' }}>
+              <div className="text-2xl font-bold text-gw2-gold">
                 {totalAP.toLocaleString()}
               </div>
               <p className="text-xs text-muted-foreground">

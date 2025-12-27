@@ -2,13 +2,14 @@ export interface GameEvent {
   id: string;
   name: string;
   map: string;
-  category: 'core' | 'hot' | 'pof' | 'ibs' | 'eod' | 'soto';
+  category: 'core' | 'hot' | 'pof' | 'ibs' | 'eod' | 'soto' | 'jw' | 'voe';
   type: 'boss' | 'meta';
   spawnMinutes: number[];
+  cycleMinutes?: number; // Cycle length in minutes (default 120)
   icon: string;
   waypoint?: string;
   difficulty: 'open' | 'group' | 'squad';
-  duration: number; // Duration in minutes
+  duration: number;
 }
 
 export interface NextSpawn {
@@ -18,78 +19,43 @@ export interface NextSpawn {
 }
 
 export const GAME_EVENTS: GameEvent[] = [
-  // Core Tyria World Bosses
+  // Core Tyria World Bosses (15 min duration each, on a rotating schedule)
+  // These spawn at specific times within a 2-hour window
   {
-    id: 'tequatl',
-    name: 'Tequatl the Sunless',
-    map: 'Sparkfly Fen',
-    category: 'core',
-    type: 'boss',
-    spawnMinutes: [0],
-    icon: '🐉',
-    waypoint: '[&BNYAAAA=]',
-    difficulty: 'squad',
-    duration: 15
-  },
-  {
-    id: 'triple_trouble',
-    name: 'Triple Trouble',
+    id: 'taidha',
+    name: 'Admiral Taidha Covington',
     map: 'Bloodtide Coast',
     category: 'core',
     type: 'boss',
-    spawnMinutes: [30],
-    icon: '🐛',
+    spawnMinutes: [0],
+    icon: '🏴‍☠️',
     waypoint: '[&BKoBAAA=]',
-    difficulty: 'squad',
-    duration: 15
-  },
-  {
-    id: 'karka_queen',
-    name: 'Karka Queen',
-    map: 'Southsun Cove',
-    category: 'core',
-    type: 'boss',
-    spawnMinutes: [60],
-    icon: '🦀',
-    waypoint: '[&BN4CAAA=]',
-    difficulty: 'group',
-    duration: 10
-  },
-  {
-    id: 'modniir',
-    name: 'Modniir Ulgoth',
-    map: 'Harathi Hinterlands',
-    category: 'core',
-    type: 'boss',
-    spawnMinutes: [15],
-    icon: '⚔️',
-    waypoint: '[&BPcBAAA=]',
-    difficulty: 'open',
-    duration: 10
-  },
-  {
-    id: 'shadow_behemoth',
-    name: 'Shadow Behemoth',
-    map: 'Queensdale',
-    category: 'core',
-    type: 'boss',
-    spawnMinutes: [15, 105],
-    icon: '👹',
-    waypoint: '[&BKgBAAA=]',
     difficulty: 'open',
     duration: 15
   },
   {
     id: 'svanir',
-    name: 'Svanir Shaman',
+    name: 'Svanir Shaman Chief',
     map: 'Wayfarer Foothills',
     category: 'core',
     type: 'boss',
-    spawnMinutes: [15, 105],
+    spawnMinutes: [15],
     icon: '❄️',
-    waypoint: '[&BNQAAAA=]',
+    waypoint: '[&BMMAAAA=]',
     difficulty: 'open',
-    duration: 10
+    duration: 15
+  },
+  {
+    id: 'megadestroyer',
+    name: 'Megadestroyer',
+    map: 'Mount Maelstrom',
+    category: 'core',
+    type: 'boss',
+    spawnMinutes: [30],
+    icon: '🌋',
+    waypoint: '[&BNABAAA=]',
+    difficulty: 'group',
+    duration: 15
   },
   {
     id: 'fire_elemental',
@@ -97,23 +63,11 @@ export const GAME_EVENTS: GameEvent[] = [
     map: 'Metrica Province',
     category: 'core',
     type: 'boss',
-    spawnMinutes: [45, 105],
+    spawnMinutes: [45],
     icon: '🔥',
     waypoint: '[&BE4AAAA=]',
     difficulty: 'open',
-    duration: 10
-  },
-  {
-    id: 'jungle_wurm',
-    name: 'Great Jungle Wurm',
-    map: 'Caledon Forest',
-    category: 'core',
-    type: 'boss',
-    spawnMinutes: [15, 75],
-    icon: '🐍',
-    waypoint: '[&BEYAAAA=]',
-    difficulty: 'open',
-    duration: 10
+    duration: 15
   },
   {
     id: 'shatterer',
@@ -128,19 +82,82 @@ export const GAME_EVENTS: GameEvent[] = [
     duration: 15
   },
   {
-    id: 'megadestroyer',
-    name: 'Megadestroyer',
-    map: 'Mount Maelstrom',
+    id: 'jungle_wurm',
+    name: 'Great Jungle Wurm',
+    map: 'Caledon Forest',
     category: 'core',
     type: 'boss',
-    spawnMinutes: [30, 90],
-    icon: '🌋',
-    waypoint: '[&BNABAAA=]',
+    spawnMinutes: [75],
+    icon: '🐍',
+    waypoint: '[&BEYAAAA=]',
+    difficulty: 'open',
+    duration: 15
+  },
+  {
+    id: 'modniir',
+    name: 'Modniir Ulgoth',
+    map: 'Harathi Hinterlands',
+    category: 'core',
+    type: 'boss',
+    spawnMinutes: [90],
+    icon: '⚔️',
+    waypoint: '[&BPcBAAA=]',
+    difficulty: 'open',
+    duration: 15
+  },
+  {
+    id: 'shadow_behemoth',
+    name: 'Shadow Behemoth',
+    map: 'Queensdale',
+    category: 'core',
+    type: 'boss',
+    spawnMinutes: [105],
+    icon: '👹',
+    waypoint: '[&BKgBAAA=]',
+    difficulty: 'open',
+    duration: 15
+  },
+  // Hard Core Bosses (less frequent)
+  {
+    id: 'tequatl',
+    name: 'Tequatl the Sunless',
+    map: 'Sparkfly Fen',
+    category: 'core',
+    type: 'boss',
+    spawnMinutes: [0],
+    cycleMinutes: 1440, // Once per day at reset
+    icon: '🐉',
+    waypoint: '[&BNYAAAA=]',
+    difficulty: 'squad',
+    duration: 15
+  },
+  {
+    id: 'triple_trouble',
+    name: 'Triple Trouble',
+    map: 'Bloodtide Coast',
+    category: 'core',
+    type: 'boss',
+    spawnMinutes: [120],
+    cycleMinutes: 1440,
+    icon: '🐛',
+    waypoint: '[&BKoBAAA=]',
+    difficulty: 'squad',
+    duration: 15
+  },
+  {
+    id: 'karka_queen',
+    name: 'Karka Queen',
+    map: 'Southsun Cove',
+    category: 'core',
+    type: 'boss',
+    spawnMinutes: [120],
+    icon: '🦀',
+    waypoint: '[&BN4CAAA=]',
     difficulty: 'group',
     duration: 15
   },
   {
-    id: 'claw',
+    id: 'claw_jormag',
     name: 'Claw of Jormag',
     map: 'Frostgorge Sound',
     category: 'core',
@@ -152,104 +169,30 @@ export const GAME_EVENTS: GameEvent[] = [
     duration: 15
   },
   {
-    id: 'frozen_maw',
-    name: 'Frozen Maw',
-    map: 'Wayfarer Foothills',
-    category: 'core',
-    type: 'boss',
-    spawnMinutes: [15, 75],
-    icon: '❄️',
-    waypoint: '[&BMMAAAA=]',
-    difficulty: 'open',
-    duration: 10
-  },
-  {
-    id: 'fire_shaman',
-    name: 'Fire Shaman',
-    map: 'Diessa Plateau',
-    category: 'core',
-    type: 'boss',
-    spawnMinutes: [15, 75],
-    icon: '🔥',
-    waypoint: '[&BMwDAAA=]',
-    difficulty: 'open',
-    duration: 10
-  },
-  {
     id: 'golem_mark_ii',
     name: 'Golem Mark II',
     map: 'Mount Maelstrom',
     category: 'core',
     type: 'boss',
-    spawnMinutes: [0, 60],
+    spawnMinutes: [0],
     icon: '🤖',
     waypoint: '[&BM0BAAA=]',
     difficulty: 'open',
-    duration: 10
-  },
-  {
-    id: 'ulgoth',
-    name: 'Ulgoth',
-    map: 'Harathi Hinterlands',
-    category: 'core',
-    type: 'boss',
-    spawnMinutes: [30, 90],
-    icon: '⚔️',
-    waypoint: '[&BPcBAAA=]',
-    difficulty: 'open',
-    duration: 10
-  },
-
-  // Core Tyria Metas
-  {
-    id: 'dry_top',
-    name: 'Dry Top (Sandstorm)',
-    map: 'Dry Top',
-    category: 'core',
-    type: 'meta',
-    spawnMinutes: [40, 100],
-    icon: '🏜️',
-    waypoint: '[&BIAHAAA=]',
-    difficulty: 'open',
     duration: 15
-  },
-  {
-    id: 'silver_wastes',
-    name: 'RIBA / Vinewrath',
-    map: 'Silverwastes',
-    category: 'core',
-    type: 'meta',
-    spawnMinutes: [0, 60],
-    icon: '🪱',
-    waypoint: '[&BPUHAAA=]',
-    difficulty: 'group',
-    duration: 20
   },
 
   // Heart of Thorns Metas
   {
-    id: 'verdant_brink_day',
-    name: 'Verdant Brink (Day)',
-    map: 'Verdant Brink',
-    category: 'hot',
-    type: 'meta',
-    spawnMinutes: [10],
-    icon: '☀️',
-    waypoint: '[&BOAHAAA=]',
-    difficulty: 'open',
-    duration: 25
-  },
-  {
     id: 'verdant_brink_night',
-    name: 'Verdant Brink (Night)',
+    name: 'Verdant Brink (Night Bosses)',
     map: 'Verdant Brink',
     category: 'hot',
     type: 'meta',
-    spawnMinutes: [55],
+    spawnMinutes: [105],
     icon: '🌙',
     waypoint: '[&BOAHAAA=]',
     difficulty: 'group',
-    duration: 25
+    duration: 20
   },
   {
     id: 'auric_basin',
@@ -257,7 +200,7 @@ export const GAME_EVENTS: GameEvent[] = [
     map: 'Auric Basin',
     category: 'hot',
     type: 'meta',
-    spawnMinutes: [45],
+    spawnMinutes: [90],
     icon: '🌿',
     waypoint: '[&BOMEAAA=]',
     difficulty: 'group',
@@ -269,10 +212,10 @@ export const GAME_EVENTS: GameEvent[] = [
     map: 'Tangled Depths',
     category: 'hot',
     type: 'meta',
-    spawnMinutes: [30],
+    spawnMinutes: [100],
     icon: '🐛',
     waypoint: '[&BPQHAAA=]',
-    difficulty: 'group',
+    difficulty: 'squad',
     duration: 20
   },
   {
@@ -285,155 +228,131 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '🐉',
     waypoint: '[&BBAIAAA=]',
     difficulty: 'squad',
-    duration: 30
+    duration: 120
   },
 
   // Path of Fire Metas
   {
     id: 'casino_blitz',
     name: 'Casino Blitz',
-    map: 'Amnoon',
-    category: 'pof',
-    type: 'meta',
-    spawnMinutes: [20, 80],
-    icon: '🎰',
-    waypoint: '[&BLsKAAA=]',
-    difficulty: 'open',
-    duration: 15
-  },
-  {
-    id: 'pinata',
-    name: 'Buried Treasure',
     map: 'Crystal Oasis',
     category: 'pof',
     type: 'meta',
-    spawnMinutes: [5, 65],
+    spawnMinutes: [95],
+    icon: '🎰',
+    waypoint: '[&BLsKAAA=]',
+    difficulty: 'open',
+    duration: 16
+  },
+  {
+    id: 'pinata',
+    name: 'Pinata / Buried Treasure',
+    map: 'Crystal Oasis',
+    category: 'pof',
+    type: 'meta',
+    spawnMinutes: [111],
     icon: '🎁',
     waypoint: '[&BKkKAAA=]',
     difficulty: 'open',
-    duration: 15
+    duration: 9
   },
   {
     id: 'doppelganger',
     name: 'Doppelganger',
-    map: 'Domain of Istan',
+    map: 'Elon Riverlands',
     category: 'pof',
     type: 'meta',
-    spawnMinutes: [15, 75],
+    spawnMinutes: [85],
     icon: '👥',
     waypoint: '[&BAkLAAA=]',
     difficulty: 'open',
-    duration: 10
-  },
-  {
-    id: 'palawadan',
-    name: 'Palawadan',
-    map: 'Domain of Istan',
-    category: 'pof',
-    type: 'meta',
-    spawnMinutes: [45, 105],
-    icon: '🏰',
-    waypoint: '[&BAkLAAA=]',
-    difficulty: 'group',
     duration: 20
   },
   {
     id: 'junundu',
     name: 'Junundu Rising',
-    map: 'Domain of Vabbi',
+    map: 'The Desolation',
     category: 'pof',
     type: 'meta',
-    spawnMinutes: [30, 90],
+    spawnMinutes: [30],
     icon: '🪱',
     waypoint: '[&BKMLAAA=]',
     difficulty: 'open',
-    duration: 15
-  },
-  {
-    id: 'serpents_ire',
-    name: "Serpent's Ire",
-    map: 'Domain of Vabbi',
-    category: 'pof',
-    type: 'meta',
-    spawnMinutes: [30, 90],
-    icon: '🐍',
-    waypoint: '[&BKMLAAA=]',
-    difficulty: 'group',
     duration: 20
   },
   {
     id: 'maws_of_torment',
     name: 'Maws of Torment',
-    map: 'Desolation',
+    map: 'The Desolation',
     category: 'pof',
     type: 'meta',
-    spawnMinutes: [0, 60],
+    spawnMinutes: [0],
     icon: '😈',
-    waypoint: '[&BKMLAAA=]',
+    waypoint: '[&BMEKAAA=]',
+    difficulty: 'open',
+    duration: 20
+  },
+  {
+    id: 'serpents_ire',
+    name: "Serpents' Ire",
+    map: 'Domain of Vabbi',
+    category: 'pof',
+    type: 'meta',
+    spawnMinutes: [30],
+    icon: '🐍',
+    waypoint: '[&BHQKAAA=]',
+    difficulty: 'group',
+    duration: 30
+  },
+
+  // Icebrood Saga Metas
+  {
+    id: 'grothmar_effigy',
+    name: 'Effigy',
+    map: 'Grothmar Valley',
+    category: 'ibs',
+    type: 'meta',
+    spawnMinutes: [10],
+    icon: '🔥',
+    waypoint: '[&BA4MAAA=]',
     difficulty: 'open',
     duration: 15
   },
   {
-    id: 'forged_steel',
-    name: 'Forged with Fire',
-    map: 'Thunderhead Peaks',
-    category: 'pof',
+    id: 'grothmar_doomlore',
+    name: 'Doomlore Shrine',
+    map: 'Grothmar Valley',
+    category: 'ibs',
     type: 'meta',
-    spawnMinutes: [0, 60],
-    icon: '🔥',
-    waypoint: '[&BIQLAAA=]',
-    difficulty: 'group',
-    duration: 15
+    spawnMinutes: [38],
+    icon: '⚔️',
+    waypoint: '[&BA4MAAA=]',
+    difficulty: 'open',
+    duration: 22
   },
   {
-    id: 'thunderhead_keep',
-    name: 'Thunderhead Keep',
-    map: 'Thunderhead Peaks',
-    category: 'pof',
+    id: 'grothmar_ooze',
+    name: 'Ooze Pit',
+    map: 'Grothmar Valley',
+    category: 'ibs',
     type: 'meta',
-    spawnMinutes: [45, 105],
-    icon: '⚡',
-    waypoint: '[&BIQLAAA=]',
-    difficulty: 'group',
+    spawnMinutes: [60],
+    icon: '🟢',
+    waypoint: '[&BA4MAAA=]',
+    difficulty: 'open',
     duration: 20
   },
-
-  // Icebrood Saga Metas
   {
     id: 'grothmar_concert',
     name: 'Metal Concert',
     map: 'Grothmar Valley',
     category: 'ibs',
     type: 'meta',
-    spawnMinutes: [0, 60],
+    spawnMinutes: [95],
     icon: '🎸',
-    waypoint: '[&BDcMAAA=]',
+    waypoint: '[&BA4MAAA=]',
     difficulty: 'open',
     duration: 15
-  },
-  {
-    id: 'grothmar_ceremony',
-    name: 'Ceremony of the Sacred Flame',
-    map: 'Grothmar Valley',
-    category: 'ibs',
-    type: 'meta',
-    spawnMinutes: [20, 80],
-    icon: '🔥',
-    waypoint: '[&BDcMAAA=]',
-    difficulty: 'open',
-    duration: 15
-  },
-  {
-    id: 'grothmar_legion',
-    name: 'Ooze Pit / Devourer Race',
-    map: 'Grothmar Valley',
-    category: 'ibs',
-    type: 'meta',
-    spawnMinutes: [45, 105],
-    icon: '🏁',
-    waypoint: '[&BDcMAAA=]',
-    difficulty: 'open',
-    duration: 10
   },
   {
     id: 'bjora_drakkar',
@@ -441,11 +360,11 @@ export const GAME_EVENTS: GameEvent[] = [
     map: 'Bjora Marches',
     category: 'ibs',
     type: 'meta',
-    spawnMinutes: [5, 65],
+    spawnMinutes: [55],
     icon: '🐉',
-    waypoint: '[&BHkMAAA=]',
-    difficulty: 'group',
-    duration: 20
+    waypoint: '[&BDkMAAA=]',
+    difficulty: 'squad',
+    duration: 35
   },
   {
     id: 'bjora_storms',
@@ -453,15 +372,15 @@ export const GAME_EVENTS: GameEvent[] = [
     map: 'Bjora Marches',
     category: 'ibs',
     type: 'meta',
-    spawnMinutes: [45, 105],
+    spawnMinutes: [100],
     icon: '❄️',
-    waypoint: '[&BHkMAAA=]',
+    waypoint: '[&BCcMAAA=]',
     difficulty: 'group',
-    duration: 20
+    duration: 15
   },
   {
-    id: 'drizzlewood_north',
-    name: 'Drizzlewood Coast (North)',
+    id: 'drizzlewood',
+    name: 'Drizzlewood Coast',
     map: 'Drizzlewood Coast',
     category: 'ibs',
     type: 'meta',
@@ -469,29 +388,17 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '⚔️',
     waypoint: '[&BKIMAAA=]',
     difficulty: 'group',
-    duration: 20
-  },
-  {
-    id: 'drizzlewood_south',
-    name: 'Drizzlewood Coast (South)',
-    map: 'Drizzlewood Coast',
-    category: 'ibs',
-    type: 'meta',
-    spawnMinutes: [30, 90],
-    icon: '⚔️',
-    waypoint: '[&BKIMAAA=]',
-    difficulty: 'group',
-    duration: 20
+    duration: 60
   },
   {
     id: 'dragonstorm',
     name: 'Dragonstorm',
-    map: 'Eye of the Storm',
+    map: 'Eye of the North',
     category: 'ibs',
     type: 'meta',
-    spawnMinutes: [0, 60],
+    spawnMinutes: [60],
     icon: '🌪️',
-    waypoint: '[&BPQMAAA=]',
+    waypoint: '[&BAkMAAA=]',
     difficulty: 'squad',
     duration: 20
   },
@@ -503,11 +410,11 @@ export const GAME_EVENTS: GameEvent[] = [
     map: 'Seitung Province',
     category: 'eod',
     type: 'meta',
-    spawnMinutes: [90],
+    spawnMinutes: [0],
     icon: '⚔️',
     waypoint: '[&BGANAAA=]',
     difficulty: 'group',
-    duration: 20
+    duration: 30
   },
   {
     id: 'kaineng',
@@ -515,23 +422,35 @@ export const GAME_EVENTS: GameEvent[] = [
     map: 'New Kaineng City',
     category: 'eod',
     type: 'meta',
-    spawnMinutes: [0, 60],
+    spawnMinutes: [0],
     icon: '🌃',
     waypoint: '[&BFQNAAA=]',
     difficulty: 'group',
-    duration: 20
+    duration: 40
   },
   {
-    id: 'echovald',
-    name: 'Gang War / Aspenwood',
+    id: 'echovald_gang',
+    name: 'Gang War',
     map: 'The Echovald Wilds',
     category: 'eod',
     type: 'meta',
-    spawnMinutes: [30, 90],
+    spawnMinutes: [30],
     icon: '🌲',
     waypoint: '[&BPwNAAA=]',
     difficulty: 'group',
-    duration: 25
+    duration: 35
+  },
+  {
+    id: 'echovald_aspenwood',
+    name: 'Aspenwood',
+    map: 'The Echovald Wilds',
+    category: 'eod',
+    type: 'meta',
+    spawnMinutes: [105],
+    icon: '🏰',
+    waypoint: '[&BPwNAAA=]',
+    difficulty: 'group',
+    duration: 15
   },
   {
     id: 'dragons_end_meta',
@@ -539,25 +458,25 @@ export const GAME_EVENTS: GameEvent[] = [
     map: "Dragon's End",
     category: 'eod',
     type: 'meta',
-    spawnMinutes: [0],
+    spawnMinutes: [113],
     icon: '🐲',
     waypoint: '[&BGINAAA=]',
     difficulty: 'squad',
-    duration: 30
+    duration: 60
   },
 
   // Secrets of the Obscure Metas
   {
     id: 'skywatch',
-    name: 'Target Practice / Fly by Night',
+    name: 'Unlocking the Wizard Tower',
     map: 'Skywatch Archipelago',
     category: 'soto',
     type: 'meta',
-    spawnMinutes: [0, 30, 60, 90],
+    spawnMinutes: [60],
     icon: '🏝️',
     waypoint: '[&BKQOAAA=]',
     difficulty: 'open',
-    duration: 15
+    duration: 25
   },
   {
     id: 'amnytas',
@@ -565,45 +484,86 @@ export const GAME_EVENTS: GameEvent[] = [
     map: 'Amnytas',
     category: 'soto',
     type: 'meta',
-    spawnMinutes: [0, 60],
+    spawnMinutes: [0],
     icon: '🛡️',
     waypoint: '[&BLcOAAA=]',
     difficulty: 'group',
-    duration: 20
+    duration: 25
   },
   {
     id: 'convergence',
     name: 'Convergences',
-    map: 'Various',
+    map: "Wizard's Tower",
     category: 'soto',
     type: 'meta',
     spawnMinutes: [30],
     icon: '🌀',
-    waypoint: '[&BLcOAAA=]',
+    waypoint: '[&BB4OAAA=]',
+    difficulty: 'squad',
+    duration: 15
+  },
+
+  // Janthir Wilds Metas
+  {
+    id: 'mists_monsters',
+    name: 'Of Mists and Monsters',
+    map: 'Janthir Syntri',
+    category: 'jw',
+    type: 'meta',
+    spawnMinutes: [0],
+    icon: '🌀',
+    waypoint: '[&BDcPAAA=]',
+    difficulty: 'squad',
+    duration: 25
+  },
+  {
+    id: 'titanic_voyage',
+    name: 'A Titanic Voyage',
+    map: 'Bava Nisos',
+    category: 'jw',
+    type: 'meta',
+    spawnMinutes: [0],
+    icon: '🚢',
+    waypoint: '[&BEAPAAA=]',
+    difficulty: 'group',
+    duration: 25
+  },
+
+  // Visions of Eternity Metas
+  {
+    id: 'hammerhart_rumble',
+    name: 'Hammerhart Rumble!',
+    map: 'Shipwreck Strand',
+    category: 'voe',
+    type: 'meta',
+    spawnMinutes: [0],
+    icon: '⚓',
+    waypoint: '[&BFYPAAA=]',
     difficulty: 'group',
     duration: 20
   },
   {
-    id: 'nayos',
-    name: 'Temple of Febe',
-    map: 'Nayos',
-    category: 'soto',
+    id: 'secrets_weald',
+    name: 'Secrets of the Weald',
+    map: 'Starlit Weald',
+    category: 'voe',
     type: 'meta',
-    spawnMinutes: [0, 60],
-    icon: '⭐',
-    waypoint: '[&BKEOAAA=]',
-    difficulty: 'group',
-    duration: 20
+    spawnMinutes: [0],
+    icon: '🌲',
+    waypoint: '[&BGAPAAA=]',
+    difficulty: 'squad',
+    duration: 35
   },
 ];
 
 /**
- * Calculate the next spawn time for an event based on its spawn minutes in a 2-hour cycle
- * @param spawnMinutes Array of minutes within a 2-hour (120 minute) cycle when the event spawns
+ * Calculate the next spawn time for an event based on its spawn minutes in a cycle
+ * @param spawnMinutes Array of minutes within a cycle when the event spawns
  * @param duration Duration of the event in minutes (default: 15)
+ * @param cycleLength Length of the cycle in minutes (default: 120)
  * @returns Object containing the next spawn Date, minutes until spawn, and active status
  */
-export function getNextSpawn(spawnMinutes: number[], duration: number = 15): NextSpawn {
+export function getNextSpawn(spawnMinutes: number[], duration: number = 15, cycleLength: number = 120): NextSpawn {
   const now = new Date();
   const currentHours = now.getUTCHours();
   const currentMinutes = now.getUTCMinutes();
@@ -612,8 +572,8 @@ export function getNextSpawn(spawnMinutes: number[], duration: number = 15): Nex
   // Total minutes since midnight UTC
   const totalCurrentMinutes = currentHours * 60 + currentMinutes + currentSeconds / 60;
 
-  // Position within current 2-hour cycle (0-119)
-  const cycleMinutes = totalCurrentMinutes % 120;
+  // Position within current cycle
+  const cycleMinutes = totalCurrentMinutes % cycleLength;
 
   // Sort spawn times
   const sortedSpawns = [...spawnMinutes].sort((a, b) => a - b);
@@ -635,7 +595,7 @@ export function getNextSpawn(spawnMinutes: number[], duration: number = 15): Nex
 
   // Check if the last spawn from the previous cycle is still active
   const lastSpawn = sortedSpawns[sortedSpawns.length - 1];
-  const minutesSinceLastCycleSpawn = cycleMinutes + (120 - lastSpawn);
+  const minutesSinceLastCycleSpawn = cycleMinutes + (cycleLength - lastSpawn);
   if (minutesSinceLastCycleSpawn < duration) {
     const spawnTime = new Date(now);
     spawnTime.setUTCMinutes(currentMinutes - Math.floor(minutesSinceLastCycleSpawn));
@@ -646,7 +606,7 @@ export function getNextSpawn(spawnMinutes: number[], duration: number = 15): Nex
 
   // Find the next spawn in current cycle
   for (const spawnMin of sortedSpawns) {
-    if (spawnMin > cycleMinutes) {
+    if (spawnMin >= cycleMinutes) {
       const minutesUntil = spawnMin - cycleMinutes;
       const nextSpawn = new Date(now);
       nextSpawn.setUTCMinutes(currentMinutes + Math.floor(minutesUntil));
@@ -658,7 +618,7 @@ export function getNextSpawn(spawnMinutes: number[], duration: number = 15): Nex
 
   // All spawns in current cycle have passed, get first spawn of next cycle
   const firstSpawn = sortedSpawns[0];
-  const minutesUntil = (120 - cycleMinutes) + firstSpawn;
+  const minutesUntil = (cycleLength - cycleMinutes) + firstSpawn;
   const nextSpawn = new Date(now);
   nextSpawn.setUTCMinutes(currentMinutes + Math.floor(minutesUntil));
   nextSpawn.setUTCSeconds(0);
