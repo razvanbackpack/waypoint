@@ -1,13 +1,11 @@
 import { useState, useEffect } from 'react';
 import { EventTimer } from '@/components/timers/EventTimer';
 import { EventSidebar } from '@/components/timers/EventSidebar';
-import { getTimeUntilDailyReset } from '@/data/eventSchedule';
 import { Button } from '@/components/ui/button';
 import { Clock, Bell, BellOff } from 'lucide-react';
 
 export function Timers() {
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [resetTime, setResetTime] = useState(getTimeUntilDailyReset());
   const [favorites, setFavorites] = useState<Set<string>>(() => {
     const saved = localStorage.getItem('gw2-event-favorites');
     return saved ? new Set(JSON.parse(saved)) : new Set();
@@ -17,7 +15,6 @@ export function Timers() {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentTime(new Date());
-      setResetTime(getTimeUntilDailyReset());
     }, 1000);
     return () => clearInterval(interval);
   }, []);

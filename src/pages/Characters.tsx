@@ -21,28 +21,6 @@ const formatGold = (copper: number) => {
   return `${gold.toLocaleString()}g ${silver}s ${copperRem}c`;
 };
 
-const formatAge = (seconds: number): string => {
-  const totalHours = Math.floor(seconds / 3600);
-  const days = Math.floor(seconds / 86400);
-  const hours = Math.floor((seconds % 86400) / 3600);
-
-  if (days >= 365) {
-    const years = Math.floor(days / 365);
-    const remainingDays = days % 365;
-    if (remainingDays > 0) {
-      return `${years}y ${remainingDays}d`;
-    }
-    return `${years}y`;
-  }
-  if (days >= 1) {
-    if (hours > 0) {
-      return `${days}d ${hours}h`;
-    }
-    return `${days}d`;
-  }
-  return `${totalHours}h`;
-};
-
 const formatCharacterAge = (createdDate: string): string => {
   const created = new Date(createdDate);
   const now = new Date();

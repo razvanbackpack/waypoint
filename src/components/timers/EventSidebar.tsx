@@ -57,7 +57,7 @@ export function EventSidebar({ currentTime, favorites, toggleFavorite }: EventSi
                 <Star className="h-3.5 w-3.5 fill-current" /> Favorites
               </div>
               {favoriteEvents
-              .map(({ event, nextSpawn, minutesUntil }) => (
+              .map(({ event, minutesUntil }) => (
                 <div key={event.id} className="space-y-0.5">
                   <div className="flex items-center gap-1.5">
                     <span className="text-sm">{event.icon}</span>
