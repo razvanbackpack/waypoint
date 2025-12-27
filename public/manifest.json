@@ -1,7 +1,7 @@
 {
-  "name": "Waypoint - GW2 Companion",
+  "name": "Waypoint",
   "short_name": "Waypoint",
-  "description": "A fan-made companion app for Guild Wars 2. Track bosses, browse inventory, check recipes, never miss dailies.",
+  "description": "Track bosses, browse inventory, check recipes, and never miss dailies.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#1a1a2e",
