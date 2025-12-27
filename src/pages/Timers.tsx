@@ -64,7 +64,7 @@ export function Timers() {
       {/* Main Content Area */}
       <div className="flex gap-6">
         {/* Main content - table */}
-        <div className="flex-1 min-w-0 max-w-4xl">
+        <div className="flex-1 min-w-0">
           <EventTimer favorites={favorites} toggleFavorite={toggleFavorite} />
         </div>
 
