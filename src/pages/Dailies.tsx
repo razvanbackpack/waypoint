@@ -276,7 +276,7 @@ export function Dailies() {
   }
 
   return (
-    <div className="space-y-6 max-w-6xl mx-auto animate-fade-in">
+    <div className="space-y-6 animate-fade-in">
       {/* Page Header */}
       <div className="space-y-1">
         <div className="flex items-center gap-2">

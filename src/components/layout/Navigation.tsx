@@ -65,6 +65,7 @@ export function Navigation() {
               to="/"
               className="flex items-center gap-2 text-xl font-bold hover:opacity-80 transition-opacity"
             >
+              <img src="/favicon.svg" alt="Waypoint" className="h-8 w-8" />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-gw2-gold to-gw2-gold-light text-xl font-bold font-display tracking-wide drop-shadow-sm">
                 Waypoint
               </span>
@@ -96,7 +97,7 @@ export function Navigation() {
                   )}
                 >
                   <Users className="h-4 w-4" />
-                  <span className="hidden lg:inline text-sm font-medium">Characters</span>
+                  <span className="hidden lg:inline text-sm font-medium">Character</span>
                 </Link>
               </Button>
 
@@ -225,7 +226,7 @@ export function Navigation() {
                 )}
               >
                 <Users className="h-4 w-4" />
-                <span>Characters</span>
+                <span>Character</span>
               </Link>
               <Link
                 to="/crafting"
