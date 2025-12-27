@@ -68,14 +68,14 @@ export function Inventory() {
   if (!hasApiKey) {
     return (
       <div className="space-y-6">
-        <div>
-          <h2 className="text-3xl font-bold mb-2" style={{ color: '#C9A227' }}>
+        <header className="mb-6 md:mb-8">
+          <h1 className="text-2xl md:text-3xl font-bold text-gw2-gold">
             Inventory & Bank Viewer
-          </h2>
-          <p className="text-muted-foreground">
+          </h1>
+          <p className="text-muted-foreground mt-1">
             View and manage your Guild Wars 2 inventory, bank, and material storage
           </p>
-        </div>
+        </header>
         <ApiKeySetup />
       </div>
     );
@@ -84,14 +84,14 @@ export function Inventory() {
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-          <h2 className="text-3xl font-bold mb-2" style={{ color: '#C9A227' }}>
+        <header>
+          <h1 className="text-2xl md:text-3xl font-bold text-gw2-gold">
             Inventory & Bank Viewer
-          </h2>
-          <p className="text-muted-foreground">
+          </h1>
+          <p className="text-muted-foreground mt-1">
             View and manage your Guild Wars 2 inventory, bank, and material storage
           </p>
-        </div>
+        </header>
         {totalAccountValue > 0 && (
           <Card>
             <CardContent className="pt-6">

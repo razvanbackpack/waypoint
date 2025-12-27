@@ -1,6 +1,5 @@
 import { createRouter, createRoute, createRootRoute, Outlet } from '@tanstack/react-router'
 import { Layout } from './components/layout/Layout'
-import { TradingPost } from './pages/TradingPost'
 import { Dailies } from './pages/Dailies'
 import { Characters } from './pages/Characters'
 import { Timers } from './pages/Timers'
@@ -21,18 +20,18 @@ const rootRoute = createRootRoute({
   component: RootComponent,
 })
 
-// Characters route (index/home page)
+// Events/Timers route (index/home page)
 const indexRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/',
-  component: Characters,
+  component: Timers,
 })
 
-// Trading Post route
-const tradingPostRoute = createRoute({
+// Characters route
+const charactersRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: '/trading-post',
-  component: TradingPost,
+  path: '/characters',
+  component: Characters,
 })
 
 // Dailies route
@@ -42,12 +41,6 @@ const dailiesRoute = createRoute({
   component: Dailies,
 })
 
-// Timers route
-const timersRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: '/timers',
-  component: Timers,
-})
 
 // Crafting route
 const craftingRoute = createRoute({
@@ -66,9 +59,8 @@ const settingsRoute = createRoute({
 // Create the route tree
 const routeTree = rootRoute.addChildren([
   indexRoute,
-  tradingPostRoute,
+  charactersRoute,
   dailiesRoute,
-  timersRoute,
   craftingRoute,
   settingsRoute,
 ])

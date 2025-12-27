@@ -7,7 +7,7 @@ import {
   useWizardsVaultSpecial,
 } from '@/api/hooks/useGW2Api';
 import { getApiClient } from '@/api/client';
-import { Sparkles, Sun, Calendar, Star, Check, Circle, Gift, CalendarCheck } from 'lucide-react';
+import { Sparkles, Sun, Calendar, Star, Check, CheckCircle2, Circle, Gift, CalendarCheck } from 'lucide-react';
 import type { WizardsVaultObjective } from '@/api/types';
 
 function getTimeUntilDailyReset() {
@@ -65,7 +65,7 @@ function ProgressCard({ title, icon, completed, total, color, reward }: Progress
   return (
     <div className={`p-3 rounded-lg border transition-all duration-300 ${
       isComplete
-        ? 'bg-green-500/5 border-green-500/30 shadow-lg shadow-green-500/10'
+        ? 'bg-success/5 border-success/30 shadow-lg shadow-success/10'
         : 'bg-card hover:border-gw2-gold/30 hover:shadow-md'
     }`}>
       <div className="flex items-center gap-2 mb-2">
@@ -73,9 +73,9 @@ function ProgressCard({ title, icon, completed, total, color, reward }: Progress
         <span className="font-medium">{title}</span>
         <span className="ml-auto text-sm">
           {completed}/{total}
-          {reward && <span className="text-gw2-gold ml-1">+{reward}</span>}
+          {isComplete && reward && <span className="text-gw2-gold ml-1">+{reward}</span>}
         </span>
-        {isComplete && <Check className="h-4 w-4 text-green-500" />}
+        {isComplete && <CheckCircle2 className="h-4 w-4 text-success" />}
       </div>
       <div className="h-3 bg-muted rounded-full overflow-hidden">
         <div
@@ -109,7 +109,7 @@ function ObjectiveCard({ objective }: ObjectiveCardProps) {
     <div
       className={`p-3 rounded-lg border transition-all duration-300 hover:scale-[1.02] ${
         isComplete
-          ? 'bg-green-500/10 border-green-500/50 shadow-green-500/20 shadow-md animate-fade-in'
+          ? 'bg-success/10 border-success/50 shadow-success/20 shadow-md animate-fade-in'
           : 'bg-card hover:border-gw2-gold/50 hover:shadow-lg hover:shadow-gw2-gold/5'
       }`}
     >
@@ -117,10 +117,10 @@ function ObjectiveCard({ objective }: ObjectiveCardProps) {
         {/* Checkbox/Trophy icon */}
         <div
           className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
-            isComplete ? 'bg-green-500 text-white' : 'bg-muted'
+            isComplete ? 'bg-success text-success-foreground' : 'bg-muted'
           }`}
         >
-          {isComplete ? <Check className="h-5 w-5" /> : <Circle className="h-5 w-5" />}
+          {isComplete ? <Check className="h-5 w-5" /> : <Circle className="h-5 w-5 text-muted-foreground" />}
         </div>
 
         <div className="flex-1 min-w-0">
@@ -175,7 +175,7 @@ function MetaRewardCard({ title, progressCurrent, progressComplete, rewardAstral
   return (
     <div className={`p-4 rounded-lg border-2 mb-4 transition-all duration-300 ${
       claimed
-        ? 'bg-green-500/10 border-green-500/50 shadow-lg shadow-green-500/20'
+        ? 'bg-success/10 border-success/50 shadow-lg shadow-success/20'
         : isComplete
           ? 'bg-gw2-gold/10 border-gw2-gold/50 shadow-lg shadow-gw2-gold/20 animate-pulse-glow'
           : 'bg-card border-border'
@@ -183,19 +183,19 @@ function MetaRewardCard({ title, progressCurrent, progressComplete, rewardAstral
       <div className="flex items-center gap-4">
         <div className={`p-2 rounded-lg ${
           claimed
-            ? 'bg-green-500/20 border border-green-500/30'
+            ? 'bg-success/20 border border-success/30'
             : isComplete
               ? 'bg-gw2-gold/20 border border-gw2-gold/30'
               : 'bg-muted/50 border border-border'
         }`}>
-          <Gift className={`h-6 w-6 ${claimed ? 'text-green-500' : isComplete ? 'text-gw2-gold' : 'text-muted-foreground'}`} />
+          <Gift className={`h-6 w-6 ${claimed ? 'text-success' : isComplete ? 'text-gw2-gold' : 'text-muted-foreground'}`} />
         </div>
 
         <div className="flex-1">
           <div className="flex items-center gap-2">
             <span className="font-medium text-sm">{title}</span>
             {claimed && (
-              <Badge className="bg-green-500/20 text-green-500 border-green-500/50 text-xs py-0">
+              <Badge className="bg-success/20 text-success border-success/50 text-xs py-0">
                 <Check className="h-3 w-3 mr-1" /> Claimed
               </Badge>
             )}
@@ -208,7 +208,7 @@ function MetaRewardCard({ title, progressCurrent, progressComplete, rewardAstral
           <div className="flex items-center gap-2 mt-1">
             <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden max-w-48">
               <div
-                className={`h-full transition-all duration-500 ${claimed ? 'bg-green-500' : 'bg-gradient-to-r from-gw2-gold to-yellow-500'}`}
+                className={`h-full transition-all duration-500 ${claimed ? 'bg-success' : 'bg-gradient-to-r from-gw2-gold to-yellow-500'}`}
                 style={{ width: `${progress}%` }}
               />
             </div>
@@ -216,9 +216,9 @@ function MetaRewardCard({ title, progressCurrent, progressComplete, rewardAstral
           </div>
         </div>
 
-        {rewardAstral && (
+        {isComplete && rewardAstral && (
           <div className="text-right">
-            <div className={`text-lg font-bold ${claimed ? 'text-green-500' : 'text-gw2-gold'}`}>+{rewardAstral}</div>
+            <div className={`text-lg font-bold ${claimed ? 'text-success' : 'text-gw2-gold'}`}>+{rewardAstral}</div>
             <div className="text-xs text-muted-foreground">Acclaim</div>
           </div>
         )}
@@ -353,24 +353,24 @@ export function Dailies() {
 
       {/* Tabs for objectives */}
       <Tabs value={mainTab} onValueChange={setMainTab}>
-        <TabsList className="w-full grid grid-cols-3 h-auto p-1 bg-card/50 border">
+        <TabsList className="w-full grid grid-cols-3 h-auto bg-transparent gap-1 p-0">
           <TabsTrigger
             value="daily"
-            className="flex items-center gap-2 data-[state=active]:bg-gw2-gold/10 data-[state=active]:text-gw2-gold data-[state=active]:border-gw2-gold/30 data-[state=active]:shadow-lg"
+            className="flex items-center justify-center gap-2 px-3 py-1.5 text-sm font-medium text-muted-foreground rounded-md border border-transparent hover:text-foreground data-[state=active]:bg-muted data-[state=active]:text-gw2-gold data-[state=active]:border-border transition-colors"
           >
             <Sun className="h-4 w-4" />
             <span>Daily</span>
           </TabsTrigger>
           <TabsTrigger
             value="weekly"
-            className="flex items-center gap-2 data-[state=active]:bg-gw2-gold/10 data-[state=active]:text-gw2-gold data-[state=active]:border-gw2-gold/30 data-[state=active]:shadow-lg"
+            className="flex items-center justify-center gap-2 px-3 py-1.5 text-sm font-medium text-muted-foreground rounded-md border border-transparent hover:text-foreground data-[state=active]:bg-muted data-[state=active]:text-gw2-gold data-[state=active]:border-border transition-colors"
           >
             <Calendar className="h-4 w-4" />
             <span>Weekly</span>
           </TabsTrigger>
           <TabsTrigger
             value="special"
-            className="flex items-center gap-2 data-[state=active]:bg-gw2-gold/10 data-[state=active]:text-gw2-gold data-[state=active]:border-gw2-gold/30 data-[state=active]:shadow-lg"
+            className="flex items-center justify-center gap-2 px-3 py-1.5 text-sm font-medium text-muted-foreground rounded-md border border-transparent hover:text-foreground data-[state=active]:bg-muted data-[state=active]:text-gw2-gold data-[state=active]:border-border transition-colors"
           >
             <Star className="h-4 w-4" />
             <span>Special</span>
@@ -404,7 +404,7 @@ export function Dailies() {
                     </div>
                   ) : (
                     <div className="text-center py-8 text-muted-foreground">
-                      <Check className="h-12 w-12 mx-auto mb-2 text-green-500" />
+                      <CheckCircle2 className="h-12 w-12 mx-auto mb-2 text-success" />
                       <p className="font-medium">All daily objectives completed!</p>
                     </div>
                   )}
@@ -413,7 +413,7 @@ export function Dailies() {
                   {complete.length > 0 && (
                     <>
                       <div className="flex items-center gap-2 text-sm text-muted-foreground mt-6">
-                        <Check className="h-4 w-4 text-green-500" />
+                        <CheckCircle2 className="h-4 w-4 text-success" />
                         <span>Completed ({complete.length})</span>
                         <div className="flex-1 h-px bg-border" />
                       </div>
@@ -455,7 +455,7 @@ export function Dailies() {
                     </div>
                   ) : (
                     <div className="text-center py-8 text-muted-foreground">
-                      <Check className="h-12 w-12 mx-auto mb-2 text-green-500" />
+                      <CheckCircle2 className="h-12 w-12 mx-auto mb-2 text-success" />
                       <p className="font-medium">All weekly objectives completed!</p>
                     </div>
                   )}
@@ -464,7 +464,7 @@ export function Dailies() {
                   {complete.length > 0 && (
                     <>
                       <div className="flex items-center gap-2 text-sm text-muted-foreground mt-6">
-                        <Check className="h-4 w-4 text-green-500" />
+                        <CheckCircle2 className="h-4 w-4 text-success" />
                         <span>Completed ({complete.length})</span>
                         <div className="flex-1 h-px bg-border" />
                       </div>
@@ -503,7 +503,7 @@ export function Dailies() {
                     </div>
                   ) : (
                     <div className="text-center py-8 text-muted-foreground">
-                      <Check className="h-12 w-12 mx-auto mb-2 text-green-500" />
+                      <CheckCircle2 className="h-12 w-12 mx-auto mb-2 text-success" />
                       <p className="font-medium">All special objectives completed!</p>
                     </div>
                   )}
@@ -512,7 +512,7 @@ export function Dailies() {
                   {complete.length > 0 && (
                     <>
                       <div className="flex items-center gap-2 text-sm text-muted-foreground mt-6">
-                        <Check className="h-4 w-4 text-green-500" />
+                        <CheckCircle2 className="h-4 w-4 text-success" />
                         <span>Completed ({complete.length})</span>
                         <div className="flex-1 h-px bg-border" />
                       </div>

@@ -1,11 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Link, useRouterState, useNavigate } from '@tanstack/react-router';
-import { Check, X, Menu, XIcon, User, TrendingUp, Clock, CalendarCheck, Hammer, Database } from 'lucide-react';
+import { Check, X, Menu, XIcon, User, Clock, CalendarCheck, Hammer, Database, Users } from 'lucide-react';
 import { Button } from '../ui/button';
 import { useApiKey } from '../../api/hooks/useApiKey';
 import { useCharacters } from '../../api/hooks/useGW2Api';
 import { useViewModeStore } from '../../store/viewModeStore';
-import { ThemeToggle } from './ThemeToggle';
 import {
   Select,
   SelectContent,
@@ -46,7 +45,7 @@ export function Navigation() {
   const handleViewChange = (value: string) => {
     setSelectedCharacter(value);
     // Navigate to characters page when a character is selected
-    navigate({ to: '/' });
+    navigate({ to: '/characters' });
   };
 
   // Get display value for the select
@@ -58,7 +57,7 @@ export function Navigation() {
 
   return (
     <>
-      <nav className="bg-card border-b-2 border-primary/30 sticky top-0 z-50 shadow-sm">
+      <nav className="bg-card/80 backdrop-blur-md border-b-2 border-primary/30 sticky top-0 z-50 shadow-lg bg-gradient-to-r from-card/90 via-card/80 to-card/90">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-14">
             {/* Logo/Title */}
@@ -66,48 +65,20 @@ export function Navigation() {
               to="/"
               className="flex items-center gap-2 text-xl font-bold hover:opacity-80 transition-opacity"
             >
-              <span className="text-xl font-bold tracking-wide">
-                <span className="text-gw2-gold">Waypoint</span>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-gw2-gold to-gw2-gold-light text-xl font-bold font-display tracking-wide drop-shadow-sm">
+                Waypoint
               </span>
             </Link>
 
             {/* Center: Navigation Links */}
             <div className="hidden md:flex items-center gap-1 lg:gap-2">
-              {/* Trading Post Button - Desktop Only */}
-              <Button variant="ghost" size="sm" asChild className="h-9 w-9 md:w-auto md:px-2 lg:px-3 lg:gap-2">
+              {/* Events Button (Home) */}
+              <Button variant="ghost" size="sm" asChild className="h-9 w-9 md:w-auto md:px-2 lg:px-3 lg:gap-2 hover:bg-primary/10 hover:text-gw2-gold">
                 <Link
-                  to="/trading-post"
+                  to="/"
                   className={cn(
                     "transition-all duration-200 relative",
-                    isActive('/trading-post') && "text-gw2-gold after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-primary after:glow-gold-sm"
-                  )}
-                >
-                  <TrendingUp className="h-4 w-4" />
-                  <span className="hidden lg:inline text-sm font-medium">TP</span>
-                </Link>
-              </Button>
-
-              {/* Crafting Button */}
-              <Button variant="ghost" size="sm" asChild className="h-9 w-9 md:w-auto md:px-2 lg:px-3 lg:gap-2">
-                <Link
-                  to="/crafting"
-                  className={cn(
-                    "transition-all duration-200 relative",
-                    isActive('/crafting') && "text-gw2-gold after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-primary after:glow-gold-sm"
-                  )}
-                >
-                  <Hammer className="h-4 w-4" />
-                  <span className="hidden lg:inline text-sm font-medium">Craft</span>
-                </Link>
-              </Button>
-
-              {/* Events Button */}
-              <Button variant="ghost" size="sm" asChild className="h-9 w-9 md:w-auto md:px-2 lg:px-3 lg:gap-2">
-                <Link
-                  to="/timers"
-                  className={cn(
-                    "transition-all duration-200 relative",
-                    isActive('/timers') && "text-gw2-gold after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-primary after:glow-gold-sm"
+                    isActive('/') && "text-gw2-gold bg-primary/5 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-gw2-gold after:shadow-[0_0_8px_rgba(255,204,0,0.6)]"
                   )}
                 >
                   <Clock className="h-4 w-4" />
@@ -115,27 +86,55 @@ export function Navigation() {
                 </Link>
               </Button>
 
-              {/* Dailies Button */}
-              <Button variant="ghost" size="sm" asChild className="h-9 w-9 md:w-auto md:px-2 lg:px-3 lg:gap-2">
+              {/* Characters Button */}
+              <Button variant="ghost" size="sm" asChild className="h-9 w-9 md:w-auto md:px-2 lg:px-3 lg:gap-2 hover:bg-primary/10 hover:text-gw2-gold">
+                <Link
+                  to="/characters"
+                  className={cn(
+                    "transition-all duration-200 relative",
+                    isActive('/characters') && "text-gw2-gold bg-primary/5 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-gw2-gold after:shadow-[0_0_8px_rgba(255,204,0,0.6)]"
+                  )}
+                >
+                  <Users className="h-4 w-4" />
+                  <span className="hidden lg:inline text-sm font-medium">Characters</span>
+                </Link>
+              </Button>
+
+              {/* Recipes Button */}
+              <Button variant="ghost" size="sm" asChild className="h-9 w-9 md:w-auto md:px-2 lg:px-3 lg:gap-2 hover:bg-primary/10 hover:text-gw2-gold">
+                <Link
+                  to="/crafting"
+                  className={cn(
+                    "transition-all duration-200 relative",
+                    isActive('/crafting') && "text-gw2-gold bg-primary/5 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-gw2-gold after:shadow-[0_0_8px_rgba(255,204,0,0.6)]"
+                  )}
+                >
+                  <Hammer className="h-4 w-4" />
+                  <span className="hidden lg:inline text-sm font-medium">Recipes</span>
+                </Link>
+              </Button>
+
+              {/* Objectives Button */}
+              <Button variant="ghost" size="sm" asChild className="h-9 w-9 md:w-auto md:px-2 lg:px-3 lg:gap-2 hover:bg-primary/10 hover:text-gw2-gold">
                 <Link
                   to="/dailies"
                   className={cn(
                     "transition-all duration-200 relative",
-                    isActive('/dailies') && "text-gw2-gold after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-primary after:glow-gold-sm"
+                    isActive('/dailies') && "text-gw2-gold bg-primary/5 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-gw2-gold after:shadow-[0_0_8px_rgba(255,204,0,0.6)]"
                   )}
                 >
                   <CalendarCheck className="h-4 w-4" />
-                  <span className="hidden lg:inline text-sm font-medium">Daily</span>
+                  <span className="hidden lg:inline text-sm font-medium">Objectives</span>
                 </Link>
               </Button>
 
               {/* Settings Button with Connection Status */}
-              <Button variant="ghost" size="sm" asChild className="h-9 w-9 md:w-auto md:px-2 lg:px-3 lg:gap-2 relative">
+              <Button variant="ghost" size="sm" asChild className="h-9 w-9 md:w-auto md:px-2 lg:px-3 lg:gap-2 relative hover:bg-primary/10 hover:text-gw2-gold">
                 <Link
                   to="/settings"
                   className={cn(
                     "transition-all duration-200 relative",
-                    isActive('/settings') && "text-gw2-gold after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-primary after:glow-gold-sm"
+                    isActive('/settings') && "text-gw2-gold bg-primary/5 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-gw2-gold after:shadow-[0_0_8px_rgba(255,204,0,0.6)]"
                   )}
                 >
                   <Database className="h-4 w-4" />
@@ -144,7 +143,7 @@ export function Navigation() {
                   <span
                     className={cn(
                       "absolute top-1 right-1 h-2 w-2 rounded-full ring-1 ring-card",
-                      hasApiKey ? "bg-green-500" : "bg-red-500"
+                      hasApiKey ? "bg-green-500 animate-pulse" : "bg-destructive"
                     )}
                     aria-label={hasApiKey ? "Connected" : "Not Connected"}
                   />
@@ -182,8 +181,6 @@ export function Navigation() {
                 </Select>
               )}
 
-              {/* Theme Toggle */}
-              <ThemeToggle />
             </div>
 
             {/* Mobile Menu Button */}
@@ -203,19 +200,32 @@ export function Navigation() {
 
           {/* Mobile Menu */}
           {isMobileMenuOpen && (
-            <div className="md:hidden py-4 space-y-2 border-t border-border animate-fade-in">
+            <div className="md:hidden py-4 space-y-2 border-t border-border animate-in slide-in-from-top-2 duration-200">
               <Link
-                to="/trading-post"
+                to="/"
                 onClick={() => setIsMobileMenuOpen(false)}
                 className={cn(
                   "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors duration-200",
-                  isActive('/trading-post')
+                  isActive('/')
                     ? 'bg-primary/10 text-gw2-gold'
-                    : 'text-foreground/80 hover:bg-muted'
+                    : 'text-foreground/80 hover:bg-white/10'
                 )}
               >
-                <TrendingUp className="h-4 w-4" />
-                <span>Trading Post</span>
+                <Clock className="h-4 w-4" />
+                <span>Events</span>
+              </Link>
+              <Link
+                to="/characters"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className={cn(
+                  "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors duration-200",
+                  isActive('/characters')
+                    ? 'bg-primary/10 text-gw2-gold'
+                    : 'text-foreground/80 hover:bg-white/10'
+                )}
+              >
+                <Users className="h-4 w-4" />
+                <span>Characters</span>
               </Link>
               <Link
                 to="/crafting"
@@ -224,24 +234,11 @@ export function Navigation() {
                   "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors duration-200",
                   isActive('/crafting')
                     ? 'bg-primary/10 text-gw2-gold'
-                    : 'text-foreground/80 hover:bg-muted'
+                    : 'text-foreground/80 hover:bg-white/10'
                 )}
               >
                 <Hammer className="h-4 w-4" />
-                <span>Crafting</span>
-              </Link>
-              <Link
-                to="/timers"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className={cn(
-                  "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors duration-200",
-                  isActive('/timers')
-                    ? 'bg-primary/10 text-gw2-gold'
-                    : 'text-foreground/80 hover:bg-muted'
-                )}
-              >
-                <Clock className="h-4 w-4" />
-                <span>Events</span>
+                <span>Recipes</span>
               </Link>
               <Link
                 to="/dailies"
@@ -250,11 +247,11 @@ export function Navigation() {
                   "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors duration-200",
                   isActive('/dailies')
                     ? 'bg-primary/10 text-gw2-gold'
-                    : 'text-foreground/80 hover:bg-muted'
+                    : 'text-foreground/80 hover:bg-white/10'
                 )}
               >
                 <CalendarCheck className="h-4 w-4" />
-                <span>Daily</span>
+                <span>Objectives</span>
               </Link>
               <Link
                 to="/settings"
@@ -263,7 +260,7 @@ export function Navigation() {
                   "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors duration-200",
                   isActive('/settings')
                     ? 'bg-primary/10 text-gw2-gold'
-                    : 'text-foreground/80 hover:bg-muted'
+                    : 'text-foreground/80 hover:bg-white/10'
                 )}
               >
                 <Database className="h-4 w-4" />
@@ -304,8 +301,6 @@ export function Navigation() {
                   </div>
                 )}
 
-                {/* Mobile Theme Toggle */}
-                <ThemeToggle />
 
                 {/* Mobile Connection Status */}
                 <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-muted">

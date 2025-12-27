@@ -115,16 +115,7 @@ export function ItemSearch({ onSelectItem, onAddToWatchlist }: ItemSearchProps) 
     }
   };
 
-  const rarityColors: Record<string, string> = {
-    Junk: '#AAA',
-    Basic: '#000',
-    Fine: '#62A4DA',
-    Masterwork: '#1a9306',
-    Rare: '#fcd00b',
-    Exotic: '#ffa405',
-    Ascended: '#fb3e8d',
-    Legendary: '#4C139D',
-  };
+  const getRarityClass = (rarity: string) => `rarity-${rarity.toLowerCase()}`;
 
   const displayResults = searchTerm.trim().length >= 2 ? searchResults : recentSearches;
   const showRecentLabel = searchTerm.trim().length === 0 && recentSearches.length > 0;
@@ -154,7 +145,7 @@ export function ItemSearch({ onSelectItem, onAddToWatchlist }: ItemSearchProps) 
       </div>
 
       {showDropdown && displayResults.length > 0 && (
-        <Card className="absolute z-50 w-full mt-2 max-h-96 overflow-y-auto">
+        <Card className="absolute z-50 w-full mt-2 max-h-96 overflow-y-auto shadow-xl animate-in fade-in-0 zoom-in-95 duration-150">
           <div className="py-2">
             {showRecentLabel && (
               <div className="px-4 py-2 text-xs font-medium text-muted-foreground">
@@ -164,7 +155,7 @@ export function ItemSearch({ onSelectItem, onAddToWatchlist }: ItemSearchProps) 
             {displayResults.map((item) => (
               <div
                 key={item.id}
-                className="flex items-center gap-3 px-4 py-2 hover:bg-muted/50 cursor-pointer transition-colors"
+                className="flex items-center gap-3 px-4 py-2 hover:bg-muted/50 cursor-pointer transition-colors duration-200"
                 onClick={() => handleSelectItem(item)}
               >
                 {item.icon && (
@@ -172,18 +163,12 @@ export function ItemSearch({ onSelectItem, onAddToWatchlist }: ItemSearchProps) 
                     loading="lazy"
                     src={item.icon}
                     alt={item.name}
-                    className="w-10 h-10 rounded flex-shrink-0"
-                    style={{
-                      borderWidth: '2px',
-                      borderStyle: 'solid',
-                      borderColor: rarityColors[item.rarity] || '#AAA',
-                    }}
+                    className={`w-10 h-10 rounded flex-shrink-0 border-2 ${getRarityClass(item.rarity)} rarity-border`}
                   />
                 )}
                 <div className="flex-1 min-w-0">
                   <div
-                    className="font-medium truncate"
-                    style={{ color: rarityColors[item.rarity] || '#FFF' }}
+                    className={`font-medium truncate ${getRarityClass(item.rarity)} rarity-text`}
                   >
                     {item.name}
                   </div>
@@ -196,7 +181,7 @@ export function ItemSearch({ onSelectItem, onAddToWatchlist }: ItemSearchProps) 
                     variant="ghost"
                     size="icon-sm"
                     onClick={(e) => handleAddToWatchlist(item, e)}
-                    className="flex-shrink-0"
+                    className="flex-shrink-0 hover:text-primary"
                   >
                     <Star className="h-4 w-4" />
                   </Button>

@@ -37,14 +37,14 @@ export function EventCard({ boss, nextSpawn }: EventCardProps) {
   let timeColor = 'text-foreground';
 
   if (isActive) {
-    cardClass = 'border-[#C59C61] bg-[#C59C61]/5';
-    timeColor = 'text-[#C59C61]';
+    cardClass = 'border-gw2-gold bg-gw2-gold/5 glow-gold-sm';
+    timeColor = 'text-gw2-gold';
   } else if (isImminentGreen) {
-    cardClass = 'border-green-500/50 bg-green-500/5';
-    timeColor = 'text-green-500';
+    cardClass = 'border-success/50 bg-success/5';
+    timeColor = 'text-success';
   } else if (isImminentYellow) {
-    cardClass = 'border-yellow-500/50 bg-yellow-500/5';
-    timeColor = 'text-yellow-500';
+    cardClass = 'border-warning/50 bg-warning/5';
+    timeColor = 'text-warning';
   }
 
   const formatTime = () => {
@@ -58,7 +58,7 @@ export function EventCard({ boss, nextSpawn }: EventCardProps) {
   };
 
   return (
-    <Card className={`transition-colors ${cardClass}`}>
+    <Card className={`card-interactive transition-colors duration-200 ${cardClass}`}>
       <CardContent className="p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -69,11 +69,11 @@ export function EventCard({ boss, nextSpawn }: EventCardProps) {
             </div>
           </div>
           <div className="text-right">
-            <div className={`text-2xl font-bold font-mono ${timeColor}`}>
+            <div className={`text-2xl font-bold font-mono tabular-nums ${timeColor}`}>
               {formatTime()}
             </div>
             {!isActive && (
-              <div className="text-xs text-muted-foreground">
+              <div className="text-xs text-muted-foreground font-mono tabular-nums">
                 {nextSpawn.toLocaleTimeString('en-US', {
                   hour: '2-digit',
                   minute: '2-digit',

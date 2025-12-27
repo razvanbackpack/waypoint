@@ -2,14 +2,7 @@ import { useState, useMemo, useCallback, useEffect } from 'react';
 import { useQueries } from '@tanstack/react-query';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { Search, Loader2, X, HelpCircle, ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
+import { Search, Loader2, X, HelpCircle, ChevronLeft, ChevronRight, ChevronDown, Check } from 'lucide-react';
 import { useMaterials, useBank, useCharacters, queryKeys } from '@/api/hooks/useGW2Api';
 import { useApiKey } from '@/api/hooks/useApiKey';
 import { getApiClient } from '@/api/client';
@@ -25,16 +18,16 @@ import { useGameData } from '@/contexts/GameDataContext';
 import type { Item, Rarity, CraftingDiscipline, Character } from '@/api/types';
 import type { Recipe, CharacterCrafting } from '@/api/types/crafting';
 
-const DISCIPLINE_COLORS: Record<CraftingDiscipline, string> = {
-  Armorsmith: 'bg-orange-500/20 text-orange-400',
-  Artificer: 'bg-purple-500/20 text-purple-400',
-  Chef: 'bg-green-500/20 text-green-400',
-  Huntsman: 'bg-amber-500/20 text-amber-400',
-  Jeweler: 'bg-pink-500/20 text-pink-400',
-  Leatherworker: 'bg-yellow-500/20 text-yellow-400',
-  Scribe: 'bg-blue-500/20 text-blue-400',
-  Tailor: 'bg-cyan-500/20 text-cyan-400',
-  Weaponsmith: 'bg-red-500/20 text-red-400',
+const DISCIPLINE_CLASSES: Record<CraftingDiscipline, string> = {
+  Armorsmith: 'discipline-armorsmith',
+  Artificer: 'discipline-artificer',
+  Chef: 'discipline-chef',
+  Huntsman: 'discipline-huntsman',
+  Jeweler: 'discipline-jeweler',
+  Leatherworker: 'discipline-leatherworker',
+  Scribe: 'discipline-scribe',
+  Tailor: 'discipline-tailor',
+  Weaponsmith: 'discipline-weaponsmith',
 };
 
 const DISCIPLINES: CraftingDiscipline[] = [
@@ -89,6 +82,139 @@ function formatTypeName(type: string): string {
   return type
     .replace(/([a-z])([A-Z])/g, '$1 $2')
     .replace(/([A-Z])([A-Z][a-z])/g, '$1 $2');
+}
+
+/**
+ * Renders item stats section for HoverCard tooltips
+ * Displays defense, damage, and attribute bonuses from item.details
+ */
+function renderItemStats(item: Item): React.ReactNode {
+  const details = item.details;
+  if (!details) return null;
+
+  const stats: React.ReactNode[] = [];
+
+  // Defense (for armor)
+  if (details.defense !== undefined && details.defense > 0) {
+    stats.push(
+      <div key="defense" className="text-xs">
+        <span className="text-muted-foreground">Defense: </span>
+        <span className="text-green-700 dark:text-green-400">{details.defense}</span>
+      </div>
+    );
+  }
+
+  // Weapon damage range
+  if (details.min_power !== undefined && details.max_power !== undefined) {
+    stats.push(
+      <div key="damage" className="text-xs">
+        <span className="text-muted-foreground">Weapon Strength: </span>
+        <span className="text-orange-700 dark:text-orange-400">{details.min_power} - {details.max_power}</span>
+      </div>
+    );
+  }
+
+  // Damage type (for weapons)
+  if (details.damage_type) {
+    stats.push(
+      <div key="damage-type" className="text-xs">
+        <span className="text-muted-foreground">Damage Type: </span>
+        <span>{details.damage_type}</span>
+      </div>
+    );
+  }
+
+  // Attribute bonuses from infix_upgrade
+  if (details.infix_upgrade?.attributes && details.infix_upgrade.attributes.length > 0) {
+    const attributes = details.infix_upgrade.attributes.map((attr, idx) => (
+      <div key={idx} className="text-xs text-green-700 dark:text-green-400">
+        +{attr.modifier} {attr.attribute}
+      </div>
+    ));
+    stats.push(
+      <div key="attributes" className="space-y-0.5">
+        {attributes}
+      </div>
+    );
+  }
+
+  // Weight class (for armor)
+  if (details.weight_class && details.weight_class !== 'Clothing') {
+    stats.push(
+      <div key="weight" className="text-xs">
+        <span className="text-muted-foreground">Weight: </span>
+        <span>{details.weight_class}</span>
+      </div>
+    );
+  }
+
+  if (stats.length === 0) return null;
+
+  return (
+    <div className="space-y-1 mt-2 pt-2 border-t border-border/50">
+      {stats}
+    </div>
+  );
+}
+
+/**
+ * Renders complete item tooltip content for HoverCards
+ */
+function ItemTooltipContent({
+  item,
+  showInventory = false,
+  available,
+  needed
+}: {
+  item: Item | undefined;
+  itemId?: number;
+  showInventory?: boolean;
+  available?: number | null;
+  needed?: number;
+}): React.ReactNode {
+  if (!item) return null;
+
+  const hasEnough = available !== null && available !== undefined && needed !== undefined && available >= needed;
+
+  return (
+    <>
+      <div className="flex gap-3">
+        {item.icon && (
+          <img src={item.icon} alt={item.name} className="w-10 h-10 rounded" />
+        )}
+        <div className="flex-1">
+          <div className="font-medium" style={{ color: getRarityColor(item.rarity as Rarity) }}>
+            {item.name}
+          </div>
+          {item.type && (
+            <div className="text-xs text-muted-foreground">
+              {formatTypeName(item.type)}
+              {item.details?.type && ` - ${formatTypeName(item.details.type)}`}
+            </div>
+          )}
+          <div className="flex gap-1 mt-1 flex-wrap">
+            <span className="text-[10px] px-1 py-0.5 rounded bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-300">{item.rarity}</span>
+            {item.level > 0 && (
+              <span className="text-[10px] px-1 py-0.5 rounded bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-300">
+                Req. Level {item.level}
+              </span>
+            )}
+          </div>
+        </div>
+      </div>
+      {renderItemStats(item)}
+      {showInventory && available !== null && available !== undefined && needed !== undefined && (
+        <div className="mt-2 pt-2 border-t text-sm">
+          <span className={hasEnough ? 'text-success' : 'text-destructive'}>
+            Have: {available} / Need: {needed}
+          </span>
+        </div>
+      )}
+      {item.description && (
+        <p className="mt-2 text-xs text-muted-foreground line-clamp-3">{item.description}</p>
+      )}
+    </>
+  );
 }
 
 interface RecipeWithItem extends Recipe {
@@ -397,10 +523,10 @@ export function RecipeBrowser() {
     return (
       <tr
         key={recipe.id}
-        className="border-b border-border hover:bg-muted/50 even:bg-muted/30 transition-colors"
+        className="border-b border-gw2-gold/10 hover:bg-muted/50 even:bg-muted/20 odd:bg-background transition-colors duration-200"
       >
         {/* Icon */}
-        <td className="py-2 px-2">
+        <td className="py-1 px-2">
           {outputItem?.icon && (
             <img
               src={outputItem.icon}
@@ -412,38 +538,47 @@ export function RecipeBrowser() {
         </td>
 
         {/* Item Name with Type Tags */}
-        <td className="py-2 px-2">
-          <div className="font-medium text-sm" style={{ color: rarityColor }}>
-            {outputItem?.name || `Item ${recipe.output_item_id}`}
-            {recipe.output_item_count > 1 && (
-              <span className="ml-1 text-xs text-muted-foreground">
-                x{recipe.output_item_count}
-              </span>
-            )}
-          </div>
-          {outputItem && (
-            <div className="flex gap-1 mt-0.5">
-              {outputItem.type && (
-                <span className="text-[10px] px-1 py-0.5 rounded bg-muted">
-                  {formatTypeName(outputItem.type)}
-                </span>
-              )}
-              {outputItem.details?.type && (
-                <span className="text-[10px] px-1 py-0.5 rounded bg-muted">
-                  {formatTypeName(outputItem.details.type)}
-                </span>
-              )}
-            </div>
-          )}
+        <td className="py-1 px-2">
+          <HoverCard openDelay={200} closeDelay={100}>
+            <HoverCardTrigger asChild>
+              <div className="cursor-help">
+                <div className="font-medium text-xs" style={{ color: rarityColor }}>
+                  {outputItem?.name || `Item ${recipe.output_item_id}`}
+                  {recipe.output_item_count > 1 && (
+                    <span className="ml-1 text-xs text-muted-foreground">
+                      x{recipe.output_item_count}
+                    </span>
+                  )}
+                </div>
+                {outputItem && (
+                  <div className="flex gap-1 mt-0.5">
+                    {outputItem.type && (
+                      <span className="text-[10px] px-1 py-0.5 rounded bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-300">
+                        {formatTypeName(outputItem.type)}
+                      </span>
+                    )}
+                    {outputItem.details?.type && (
+                      <span className="text-[10px] px-1 py-0.5 rounded bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-300">
+                        {formatTypeName(outputItem.details.type)}
+                      </span>
+                    )}
+                  </div>
+                )}
+              </div>
+            </HoverCardTrigger>
+            <HoverCardContent className="w-80 p-3">
+              <ItemTooltipContent item={outputItem} />
+            </HoverCardContent>
+          </HoverCard>
         </td>
 
         {/* Discipline */}
-        <td className="py-2 px-2">
+        <td className="py-1 px-2">
           <div className="flex flex-wrap gap-1">
             {recipe.disciplines.map(disc => (
               <span
                 key={disc}
-                className={`text-[10px] px-1.5 py-0.5 rounded ${DISCIPLINE_COLORS[disc]}`}
+                className={`text-[10px] px-1.5 py-0.5 rounded ${DISCIPLINE_CLASSES[disc]} bg-discipline/20 text-discipline`}
               >
                 {disc}
               </span>
@@ -452,14 +587,14 @@ export function RecipeBrowser() {
         </td>
 
         {/* Level */}
-        <td className="py-2 px-2">
-          <span className="text-sm text-muted-foreground">
+        <td className="py-1 px-2">
+          <span className="text-xs text-muted-foreground">
             {recipe.min_rating}
           </span>
         </td>
 
         {/* Ingredients */}
-        <td className="py-2 px-2">
+        <td className="py-1 px-2">
           <div className="flex flex-wrap gap-1 items-center">
             {recipe.ingredients.slice(0, 6).map((ing, idx) => {
               const ingItem = getItem(ing.item_id);
@@ -485,7 +620,7 @@ export function RecipeBrowser() {
                       )}
                       {hasApiKey && available !== null ? (
                         <span
-                          className={`text-xs font-medium ${hasEnough ? 'text-green-500' : 'text-red-500'}`}
+                          className={`text-xs font-medium ${hasEnough ? 'text-success' : 'text-destructive'}`}
                         >
                           {available}/{needed}
                         </span>
@@ -496,34 +631,17 @@ export function RecipeBrowser() {
                       )}
                     </div>
                   </HoverCardTrigger>
-                  <HoverCardContent className="w-72 p-3">
-                    <div className="flex gap-3">
-                      {ingItem?.icon && (
-                        <img src={ingItem.icon} alt={ingItem.name} className="w-10 h-10 rounded" />
-                      )}
-                      <div className="flex-1">
-                        <div className="font-medium" style={{ color: ingItem ? getRarityColor(ingItem.rarity) : undefined }}>
-                          {ingItem?.name || `Unknown Item #${ing.item_id}`}
-                        </div>
-                        {ingItem?.type && (
-                          <div className="text-xs text-muted-foreground">{formatTypeName(ingItem.type)}</div>
-                        )}
-                        {ingItem && (
-                          <div className="flex gap-1 mt-1">
-                            <span className="text-[10px] px-1 py-0.5 rounded bg-muted">{ingItem.rarity}</span>
-                          </div>
-                        )}
+                  <HoverCardContent className="w-80 p-3">
+                    <ItemTooltipContent
+                      item={ingItem}
+                      showInventory={hasApiKey}
+                      available={available}
+                      needed={needed}
+                    />
+                    {!ingItem && (
+                      <div className="text-sm text-muted-foreground">
+                        Unknown Item #{ing.item_id}
                       </div>
-                    </div>
-                    {hasApiKey && available !== null && (
-                      <div className="mt-2 pt-2 border-t text-sm">
-                        <span className={hasEnough ? 'text-green-500' : 'text-red-500'}>
-                          Have: {available} / Need: {needed}
-                        </span>
-                      </div>
-                    )}
-                    {ingItem?.description && (
-                      <p className="mt-2 text-xs text-muted-foreground line-clamp-2">{ingItem.description}</p>
                     )}
                   </HoverCardContent>
                 </HoverCard>
@@ -539,7 +657,7 @@ export function RecipeBrowser() {
 
         {/* Crafter */}
         {hasApiKey && (
-          <td className="py-2 px-2">
+          <td className="py-1 px-2">
             {crafterInfo ? (
               <span className="flex items-center gap-1">
                 <span
@@ -560,7 +678,7 @@ export function RecipeBrowser() {
                 )}
               </span>
             ) : (
-              <X className="h-4 w-4 text-red-500" />
+              <X className="h-4 w-4 text-destructive" />
             )}
           </td>
         )}
@@ -605,33 +723,36 @@ export function RecipeBrowser() {
           <label className="text-xs text-muted-foreground mb-1 block">Disciplines</label>
           <Popover>
             <PopoverTrigger asChild>
-              <Button variant="outline" size="sm" className="h-9 w-full justify-between">
-                {filters.disciplines.length === 0
-                  ? 'All Disciplines'
-                  : `${filters.disciplines.length} selected`}
+              <button className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
+                <span className="line-clamp-1">
+                  {filters.disciplines.length === 0
+                    ? 'All Disciplines'
+                    : `${filters.disciplines.length} selected`}
+                </span>
                 <ChevronDown className="h-4 w-4 opacity-50" />
-              </Button>
+              </button>
             </PopoverTrigger>
-            <PopoverContent className="w-48 p-2">
-              <div className="space-y-1">
+            <PopoverContent className="w-48 rounded-md border bg-popover text-popover-foreground shadow-md p-1">
+              <div className="space-y-0.5">
                 {DISCIPLINES.map(disc => (
-                  <label key={disc} className="flex items-center gap-2 cursor-pointer hover:bg-muted p-1 rounded">
-                    <input
-                      type="checkbox"
-                      checked={filters.disciplines.includes(disc)}
-                      onChange={() => {
-                        setFilters(prev => ({
-                          ...prev,
-                          disciplines: prev.disciplines.includes(disc)
-                            ? prev.disciplines.filter(d => d !== disc)
-                            : [...prev.disciplines, disc]
-                        }));
-                        setPage(0);
-                      }}
-                      className="rounded"
-                    />
-                    <span className={`text-sm ${DISCIPLINE_COLORS[disc].replace('bg-', 'text-').replace('/20', '')}`}>{disc}</span>
-                  </label>
+                  <div
+                    key={disc}
+                    className="relative flex w-full cursor-pointer select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none hover:bg-accent hover:text-accent-foreground"
+                    onClick={() => {
+                      setFilters(prev => ({
+                        ...prev,
+                        disciplines: prev.disciplines.includes(disc)
+                          ? prev.disciplines.filter(d => d !== disc)
+                          : [...prev.disciplines, disc]
+                      }));
+                      setPage(0);
+                    }}
+                  >
+                    <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
+                      {filters.disciplines.includes(disc) && <Check className="h-4 w-4" />}
+                    </span>
+                    <span className={`${DISCIPLINE_CLASSES[disc]} text-discipline`}>{disc}</span>
+                  </div>
                 ))}
                 {filters.disciplines.length > 0 && (
                   <Button
@@ -657,36 +778,39 @@ export function RecipeBrowser() {
             <label className="text-xs text-muted-foreground mb-1 block">Characters</label>
             <Popover>
               <PopoverTrigger asChild>
-                <Button variant="outline" size="sm" className="h-9 w-full justify-between">
-                  {filters.characters.length === 0
-                    ? 'All Characters'
-                    : `${filters.characters.length} selected`}
+                <button className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
+                  <span className="line-clamp-1">
+                    {filters.characters.length === 0
+                      ? 'All Characters'
+                      : `${filters.characters.length} selected`}
+                  </span>
                   <ChevronDown className="h-4 w-4 opacity-50" />
-                </Button>
+                </button>
               </PopoverTrigger>
-              <PopoverContent className="w-56 p-2">
-                <div className="space-y-1">
+              <PopoverContent className="w-56 rounded-md border bg-popover text-popover-foreground shadow-md p-1">
+                <div className="space-y-0.5">
                   {characterNames.map(name => {
                     const profession = characterProfessionMap.get(name);
                     const professionColor = profession ? getProfessionColor(profession) : '#FFFFFF';
 
                     return (
-                      <label key={name} className="flex items-center gap-2 cursor-pointer hover:bg-muted p-1 rounded">
-                        <input
-                          type="checkbox"
-                          checked={filters.characters.includes(name)}
-                          onChange={() => {
-                            setFilters(prev => ({
-                              ...prev,
-                              characters: prev.characters.includes(name)
-                                ? prev.characters.filter(c => c !== name)
-                                : [...prev.characters, name]
-                            }));
-                            setPage(0);
-                          }}
-                          className="rounded"
-                        />
-                        <span className="text-sm flex-1">{name}</span>
+                      <div
+                        key={name}
+                        className="relative flex w-full cursor-pointer select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none hover:bg-accent hover:text-accent-foreground"
+                        onClick={() => {
+                          setFilters(prev => ({
+                            ...prev,
+                            characters: prev.characters.includes(name)
+                              ? prev.characters.filter(c => c !== name)
+                              : [...prev.characters, name]
+                          }));
+                          setPage(0);
+                        }}
+                      >
+                        <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
+                          {filters.characters.includes(name) && <Check className="h-4 w-4" />}
+                        </span>
+                        <span className="flex-1">{name}</span>
                         {profession && (
                           <span
                             className="text-xs px-1 py-0.5 rounded"
@@ -698,7 +822,7 @@ export function RecipeBrowser() {
                             {profession}
                           </span>
                         )}
-                      </label>
+                      </div>
                     );
                   })}
                   {filters.characters.length > 0 && (
@@ -723,33 +847,81 @@ export function RecipeBrowser() {
         {/* Rarity Filter */}
         <div>
           <label className="text-xs text-muted-foreground mb-1 block">Rarity</label>
-          <Select value={filters.rarity} onValueChange={(value) => handleFilterChange('rarity', value)}>
-            <SelectTrigger>
-              <SelectValue placeholder="All Rarities" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Rarities</SelectItem>
-              {RARITIES.map(rarity => (
-                <SelectItem key={rarity} value={rarity}>{rarity}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <Popover>
+            <PopoverTrigger asChild>
+              <button className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
+                <span className="line-clamp-1" style={filters.rarity !== 'all' ? { color: getRarityColor(filters.rarity as Rarity) } : undefined}>
+                  {filters.rarity === 'all' ? 'All Rarities' : filters.rarity}
+                </span>
+                <ChevronDown className="h-4 w-4 opacity-50" />
+              </button>
+            </PopoverTrigger>
+            <PopoverContent className="w-48 rounded-md border bg-popover text-popover-foreground shadow-md p-1">
+              <div className="space-y-0.5">
+                <div
+                  className="relative flex w-full cursor-pointer select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none hover:bg-accent hover:text-accent-foreground"
+                  onClick={() => { handleFilterChange('rarity', 'all'); }}
+                >
+                  <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
+                    {filters.rarity === 'all' && <Check className="h-4 w-4" />}
+                  </span>
+                  <span>All Rarities</span>
+                </div>
+                {RARITIES.map(rarity => (
+                  <div
+                    key={rarity}
+                    className="relative flex w-full cursor-pointer select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none hover:bg-accent hover:text-accent-foreground"
+                    onClick={() => { handleFilterChange('rarity', rarity); }}
+                  >
+                    <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
+                      {filters.rarity === rarity && <Check className="h-4 w-4" />}
+                    </span>
+                    <span style={{ color: getRarityColor(rarity) }}>{rarity}</span>
+                  </div>
+                ))}
+              </div>
+            </PopoverContent>
+          </Popover>
         </div>
 
         {/* Type Filter */}
         <div>
           <label className="text-xs text-muted-foreground mb-1 block">Type</label>
-          <Select value={filters.type} onValueChange={(value) => handleFilterChange('type', value)}>
-            <SelectTrigger>
-              <SelectValue placeholder="All Types" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Types</SelectItem>
-              {ITEM_TYPES.map(type => (
-                <SelectItem key={type} value={type}>{type}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <Popover>
+            <PopoverTrigger asChild>
+              <button className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
+                <span className="line-clamp-1">
+                  {filters.type === 'all' ? 'All Types' : filters.type}
+                </span>
+                <ChevronDown className="h-4 w-4 opacity-50" />
+              </button>
+            </PopoverTrigger>
+            <PopoverContent className="w-48 rounded-md border bg-popover text-popover-foreground shadow-md p-1">
+              <div className="space-y-0.5">
+                <div
+                  className="relative flex w-full cursor-pointer select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none hover:bg-accent hover:text-accent-foreground"
+                  onClick={() => { handleFilterChange('type', 'all'); }}
+                >
+                  <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
+                    {filters.type === 'all' && <Check className="h-4 w-4" />}
+                  </span>
+                  <span>All Types</span>
+                </div>
+                {ITEM_TYPES.map(type => (
+                  <div
+                    key={type}
+                    className="relative flex w-full cursor-pointer select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none hover:bg-accent hover:text-accent-foreground"
+                    onClick={() => { handleFilterChange('type', type); }}
+                  >
+                    <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
+                      {filters.type === type && <Check className="h-4 w-4" />}
+                    </span>
+                    <span>{type}</span>
+                  </div>
+                ))}
+              </div>
+            </PopoverContent>
+          </Popover>
         </div>
 
         {/* Level Range */}
@@ -837,17 +1009,17 @@ export function RecipeBrowser() {
             </div>
           )}
 
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse">
+          <div className="border border-gw2-gold/20 rounded-lg overflow-hidden shadow-lg">
+            <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-border">
-                  <th className="text-left py-2 px-2 text-sm font-semibold w-10"></th>
-                  <th className="text-left py-2 px-2 text-sm font-semibold">Item Name</th>
-                  <th className="text-left py-2 px-2 text-sm font-semibold">Discipline</th>
-                  <th className="text-left py-2 px-2 text-sm font-semibold">Level</th>
-                  <th className="text-left py-2 px-2 text-sm font-semibold">Ingredients</th>
+                <tr className="sticky top-0 z-10 border-b border-gw2-gold/30 bg-card/95 backdrop-blur-sm text-left">
+                  <th className="py-1 px-2 font-medium text-xs text-gw2-gold/70 w-10"></th>
+                  <th className="py-1 px-2 font-medium text-xs text-gw2-gold/70">Item Name</th>
+                  <th className="py-1 px-2 font-medium text-xs text-gw2-gold/70">Discipline</th>
+                  <th className="py-1 px-2 font-medium text-xs text-gw2-gold/70">Level</th>
+                  <th className="py-1 px-2 font-medium text-xs text-gw2-gold/70">Ingredients</th>
                   {hasApiKey && (
-                    <th className="text-left py-2 px-2 text-sm font-semibold">Crafter</th>
+                    <th className="py-1 px-2 font-medium text-xs text-gw2-gold/70">Can Craft</th>
                   )}
                 </tr>
               </thead>

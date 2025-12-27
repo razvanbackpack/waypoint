@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
+import { Clock } from 'lucide-react';
 
 export function WeeklyResetTimer() {
   const [timeUntilReset, setTimeUntilReset] = useState('');
+  const [isUrgent, setIsUrgent] = useState(false);
 
   useEffect(() => {
     const calculateTimeUntilReset = () => {
@@ -21,6 +23,9 @@ export function WeeklyResetTimer() {
       const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
       const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
+      // Check if less than 1 hour remaining
+      setIsUrgent(days === 0 && hours < 1);
+
       if (days > 0) {
         return `${days}d ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
       }
@@ -39,8 +44,9 @@ export function WeeklyResetTimer() {
 
   return (
     <div className="flex items-center gap-2">
+      <Clock className={`h-4 w-4 ${isUrgent ? 'text-warning' : 'text-muted-foreground'}`} />
       <span className="text-sm text-muted-foreground">Weekly reset in:</span>
-      <span className="font-mono text-lg font-bold" style={{ color: '#C9A227' }}>
+      <span className={`font-mono text-lg font-bold ${isUrgent ? 'text-warning' : 'text-gw2-gold'}`}>
         {timeUntilReset}
       </span>
     </div>

@@ -56,7 +56,7 @@ export function ProfitCalculator() {
                 <CoinDisplay
                   copper={Math.abs(profit.profitPerItem)}
                   className={
-                    profit.isProfitable ? 'text-green-500' : 'text-red-500'
+                    profit.isProfitable ? 'text-success' : 'text-destructive'
                   }
                 />
               </div>
@@ -64,8 +64,8 @@ export function ProfitCalculator() {
             <div className="flex justify-between items-center">
               <span className="text-sm text-muted-foreground">ROI</span>
               <span
-                className={`font-semibold ${
-                  profit.isProfitable ? 'text-green-500' : 'text-red-500'
+                className={`font-semibold font-mono ${
+                  profit.isProfitable ? 'text-success' : 'text-destructive'
                 }`}
               >
                 {profit.profitMarginPercent.toFixed(2)}%

@@ -85,7 +85,7 @@ export function DailyAchievements() {
             <label
               key={achievement.id}
               className={`flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-colors hover:bg-muted/50 ${
-                isCompleted ? 'bg-green-500/10 border-green-500/30' : 'bg-card'
+                isCompleted ? 'bg-success/10 border-success/30' : 'bg-card'
               }`}
             >
               <button
@@ -94,7 +94,7 @@ export function DailyAchievements() {
                 className="mt-1 flex-shrink-0"
               >
                 {isCompleted ? (
-                  <CheckCircle2 className="h-5 w-5 text-green-500" />
+                  <CheckCircle2 className="h-5 w-5 text-success" />
                 ) : (
                   <Circle className="h-5 w-5 text-muted-foreground" />
                 )}
@@ -104,7 +104,7 @@ export function DailyAchievements() {
                   <span className={`font-medium ${isCompleted ? 'line-through text-muted-foreground' : ''}`}>
                     {achievement.name}
                   </span>
-                  <span className="text-sm font-bold flex-shrink-0" style={{ color: '#C9A227' }}>
+                  <span className="text-sm font-bold flex-shrink-0 text-gw2-gold">
                     {points} AP
                   </span>
                 </div>
@@ -198,7 +198,7 @@ export function DailyAchievements() {
 
         {dailies.special.length > 0 && (
           <div className="mt-6 space-y-2">
-            <h4 className="font-semibold">Special Events</h4>
+            <h4 className="font-semibold heading-accent">Special Events</h4>
             {renderDailyList(dailies.special.map(d => d.id), 'Special')}
           </div>
         )}

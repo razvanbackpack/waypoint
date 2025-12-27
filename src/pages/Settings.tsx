@@ -105,16 +105,14 @@ export function Settings() {
   };
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-3 animate-fade-in">
       {/* Page Header */}
       <div className="flex items-center gap-2">
-        <div className="p-1.5 rounded-lg bg-gw2-gold/10 glow-gold-sm">
-          <SettingsIcon className="h-5 w-5 text-gw2-gold" />
-        </div>
-        <h1 className="text-2xl font-bold heading-accent">Settings</h1>
+        <SettingsIcon className="h-5 w-5 text-gw2-gold" />
+        <h1 className="text-xl font-bold text-gw2-gold">Settings</h1>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-6">
+      <div className="grid md:grid-cols-2 gap-3">
         {/* API Key Configuration */}
         <Card className="md:col-span-2">
         <CardHeader className="pb-3">
@@ -123,9 +121,9 @@ export function Settings() {
             API Key Configuration
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-3">
           {/* Current Status */}
-          <div className="flex items-center gap-2 p-3 rounded-lg bg-muted">
+          <div className="flex items-center gap-2 p-2 rounded-lg bg-muted">
             {hasApiKey ? (
               <>
                 <Check className="h-4 w-4 text-green-500" />
@@ -143,7 +141,7 @@ export function Settings() {
           </div>
 
           {/* API Key Input */}
-          <div className="space-y-2">
+          <div className="space-y-1">
             <label htmlFor="api-key" className="text-sm font-medium">
               API Key
             </label>
@@ -159,17 +157,17 @@ export function Settings() {
               className="font-mono text-xs"
             />
             {displayError && (
-              <p className="text-sm text-red-500">{displayError}</p>
+              <p className="text-sm text-destructive">{displayError}</p>
             )}
           </div>
 
           {/* Action Buttons */}
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap gap-2">
             <Button
               onClick={handleSaveApiKey}
               disabled={!inputValue.trim()}
               size="sm"
-              className="bg-[#C59C61] hover:bg-[#B08C51] text-black"
+              className="bg-gw2-gold hover:bg-gw2-gold-dark text-primary-foreground"
             >
               Save Key
             </Button>
@@ -185,21 +183,63 @@ export function Settings() {
           </div>
 
           {/* Get API Key Link */}
-          <div className="space-y-2">
+          <div className="space-y-1">
             <p className="text-sm text-muted-foreground">
               Don't have an API key?{' '}
               <a
                 href="https://account.arena.net/applications"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[#C59C61] hover:underline inline-flex items-center gap-1"
+                className="text-gw2-gold hover:underline inline-flex items-center gap-1"
               >
                 Generate one here
                 <ExternalLink className="h-3 w-3" />
               </a>
             </p>
-            <p className="text-xs text-muted-foreground">
-              Grant all permissions for full functionality.
+          </div>
+
+          {/* Required Permissions */}
+          <div className="space-y-2 pt-2 border-t border-border">
+            <p className="text-sm font-medium text-foreground">Required API Key Permissions</p>
+            <p className="text-xs text-muted-foreground">Enable these permissions for full functionality:</p>
+            <div className="rounded border border-border overflow-hidden">
+              <table className="w-full text-xs">
+                <thead>
+                  <tr className="bg-muted/50">
+                    <th className="text-left px-2 py-1 font-medium text-foreground">Permission</th>
+                    <th className="text-left px-2 py-1 font-medium text-foreground">Used For</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border">
+                  <tr>
+                    <td className="px-2 py-1 font-mono text-gw2-gold">account</td>
+                    <td className="px-2 py-1 text-muted-foreground">Account info, world, WvW rank</td>
+                  </tr>
+                  <tr>
+                    <td className="px-2 py-1 font-mono text-gw2-gold">characters</td>
+                    <td className="px-2 py-1 text-muted-foreground">Character list, equipment, specs</td>
+                  </tr>
+                  <tr>
+                    <td className="px-2 py-1 font-mono text-gw2-gold">inventories</td>
+                    <td className="px-2 py-1 text-muted-foreground">Bank, materials, character bags</td>
+                  </tr>
+                  <tr>
+                    <td className="px-2 py-1 font-mono text-gw2-gold">progression</td>
+                    <td className="px-2 py-1 text-muted-foreground">Achievements, masteries, dailies</td>
+                  </tr>
+                  <tr>
+                    <td className="px-2 py-1 font-mono text-gw2-gold">wallet</td>
+                    <td className="px-2 py-1 text-muted-foreground">Currencies (gold, karma, gems)</td>
+                  </tr>
+                  <tr>
+                    <td className="px-2 py-1 font-mono text-gw2-gold">unlocks</td>
+                    <td className="px-2 py-1 text-muted-foreground">Skins, dyes, recipes, minis</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <p className="text-xs text-muted-foreground italic">
+              Tip: Select all permissions when creating your key for the best experience.
             </p>
           </div>
         </CardContent>
@@ -210,11 +250,11 @@ export function Settings() {
         <CardHeader className="pb-3">
           <CardTitle className="text-lg">Backup & Restore</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="text-sm text-muted-foreground space-y-2">
-            <p>Export your settings to transfer to another browser or keep as backup.</p>
-            <p className="text-foreground font-medium">What's included in the export:</p>
-            <ul className="list-disc list-inside space-y-1 ml-2">
+        <CardContent className="space-y-2">
+          <div className="text-sm text-muted-foreground space-y-1">
+            <p>Export settings to transfer to another browser or backup.</p>
+            <p className="text-foreground font-medium">Includes:</p>
+            <ul className="list-disc list-inside space-y-0.5 ml-2 text-xs">
               <li>API key</li>
               <li>Trading post watchlist</li>
               <li>Theme preference</li>
@@ -222,7 +262,7 @@ export function Settings() {
             </ul>
           </div>
 
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap gap-2">
             <Button onClick={exportAllData} variant="outline" size="sm" className="gap-2">
               <Download className="h-4 w-4" />
               Export ({localStorageCount} items)
@@ -259,27 +299,27 @@ export function Settings() {
         <CardHeader className="pb-3">
           <CardTitle className="text-lg">About Data</CardTitle>
         </CardHeader>
-        <CardContent className="text-sm text-muted-foreground space-y-4">
-          <div className="space-y-2">
+        <CardContent className="text-sm text-muted-foreground space-y-2">
+          <div className="space-y-1">
             <p className="text-foreground font-medium">Stored in your browser:</p>
-            <ul className="list-disc list-inside space-y-1 ml-2">
+            <ul className="list-disc list-inside space-y-0.5 ml-2 text-xs">
               <li>API key</li>
-              <li>App preferences (theme, view mode, etc.)</li>
+              <li>App preferences (theme, view mode)</li>
               <li>Trading post watchlist</li>
               <li>Event favorites</li>
             </ul>
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-1">
             <p className="text-foreground font-medium">What we DON'T store:</p>
-            <ul className="list-disc list-inside space-y-1 ml-2">
-              <li>Characters, inventory, or bank data</li>
+            <ul className="list-disc list-inside space-y-0.5 ml-2 text-xs">
+              <li>Characters, inventory, or bank</li>
               <li>Wallet, currencies, or materials</li>
               <li>Achievements or progression</li>
               <li>Any other account data</li>
             </ul>
-            <p className="text-xs italic mt-2">
-              All account data is fetched fresh from the Guild Wars 2 API each time you use the app. Nothing is cached or saved.
+            <p className="text-xs italic mt-1">
+              Account data is fetched fresh from the GW2 API each session.
             </p>
           </div>
         </CardContent>

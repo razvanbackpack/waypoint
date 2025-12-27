@@ -46,13 +46,13 @@ export function DailyCategory({
         onClick={() => setIsExpanded(!isExpanded)}
       >
         <div className="flex items-center justify-between">
-          <CardTitle className={`flex items-center gap-2 ${compact ? 'text-base' : ''}`}>
+          <CardTitle className={`flex items-center gap-2 heading-accent ${compact ? 'text-base' : ''}`}>
             {isExpanded ? (
-              <ChevronDown className={`text-muted-foreground ${compact ? 'h-4 w-4' : 'h-5 w-5'}`} />
+              <ChevronDown className={`text-muted-foreground transition-transform duration-200 ${compact ? 'h-4 w-4' : 'h-5 w-5'}`} />
             ) : (
-              <ChevronRight className={`text-muted-foreground ${compact ? 'h-4 w-4' : 'h-5 w-5'}`} />
+              <ChevronRight className={`text-muted-foreground transition-transform duration-200 ${compact ? 'h-4 w-4' : 'h-5 w-5'}`} />
             )}
-            <span style={{ color: '#C9A227' }}>{title}</span>
+            <span className="text-gw2-gold">{title}</span>
           </CardTitle>
           <span className="text-sm text-muted-foreground">
             {completedCount} / {categoryAchievements.length}

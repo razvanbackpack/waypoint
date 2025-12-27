@@ -15,7 +15,7 @@ export function AchievementCard({ achievement, accountProgress }: AchievementCar
   const totalPoints = achievement.tiers.reduce((sum, tier) => sum + tier.points, 0);
 
   return (
-    <Card className={isCompleted ? 'border-green-500/30 bg-green-500/5' : ''}>
+    <Card className={`card-interactive ${isCompleted ? 'border-success/30 bg-success/5' : ''}`}>
       <CardHeader>
         <div className="flex items-start gap-4">
           {achievement.icon && (
@@ -29,13 +29,13 @@ export function AchievementCard({ achievement, accountProgress }: AchievementCar
           <div className="flex-1 space-y-1">
             <CardTitle className="flex items-center gap-2">
               {achievement.name}
-              {isCompleted && <Trophy className="h-5 w-5 text-green-500" />}
+              {isCompleted && <Trophy className="h-5 w-5 text-success" />}
               {isLocked && <Lock className="h-4 w-4 text-muted-foreground" />}
             </CardTitle>
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <span>{achievement.type}</span>
               <span>•</span>
-              <span className="font-bold" style={{ color: '#C9A227' }}>
+              <span className="font-bold text-gw2-gold">
                 {totalPoints} AP
               </span>
             </div>

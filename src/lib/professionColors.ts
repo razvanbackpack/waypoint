@@ -48,15 +48,39 @@ export const PROFESSION_COLORS: Record<string, { primary: string; dark: string; 
   },
 };
 
-export const RARITY_COLORS: Record<string, string> = {
-  Junk: '#828282',
-  Basic: '#FFFFFF',
-  Fine: '#62A4DA',
-  Masterwork: '#1A9306',
-  Rare: '#FCD00B',
-  Exotic: '#FFA405',
-  Ascended: '#FB3E8D',
-  Legendary: '#974EFF',
+export const RARITY_COLORS: Record<string, { light: string; dark: string }> = {
+  Junk: {
+    light: '#666666',
+    dark: '#828282',
+  },
+  Basic: {
+    light: '#6B7280',
+    dark: '#FFFFFF',
+  },
+  Fine: {
+    light: '#2563EB',
+    dark: '#62A4DA',
+  },
+  Masterwork: {
+    light: '#15803D',
+    dark: '#1A9306',
+  },
+  Rare: {
+    light: '#A16207',
+    dark: '#FCD00B',
+  },
+  Exotic: {
+    light: '#C2410C',
+    dark: '#FFA405',
+  },
+  Ascended: {
+    light: '#BE185D',
+    dark: '#FB3E8D',
+  },
+  Legendary: {
+    light: '#7C3AED',
+    dark: '#974EFF',
+  },
 };
 
 export function getProfessionColor(profession: string | Profession, variant: 'primary' | 'dark' | 'light' = 'primary'): string {
@@ -64,6 +88,7 @@ export function getProfessionColor(profession: string | Profession, variant: 'pr
   return colors ? colors[variant] : '#FFFFFF';
 }
 
-export function getRarityColor(rarity: string): string {
-  return RARITY_COLORS[rarity] || '#FFFFFF';
+export function getRarityColor(rarity: string, variant: 'light' | 'dark' = 'dark'): string {
+  const colors = RARITY_COLORS[rarity];
+  return colors ? colors[variant] : (variant === 'light' ? '#6B7280' : '#FFFFFF');
 }

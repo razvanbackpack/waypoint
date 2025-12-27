@@ -1,4 +1,5 @@
 import type { Achievement, AccountAchievement } from '@/api/types';
+import { Progress } from '@/components/ui/progress';
 
 interface AchievementProgressProps {
   achievement: Achievement;
@@ -56,9 +57,9 @@ export function AchievementProgress({ achievement, accountProgress }: Achievemen
               <div
                 className={`h-2 w-2 rounded-full ${
                   isComplete
-                    ? 'bg-green-500'
+                    ? 'bg-success'
                     : isCurrent
-                    ? 'bg-yellow-500'
+                    ? 'bg-gw2-gold'
                     : 'bg-muted'
                 }`}
               />
@@ -91,16 +92,11 @@ export function AchievementProgress({ achievement, accountProgress }: Achievemen
     <div className="space-y-2">
       <div className="flex justify-between text-sm">
         <span>Progress</span>
-        <span>
-          {current} / {max}
+        <span className="font-mono">
+          {current} / {max} <span className="text-muted-foreground">({Math.round(percentage)}%)</span>
         </span>
       </div>
-      <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
-        <div
-          className="h-full bg-gradient-to-r from-yellow-500 to-amber-600 transition-all duration-300"
-          style={{ width: `${Math.min(percentage, 100)}%` }}
-        />
-      </div>
+      <Progress value={percentage} className="h-2" />
     </div>
   );
 }

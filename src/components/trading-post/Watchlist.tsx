@@ -142,31 +142,17 @@ export function Watchlist() {
               const profit = revenue - price.sells.unit_price;
               const isProfitable = profit > 0;
 
-              const rarityColors: Record<string, string> = {
-                Junk: '#AAA',
-                Basic: '#000',
-                Fine: '#62A4DA',
-                Masterwork: '#1a9306',
-                Rare: '#fcd00b',
-                Exotic: '#ffa405',
-                Ascended: '#fb3e8d',
-                Legendary: '#4C139D',
-              };
+              const rarityClass = `rarity-${item.rarity.toLowerCase()}`;
 
               return (
-                <TableRow key={itemId}>
+                <TableRow key={itemId} className="transition-colors duration-200 hover:bg-muted/50">
                   <TableCell>
                     <div className="flex items-center gap-2">
                       {item.icon && (
                         <img
                           src={item.icon}
                           alt={item.name}
-                          className="w-8 h-8 rounded"
-                          style={{
-                            borderWidth: '2px',
-                            borderStyle: 'solid',
-                            borderColor: rarityColors[item.rarity] || '#AAA',
-                          }}
+                          className={`w-8 h-8 rounded border-2 ${rarityClass} rarity-border`}
                         />
                       )}
                       <span className="font-medium">{item.name}</span>
@@ -181,7 +167,7 @@ export function Watchlist() {
                   <TableCell>
                     <CoinDisplay
                       copper={Math.abs(profit)}
-                      className={isProfitable ? 'text-green-500' : 'text-red-500'}
+                      className={isProfitable ? 'text-success' : 'text-destructive'}
                     />
                   </TableCell>
                   <TableCell>
@@ -189,8 +175,9 @@ export function Watchlist() {
                       variant="ghost"
                       size="icon-sm"
                       onClick={() => removeItem(itemId)}
+                      className="text-destructive hover:text-destructive hover:bg-destructive/10"
                     >
-                      <Trash2 className="h-4 w-4 text-destructive" />
+                      <Trash2 className="h-4 w-4" />
                     </Button>
                   </TableCell>
                 </TableRow>
