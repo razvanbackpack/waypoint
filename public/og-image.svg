@@ -10,7 +10,6 @@
     </linearGradient>
   </defs>
   <rect width="1200" height="630" fill="url(#bg)"/>
-  <text x="600" y="280" font-family="serif" font-size="96" fill="url(#gold)" text-anchor="middle" font-weight="bold">⚔ Waypoint</text>
-  <text x="600" y="370" font-family="sans-serif" font-size="36" fill="#a0a0a0" text-anchor="middle">Guild Wars 2 Companion App</text>
-  <text x="600" y="540" font-family="sans-serif" font-size="24" fill="#666" text-anchor="middle">World Boss Timers • Inventory • Recipes • Dailies</text>
+  <text x="600" y="315" font-family="serif" font-size="96" fill="url(#gold)" text-anchor="middle" font-weight="bold">⚔ Waypoint</text>
+  <text x="600" y="540" font-family="sans-serif" font-size="24" fill="#666" text-anchor="middle">Boss Timers • Inventory • Recipes • Dailies</text>
 </svg>
