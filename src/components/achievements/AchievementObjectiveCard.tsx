@@ -35,7 +35,7 @@ export function AchievementObjectiveCard({ objective }: AchievementObjectiveCard
               </div>
 
               <div className="text-right flex-shrink-0">
-                <div className="text-xs font-medium text-gw2-gold">
+                <div className="text-xs font-medium text-gw2-accent">
                   {objective.acclaim}
                 </div>
                 <div className="text-xs text-muted-foreground font-mono">

@@ -197,7 +197,7 @@ export function RecipeDetailPage() {
   if (isGameDataLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <Loader2 className="h-8 w-8 animate-spin text-gw2-gold" />
+        <Loader2 className="h-8 w-8 animate-spin text-gw2-accent" />
       </div>
     );
   }
@@ -206,7 +206,7 @@ export function RecipeDetailPage() {
   if (!recipe) {
     return (
       <div className="space-y-6 animate-fade-in">
-        <Link to="/crafting" className="inline-flex items-center gap-2 text-muted-foreground hover:text-gw2-gold transition-colors">
+        <Link to="/crafting" className="inline-flex items-center gap-2 text-muted-foreground hover:text-gw2-accent transition-colors">
           <ArrowLeft className="h-4 w-4" />
           Back to Crafting
         </Link>
@@ -229,14 +229,14 @@ export function RecipeDetailPage() {
   return (
     <div className="space-y-6 animate-fade-in max-w-4xl mx-auto">
       {/* Back Link */}
-      <Link to="/crafting" className="inline-flex items-center gap-2 text-muted-foreground hover:text-gw2-gold transition-colors">
+      <Link to="/crafting" className="inline-flex items-center gap-2 text-muted-foreground hover:text-gw2-accent transition-colors">
         <ArrowLeft className="h-4 w-4" />
         Back to Crafting
       </Link>
 
       {/* Main Recipe Card */}
       <Card>
-        <CardHeader className="border-b border-gw2-gold/20">
+        <CardHeader className="border-b border-gw2-accent/20">
           <div className="flex items-start gap-4">
             {/* Output Item Icon */}
             {outputItem?.icon && (
@@ -340,18 +340,18 @@ export function RecipeDetailPage() {
 
           {/* Ingredients Section */}
           <div className="space-y-3">
-            <h3 className="text-sm font-semibold text-gw2-gold uppercase tracking-wider">Ingredients</h3>
-            <div className="border border-gw2-gold/20 rounded-lg overflow-hidden">
+            <h3 className="text-sm font-semibold text-gw2-accent uppercase tracking-wider">Ingredients</h3>
+            <div className="border border-gw2-accent/20 rounded-lg overflow-hidden">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-gw2-gold/20 bg-muted/50">
-                    <th className="py-2 px-3 text-left font-medium text-xs text-gw2-gold/70 w-10"></th>
-                    <th className="py-2 px-3 text-left font-medium text-xs text-gw2-gold/70">Item</th>
-                    <th className="py-2 px-3 text-right font-medium text-xs text-gw2-gold/70 w-24">Required</th>
+                  <tr className="border-b border-gw2-accent/20 bg-muted/50">
+                    <th className="py-2 px-3 text-left font-medium text-xs text-gw2-accent/70 w-10"></th>
+                    <th className="py-2 px-3 text-left font-medium text-xs text-gw2-accent/70">Item</th>
+                    <th className="py-2 px-3 text-right font-medium text-xs text-gw2-accent/70 w-24">Required</th>
                     {hasApiKey && (
-                      <th className="py-2 px-3 text-right font-medium text-xs text-gw2-gold/70 w-24">Available</th>
+                      <th className="py-2 px-3 text-right font-medium text-xs text-gw2-accent/70 w-24">Available</th>
                     )}
-                    <th className="py-2 px-3 text-right font-medium text-xs text-gw2-gold/70 w-20"></th>
+                    <th className="py-2 px-3 text-right font-medium text-xs text-gw2-accent/70 w-20"></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -363,7 +363,7 @@ export function RecipeDetailPage() {
                     return (
                       <tr
                         key={idx}
-                        className="border-b border-gw2-gold/10 last:border-b-0 hover:bg-muted/30 transition-colors"
+                        className="border-b border-gw2-accent/10 last:border-b-0 hover:bg-muted/30 transition-colors"
                       >
                         <td className="py-2 px-3">
                           {ing.item?.icon ? (
@@ -403,7 +403,7 @@ export function RecipeDetailPage() {
                             <Link
                               to="/crafting/$recipeId"
                               params={{ recipeId: `${ing.recipe.id}-${slugify(ing.item?.name || 'recipe')}` }}
-                              className="inline-flex items-center gap-1 text-xs text-gw2-gold hover:text-gw2-gold/80 transition-colors"
+                              className="inline-flex items-center gap-1 text-xs text-gw2-accent hover:text-gw2-accent/80 transition-colors"
                             >
                               <ChefHat className="h-3.5 w-3.5" />
                               Recipe
@@ -421,7 +421,7 @@ export function RecipeDetailPage() {
           {/* Capable Crafters Section (Authenticated Only) */}
           {hasApiKey && capableCrafters.length > 0 && (
             <div className="space-y-3">
-              <h3 className="text-sm font-semibold text-gw2-gold uppercase tracking-wider">Characters Who Can Craft</h3>
+              <h3 className="text-sm font-semibold text-gw2-accent uppercase tracking-wider">Characters Who Can Craft</h3>
               <div className="flex flex-wrap gap-2">
                 {capableCrafters.map((crafter, idx) => (
                   <div

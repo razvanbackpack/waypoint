@@ -83,7 +83,7 @@ export function DailyCard({
                 Lvl {levelReq.min}-{levelReq.max}
               </span>
             )}
-            <span className="text-sm font-bold text-gw2-gold">
+            <span className="text-sm font-bold text-gw2-accent">
               {points} AP
             </span>
           </div>

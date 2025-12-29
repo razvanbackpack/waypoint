@@ -153,7 +153,7 @@ export function BankView({ searchTerm = '' }: BankViewProps) {
                 <button
                   key={index}
                   onClick={() => setSelectedItemId(item.id)}
-                  className={`item-slot has-item relative group cursor-pointer transition-all duration-150 hover:scale-105 hover:border-gw2-gold hover:glow-gold-sm ${rarityClass} border-rarity`}
+                  className={`item-slot has-item relative group cursor-pointer transition-all duration-150 hover:scale-105 hover:border-gw2-accent hover:glow-accent-sm ${rarityClass} border-rarity`}
                   title={item.name}
                 >
                   <div className="w-full h-full overflow-hidden">

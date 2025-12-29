@@ -108,8 +108,8 @@ export function Settings() {
     <div className="space-y-3 animate-fade-in">
       {/* Page Header */}
       <div className="flex items-center gap-2">
-        <SettingsIcon className="h-5 w-5 text-gw2-gold" />
-        <h1 className="text-xl font-bold text-gw2-gold">Settings</h1>
+        <SettingsIcon className="h-5 w-5 text-gw2-accent" />
+        <h1 className="text-xl font-bold text-gw2-accent">Settings</h1>
       </div>
 
       <div className="grid md:grid-cols-2 gap-3">
@@ -167,7 +167,7 @@ export function Settings() {
               onClick={handleSaveApiKey}
               disabled={!inputValue.trim()}
               size="sm"
-              className="bg-gw2-gold hover:bg-gw2-gold-dark text-primary-foreground"
+              className="bg-gw2-accent hover:bg-gw2-accent-dark text-primary-foreground"
             >
               Save Key
             </Button>
@@ -190,7 +190,7 @@ export function Settings() {
                 href="https://account.arena.net/applications"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gw2-gold hover:underline inline-flex items-center gap-1"
+                className="text-gw2-accent hover:underline inline-flex items-center gap-1"
               >
                 Generate one here
                 <ExternalLink className="h-3 w-3" />
@@ -212,27 +212,27 @@ export function Settings() {
                 </thead>
                 <tbody className="divide-y divide-border">
                   <tr>
-                    <td className="px-2 py-1 font-mono text-gw2-gold">account</td>
+                    <td className="px-2 py-1 font-mono text-gw2-accent">account</td>
                     <td className="px-2 py-1 text-muted-foreground">Account info, world, WvW rank</td>
                   </tr>
                   <tr>
-                    <td className="px-2 py-1 font-mono text-gw2-gold">characters</td>
+                    <td className="px-2 py-1 font-mono text-gw2-accent">characters</td>
                     <td className="px-2 py-1 text-muted-foreground">Character list, equipment, specs</td>
                   </tr>
                   <tr>
-                    <td className="px-2 py-1 font-mono text-gw2-gold">inventories</td>
+                    <td className="px-2 py-1 font-mono text-gw2-accent">inventories</td>
                     <td className="px-2 py-1 text-muted-foreground">Bank, materials, character bags</td>
                   </tr>
                   <tr>
-                    <td className="px-2 py-1 font-mono text-gw2-gold">progression</td>
+                    <td className="px-2 py-1 font-mono text-gw2-accent">progression</td>
                     <td className="px-2 py-1 text-muted-foreground">Achievements, masteries, dailies</td>
                   </tr>
                   <tr>
-                    <td className="px-2 py-1 font-mono text-gw2-gold">wallet</td>
+                    <td className="px-2 py-1 font-mono text-gw2-accent">wallet</td>
                     <td className="px-2 py-1 text-muted-foreground">Currencies (gold, karma, gems)</td>
                   </tr>
                   <tr>
-                    <td className="px-2 py-1 font-mono text-gw2-gold">unlocks</td>
+                    <td className="px-2 py-1 font-mono text-gw2-accent">unlocks</td>
                     <td className="px-2 py-1 text-muted-foreground">Skins, dyes, recipes, minis</td>
                   </tr>
                 </tbody>

@@ -35,7 +35,7 @@ export function AchievementCard({ achievement, accountProgress }: AchievementCar
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <span>{achievement.type}</span>
               <span>•</span>
-              <span className="font-bold text-gw2-gold">
+              <span className="font-bold text-gw2-accent">
                 {totalPoints} AP
               </span>
             </div>

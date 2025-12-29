@@ -2,6 +2,8 @@
 
 GW2 companion app. Track events, browse recipes, manage characters, check dailies.
 
+Open source: https://github.com/razvanbackpack/waypoint
+
 ## What it does
 
 - **Event Timers** - World bosses, metas, invasions with countdown timers

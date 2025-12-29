@@ -69,7 +69,7 @@ export function Inventory() {
     return (
       <div className="space-y-6">
         <header className="mb-6 md:mb-8">
-          <h1 className="text-2xl md:text-3xl font-bold text-gw2-gold">
+          <h1 className="text-2xl md:text-3xl font-bold text-gw2-accent">
             Inventory & Bank Viewer
           </h1>
           <p className="text-muted-foreground mt-1">
@@ -85,7 +85,7 @@ export function Inventory() {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <header>
-          <h1 className="text-2xl md:text-3xl font-bold text-gw2-gold">
+          <h1 className="text-2xl md:text-3xl font-bold text-gw2-accent">
             Inventory & Bank Viewer
           </h1>
           <p className="text-muted-foreground mt-1">

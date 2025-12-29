@@ -136,7 +136,7 @@ export function CharacterEquipment({ character }: CharacterEquipmentProps) {
               "item-slot w-10 h-10 overflow-hidden flex items-center justify-center flex-shrink-0",
               rarityClass,
               "border-rarity",
-              "hover:scale-105 hover:border-gw2-gold hover:glow-gold-sm"
+              "hover:scale-105 hover:border-gw2-accent hover:glow-accent-sm"
             )}
           >
             <img

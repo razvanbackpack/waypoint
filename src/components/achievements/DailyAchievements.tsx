@@ -104,7 +104,7 @@ export function DailyAchievements() {
                   <span className={`font-medium ${isCompleted ? 'line-through text-muted-foreground' : ''}`}>
                     {achievement.name}
                   </span>
-                  <span className="text-sm font-bold flex-shrink-0 text-gw2-gold">
+                  <span className="text-sm font-bold flex-shrink-0 text-gw2-accent">
                     {points} AP
                   </span>
                 </div>

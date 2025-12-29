@@ -37,8 +37,8 @@ export function EventCard({ boss, nextSpawn }: EventCardProps) {
   let timeColor = 'text-foreground';
 
   if (isActive) {
-    cardClass = 'border-gw2-gold bg-gw2-gold/5 glow-gold-sm';
-    timeColor = 'text-gw2-gold';
+    cardClass = 'border-gw2-accent bg-gw2-accent/5 glow-accent-sm';
+    timeColor = 'text-gw2-accent';
   } else if (isImminentGreen) {
     cardClass = 'border-success/50 bg-success/5';
     timeColor = 'text-success';

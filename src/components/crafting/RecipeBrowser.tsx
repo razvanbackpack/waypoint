@@ -553,7 +553,7 @@ export function RecipeBrowser() {
     return (
       <tr
         key={recipe.id}
-        className="border-b border-gw2-gold/10 hover:bg-muted/50 even:bg-muted/20 odd:bg-background transition-colors duration-200"
+        className="border-b border-gw2-accent/10 hover:bg-muted/50 even:bg-muted/20 odd:bg-background transition-colors duration-200"
       >
         {/* Pin Button */}
         <td className="py-1 px-2">
@@ -562,7 +562,7 @@ export function RecipeBrowser() {
             className="hover:scale-110 transition-transform"
             title={recipeFavorites.has(recipe.id) ? 'Unpin recipe' : 'Pin recipe'}
           >
-            <Pin className={`h-4 w-4 ${recipeFavorites.has(recipe.id) ? 'text-gw2-gold fill-current' : 'text-muted-foreground'}`} />
+            <Pin className={`h-4 w-4 ${recipeFavorites.has(recipe.id) ? 'text-gw2-accent fill-current' : 'text-muted-foreground'}`} />
           </button>
         </td>
         {/* Icon */}
@@ -1014,27 +1014,27 @@ export function RecipeBrowser() {
           <Dialog>
             <DialogTrigger asChild>
               <Button variant="outline" size="sm" className="gap-2">
-                <Pin className="h-4 w-4 text-gw2-gold" />
+                <Pin className="h-4 w-4 text-gw2-accent" />
                 Pinned Recipes ({recipeFavorites.size})
               </Button>
             </DialogTrigger>
             <DialogContent className="!max-w-[95vw] !w-[95vw] !h-[90vh] overflow-hidden flex flex-col">
               <DialogHeader>
-                <DialogTitle className="flex items-center gap-2 text-gw2-gold">
+                <DialogTitle className="flex items-center gap-2 text-gw2-accent">
                   <Pin className="h-5 w-5" />
                   Pinned Recipes
                 </DialogTitle>
               </DialogHeader>
               <div className="flex-1 overflow-y-auto">
-                <div className="border border-gw2-gold/20 rounded-lg overflow-hidden">
+                <div className="border border-gw2-accent/20 rounded-lg overflow-hidden">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="border-b border-gw2-gold/30 bg-card/95 text-left sticky top-0">
-                        <th className="py-2 px-3 font-medium text-xs text-gw2-gold/70 w-10"></th>
-                        <th className="py-2 px-3 font-medium text-xs text-gw2-gold/70 w-12"></th>
-                        <th className="py-2 px-3 font-medium text-xs text-gw2-gold/70">Item Name</th>
-                        <th className="py-2 px-3 font-medium text-xs text-gw2-gold/70">Discipline</th>
-                        <th className="py-2 px-3 font-medium text-xs text-gw2-gold/70">Level</th>
+                      <tr className="border-b border-gw2-accent/30 bg-card/95 text-left sticky top-0">
+                        <th className="py-2 px-3 font-medium text-xs text-gw2-accent/70 w-10"></th>
+                        <th className="py-2 px-3 font-medium text-xs text-gw2-accent/70 w-12"></th>
+                        <th className="py-2 px-3 font-medium text-xs text-gw2-accent/70">Item Name</th>
+                        <th className="py-2 px-3 font-medium text-xs text-gw2-accent/70">Discipline</th>
+                        <th className="py-2 px-3 font-medium text-xs text-gw2-accent/70">Level</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -1045,14 +1045,14 @@ export function RecipeBrowser() {
                           const outputItem = getItem(recipe.output_item_id);
                           const rarityColor = outputItem ? getRarityColor(outputItem.rarity) : '#FFFFFF';
                           return (
-                            <tr key={recipe.id} className="border-b border-gw2-gold/10 hover:bg-muted/50">
+                            <tr key={recipe.id} className="border-b border-gw2-accent/10 hover:bg-muted/50">
                               <td className="py-2 px-3">
                                 <button
                                   onClick={() => toggleRecipeFavorite(recipe.id)}
                                   className="hover:scale-110 transition-transform"
                                   title="Unpin recipe"
                                 >
-                                  <Pin className="h-4 w-4 text-gw2-gold fill-current" />
+                                  <Pin className="h-4 w-4 text-gw2-accent fill-current" />
                                 </button>
                               </td>
                               <td className="py-2 px-3">
@@ -1165,18 +1165,18 @@ export function RecipeBrowser() {
             </div>
           )}
 
-          <div className="border border-gw2-gold/20 rounded-lg overflow-hidden shadow-lg">
+          <div className="border border-gw2-accent/20 rounded-lg overflow-hidden shadow-lg">
             <table className="w-full text-sm">
               <thead>
-                <tr className="sticky top-0 z-10 border-b border-gw2-gold/30 bg-card/95 backdrop-blur-sm text-left">
-                  <th className="py-1 px-2 font-medium text-xs text-gw2-gold/70 w-8"></th>
-                  <th className="py-1 px-2 font-medium text-xs text-gw2-gold/70 w-10"></th>
-                  <th className="py-1 px-2 font-medium text-xs text-gw2-gold/70">Item Name</th>
-                  <th className="py-1 px-2 font-medium text-xs text-gw2-gold/70">Discipline</th>
-                  <th className="py-1 px-2 font-medium text-xs text-gw2-gold/70">Level</th>
-                  <th className="py-1 px-2 font-medium text-xs text-gw2-gold/70">Ingredients</th>
+                <tr className="sticky top-0 z-10 border-b border-gw2-accent/30 bg-card/95 backdrop-blur-sm text-left">
+                  <th className="py-1 px-2 font-medium text-xs text-gw2-accent/70 w-8"></th>
+                  <th className="py-1 px-2 font-medium text-xs text-gw2-accent/70 w-10"></th>
+                  <th className="py-1 px-2 font-medium text-xs text-gw2-accent/70">Item Name</th>
+                  <th className="py-1 px-2 font-medium text-xs text-gw2-accent/70">Discipline</th>
+                  <th className="py-1 px-2 font-medium text-xs text-gw2-accent/70">Level</th>
+                  <th className="py-1 px-2 font-medium text-xs text-gw2-accent/70">Ingredients</th>
                   {hasApiKey && (
-                    <th className="py-1 px-2 font-medium text-xs text-gw2-gold/70">Can Craft</th>
+                    <th className="py-1 px-2 font-medium text-xs text-gw2-accent/70">Can Craft</th>
                   )}
                 </tr>
               </thead>

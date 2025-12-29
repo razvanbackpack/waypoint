@@ -32,8 +32,8 @@ export function Timers() {
       <div className="space-y-1">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Clock className="h-6 w-6 text-gw2-gold" />
-            <h1 className="text-2xl font-bold text-gw2-gold">Event Timers</h1>
+            <Clock className="h-6 w-6 text-gw2-accent" />
+            <h1 className="text-2xl font-bold text-gw2-accent">Event Timers</h1>
           </div>
           <Button
             variant="outline"

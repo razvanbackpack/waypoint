@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { Github } from 'lucide-react';
 import { Navigation } from './Navigation';
 import { useTheme } from '../../hooks/useTheme';
 
@@ -16,14 +17,14 @@ export function Layout({ children }: LayoutProps) {
         {children}
       </main>
       <footer className="border-t border-border/50 py-4 text-center text-sm text-muted-foreground">
-        Built by{' '}
         <a
-          href="https://github.com/razvanbackpack"
+          href="https://github.com/razvanbackpack/waypoint"
           target="_blank"
           rel="noopener noreferrer"
-          className="text-gw2-gold hover:underline"
+          className="inline-flex items-center gap-1.5 text-gw2-accent hover:underline"
         >
-          razvanbackpack
+          <Github className="h-4 w-4" />
+          Waypoint
         </a>
         {' '}• Not affiliated with ArenaNet
       </footer>
