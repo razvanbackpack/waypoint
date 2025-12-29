@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://waypoint-1ek.pages.dev/sitemap.xml
