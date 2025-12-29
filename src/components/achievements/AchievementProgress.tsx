@@ -59,7 +59,7 @@ export function AchievementProgress({ achievement, accountProgress }: Achievemen
                   isComplete
                     ? 'bg-success'
                     : isCurrent
-                    ? 'bg-gw2-gold'
+                    ? 'bg-gw2-accent'
                     : 'bg-muted'
                 }`}
               />

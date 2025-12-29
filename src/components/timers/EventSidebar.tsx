@@ -28,7 +28,7 @@ export function EventSidebar({ currentTime, favorites, toggleFavorite }: EventSi
       <Card className="border-0">
         <CardContent className="py-2 px-3 space-y-2">
           <div className="flex items-center gap-2 text-sm">
-            <Clock className="h-4 w-4 text-gw2-gold" />
+            <Clock className="h-4 w-4 text-gw2-accent" />
             <span className="font-mono tabular-nums font-bold">
               {currentTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', timeZone: 'UTC', hour12: false })}
             </span>
@@ -53,7 +53,7 @@ export function EventSidebar({ currentTime, favorites, toggleFavorite }: EventSi
         return (
           <Card className="border-0">
             <CardContent className="py-2 px-2 space-y-1.5">
-              <div className="text-xs font-medium text-gw2-gold flex items-center gap-1 heading-accent">
+              <div className="text-xs font-medium text-gw2-accent flex items-center gap-1 heading-accent">
                 <Star className="h-3.5 w-3.5 fill-current" /> Favorites
               </div>
               {favoriteEvents
@@ -93,7 +93,7 @@ export function EventSidebar({ currentTime, favorites, toggleFavorite }: EventSi
                       {event.map}
                       {event.waypoint && <Copy className="h-2.5 w-2.5 opacity-50" />}
                     </span>
-                    <span className={`font-mono tabular-nums font-bold ${minutesUntil <= 0 ? 'text-success' : minutesUntil <= 15 ? 'text-warning' : 'text-gw2-gold'}`}>
+                    <span className={`font-mono tabular-nums font-bold ${minutesUntil <= 0 ? 'text-success' : minutesUntil <= 15 ? 'text-warning' : 'text-gw2-accent'}`}>
                       {minutesUntil <= 0 ? 'NOW' : minutesUntil < 60 ? `${Math.floor(minutesUntil)}m` : `${Math.floor(minutesUntil / 60)}h ${Math.floor(minutesUntil % 60)}m`}
                     </span>
                   </div>

@@ -1,6 +1,46 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+@font-face {
+  font-family: 'Muli';
+  src: url('/fonts/muli.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Cinzel';
+  src: url('/fonts/cinzel-400.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Cinzel';
+  src: url('/fonts/cinzel-500.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Cinzel';
+  src: url('/fonts/cinzel-600.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Cinzel';
+  src: url('/fonts/cinzel-700.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
 @custom-variant dark (&:is(.dark *));
 
 @layer base {
@@ -80,18 +120,18 @@
   --color-sidebar-ring: var(--sidebar-ring);
   /* Font Families */
   --font-display: 'Cinzel', Georgia, serif;
-  --font-body: 'Inter', system-ui, sans-serif;
+  --font-body: 'Muli', system-ui, sans-serif;
   /* GW2 Extended Color Mappings */
-  --color-gw2-gold: var(--gw2-gold);
-  --color-gw2-gold-light: var(--gw2-gold-light);
-  --color-gw2-gold-dark: var(--gw2-gold-dark);
-  --color-gw2-gold-muted: var(--gw2-gold-muted);
+  --color-gw2-accent: var(--gw2-accent);
+  --color-gw2-accent-light: var(--gw2-accent-light);
+  --color-gw2-accent-dark: var(--gw2-accent-dark);
+  --color-gw2-accent-muted: var(--gw2-accent-muted);
   --color-surface-elevated: var(--surface-elevated);
   --color-surface-sunken: var(--surface-sunken);
   --color-text-primary: var(--text-primary);
   --color-text-secondary: var(--text-secondary);
   --color-text-muted: var(--text-muted);
-  --color-text-gold: var(--text-gold);
+  --color-text-accent: var(--text-accent);
 }
 
 :root {
@@ -101,11 +141,11 @@
   --gw2-red-hover: #c41f1f;
   --gw2-red-dark: #8b0000;
 
-  /* GW2 Extended Gold Palette */
-  --gw2-gold: oklch(0.55 0.20 250);
-  --gw2-gold-light: oklch(0.65 0.18 250);
-  --gw2-gold-dark: oklch(0.45 0.20 250);
-  --gw2-gold-muted: oklch(0.55 0.10 250);
+  /* GW2 Accent Palette */
+  --gw2-accent: oklch(0.55 0.20 250);
+  --gw2-accent-light: oklch(0.65 0.18 250);
+  --gw2-accent-dark: oklch(0.45 0.20 250);
+  --gw2-accent-muted: oklch(0.55 0.10 250);
 
   /* Coin Colors for Price Displays */
   --coin-gold: #FFD700;
@@ -141,7 +181,7 @@
   --text-primary: oklch(0.98 0 0);
   --text-secondary: oklch(0.75 0 0);
   --text-muted: oklch(0.55 0 0);
-  --text-gold: oklch(0.60 0.20 250);
+  --text-accent: oklch(0.60 0.20 250);
 
   /* GW2 Dark Mode - Near Black with Gold Accents (only mode) */
   --background: oklch(0.20 0.01 260);
@@ -150,14 +190,14 @@
   --card-foreground: oklch(1 0 0);
   --popover: oklch(0.26 0.01 260);
   --popover-foreground: oklch(1 0 0);
-  /* GW2 Gold Primary */
+  /* GW2 Accent Primary */
   --primary: oklch(0.55 0.20 250);
   --primary-foreground: oklch(0.08 0 0);
   --secondary: oklch(0.32 0 0);
   --secondary-foreground: oklch(1 0 0);
   --muted: oklch(0.32 0 0);
   --muted-foreground: oklch(0.63 0 0);
-  /* GW2 Gold Accent */
+  /* GW2 Accent Color */
   --accent: oklch(0.60 0.20 250);
   --accent-foreground: oklch(0.08 0 0);
   --destructive: oklch(0.5 0.25 27);
@@ -230,33 +270,33 @@
   }
 
   /* GW2 Gold Utilities */
-  .text-gw2-gold {
-    color: var(--gw2-gold);
+  .text-gw2-accent {
+    color: var(--gw2-accent);
   }
 
-  .bg-gw2-gold {
-    background-color: var(--gw2-gold);
+  .bg-gw2-accent {
+    background-color: var(--gw2-accent);
   }
 
-  .border-gw2-gold {
-    border-color: var(--gw2-gold);
+  .border-gw2-accent {
+    border-color: var(--gw2-accent);
   }
 
-  /* Gold Glow Effects */
-  .glow-gold {
+  /* Accent Glow Effects */
+  .glow-accent {
     box-shadow:
       0 0 20px oklch(0.55 0.20 250 / 0.4),
       0 0 40px oklch(0.55 0.20 250 / 0.2),
       0 0 60px oklch(0.55 0.20 250 / 0.1);
   }
 
-  .glow-gold-sm {
+  .glow-accent-sm {
     box-shadow:
       0 0 10px oklch(0.55 0.20 250 / 0.3),
       0 0 20px oklch(0.55 0.20 250 / 0.15);
   }
 
-  .glow-gold-lg {
+  .glow-accent-lg {
     box-shadow: 0 0 30px oklch(0.55 0.20 250 / 0.4);
   }
 
@@ -472,7 +512,7 @@
     font-weight: 700;
     line-height: 1;
     letter-spacing: 0.02em;
-    color: var(--text-gold);
+    color: var(--text-accent);
   }
 
   .stat-label {
@@ -496,7 +536,7 @@
 
   .item-slot:hover {
     transform: scale(1.08);
-    border-color: var(--gw2-gold);
+    border-color: var(--gw2-accent);
     box-shadow:
       0 0 15px oklch(0.55 0.20 250 / 0.4),
       inset 0 2px 4px oklch(0 0 0 / 0.1);
@@ -568,7 +608,7 @@
   }
 
   /* Progress bar with shimmer animation */
-  .progress-fill-gold {
+  .progress-fill-accent {
     background: linear-gradient(
       90deg,
       oklch(0.55 0.20 250) 0%,
@@ -611,7 +651,7 @@
     font-weight: 700;
     letter-spacing: 0.04em;
     text-transform: uppercase;
-    background: linear-gradient(180deg, var(--gw2-gold-light) 0%, var(--gw2-gold) 100%);
+    background: linear-gradient(180deg, var(--gw2-accent-light) 0%, var(--gw2-accent) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -679,7 +719,7 @@
     font-size: 3rem;
     font-weight: 700;
     letter-spacing: 0.02em;
-    color: var(--gw2-gold);
+    color: var(--gw2-accent);
   }
 
   /* Card titles */
@@ -720,8 +760,8 @@
   }
 
   /* Gold gradient text utility */
-  .text-gold-gradient {
-    background: linear-gradient(180deg, var(--gw2-gold-light) 0%, var(--gw2-gold) 100%);
+  .text-accent-gradient {
+    background: linear-gradient(180deg, var(--gw2-accent-light) 0%, var(--gw2-accent) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;

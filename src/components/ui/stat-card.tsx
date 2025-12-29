@@ -32,7 +32,7 @@ export function StatCard({
     <Card
       className={cn(
         "flex hover:scale-[1.02] transition-transform duration-200",
-        isFeatured && "glow-gold-sm border-primary/30",
+        isFeatured && "glow-accent-sm border-primary/30",
         isCompact
           ? "flex-row items-center gap-3 py-3"
           : "flex-col items-start gap-4",
@@ -61,7 +61,7 @@ export function StatCard({
           {/* Value */}
           <div
             className={cn(
-              "text-gw2-gold font-bold",
+              "text-gw2-accent font-bold",
               isCompact ? "text-2xl" : "text-4xl"
             )}
           >

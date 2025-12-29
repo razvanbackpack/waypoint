@@ -46,7 +46,7 @@ export function MonthlyResetTimer() {
     <div className="flex items-center gap-2">
       <Clock className={`h-4 w-4 ${isUrgent ? 'text-warning' : 'text-muted-foreground'}`} />
       <span className="text-sm text-muted-foreground">Monthly reset in:</span>
-      <span className={`font-mono text-lg font-bold ${isUrgent ? 'text-warning' : 'text-gw2-gold'}`}>
+      <span className={`font-mono text-lg font-bold ${isUrgent ? 'text-warning' : 'text-gw2-accent'}`}>
         {timeUntilReset}
       </span>
     </div>

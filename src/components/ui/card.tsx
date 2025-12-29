@@ -31,7 +31,7 @@ function Card({ className, variant, glow, ...props }: CardProps) {
       data-slot="card"
       className={cn(
         cardVariants({ variant }),
-        glow && "hover:glow-gold",
+        glow && "hover:glow-accent",
         className
       )}
       {...props}

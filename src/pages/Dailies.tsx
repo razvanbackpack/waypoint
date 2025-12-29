@@ -66,14 +66,14 @@ function ProgressCard({ title, icon, completed, total, color, reward }: Progress
     <div className={`p-3 rounded-lg border transition-all duration-300 ${
       isComplete
         ? 'bg-success/5 border-success/30 shadow-lg shadow-success/10'
-        : 'bg-card hover:border-gw2-gold/30 hover:shadow-md'
+        : 'bg-card hover:border-gw2-accent/30 hover:shadow-md'
     }`}>
       <div className="flex items-center gap-2 mb-2">
         {icon}
         <span className="font-medium">{title}</span>
         <span className="ml-auto text-sm">
           {completed}/{total}
-          {isComplete && reward && <span className="text-gw2-gold ml-1">+{reward}</span>}
+          {isComplete && reward && <span className="text-gw2-accent ml-1">+{reward}</span>}
         </span>
         {isComplete && <CheckCircle2 className="h-4 w-4 text-success" />}
       </div>
@@ -110,7 +110,7 @@ function ObjectiveCard({ objective }: ObjectiveCardProps) {
       className={`p-3 rounded-lg border transition-all duration-300 hover:scale-[1.02] ${
         isComplete
           ? 'bg-success/10 border-success/50 shadow-success/20 shadow-md animate-fade-in'
-          : 'bg-card hover:border-gw2-gold/50 hover:shadow-lg hover:shadow-gw2-gold/5'
+          : 'bg-card hover:border-gw2-accent/50 hover:shadow-lg hover:shadow-gw2-gold/5'
       }`}
     >
       <div className="flex items-start gap-3">
@@ -142,7 +142,7 @@ function ObjectiveCard({ objective }: ObjectiveCardProps) {
               </div>
               <div className="h-2 bg-muted rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-gradient-to-r from-gw2-gold to-blue-400 transition-all duration-500"
+                  className="h-full bg-gradient-to-r from-gw2-accent to-blue-400 transition-all duration-500"
                   style={{ width: `${progress}%` }}
                 />
               </div>
@@ -152,7 +152,7 @@ function ObjectiveCard({ objective }: ObjectiveCardProps) {
 
         {/* Acclaim reward */}
         <div className="text-right shrink-0">
-          <div className="text-sm font-bold text-gw2-gold">+{objective.acclaim}</div>
+          <div className="text-sm font-bold text-gw2-accent">+{objective.acclaim}</div>
           <div className="text-xs text-muted-foreground">Acclaim</div>
         </div>
       </div>
@@ -177,7 +177,7 @@ function MetaRewardCard({ title, progressCurrent, progressComplete, rewardAstral
       claimed
         ? 'bg-success/10 border-success/50 shadow-lg shadow-success/20'
         : isComplete
-          ? 'bg-gw2-gold/10 border-gw2-gold/50 shadow-lg shadow-gw2-gold/20 animate-pulse-glow'
+          ? 'bg-gw2-accent/10 border-gw2-accent/50 shadow-lg shadow-gw2-gold/20 animate-pulse-glow'
           : 'bg-card border-border'
     }`}>
       <div className="flex items-center gap-4">
@@ -185,10 +185,10 @@ function MetaRewardCard({ title, progressCurrent, progressComplete, rewardAstral
           claimed
             ? 'bg-success/20 border border-success/30'
             : isComplete
-              ? 'bg-gw2-gold/20 border border-gw2-gold/30'
+              ? 'bg-gw2-accent/20 border border-gw2-accent/30'
               : 'bg-muted/50 border border-border'
         }`}>
-          <Gift className={`h-6 w-6 ${claimed ? 'text-success' : isComplete ? 'text-gw2-gold' : 'text-muted-foreground'}`} />
+          <Gift className={`h-6 w-6 ${claimed ? 'text-success' : isComplete ? 'text-gw2-accent' : 'text-muted-foreground'}`} />
         </div>
 
         <div className="flex-1">
@@ -200,7 +200,7 @@ function MetaRewardCard({ title, progressCurrent, progressComplete, rewardAstral
               </Badge>
             )}
             {!claimed && isComplete && (
-              <Badge className="bg-gw2-gold/20 text-gw2-gold border-gw2-gold/50 text-xs py-0 animate-pulse">
+              <Badge className="bg-gw2-accent/20 text-gw2-accent border-gw2-accent/50 text-xs py-0 animate-pulse">
                 Ready to claim!
               </Badge>
             )}
@@ -208,7 +208,7 @@ function MetaRewardCard({ title, progressCurrent, progressComplete, rewardAstral
           <div className="flex items-center gap-2 mt-1">
             <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden max-w-48">
               <div
-                className={`h-full transition-all duration-500 ${claimed ? 'bg-success' : 'bg-gradient-to-r from-gw2-gold to-blue-400'}`}
+                className={`h-full transition-all duration-500 ${claimed ? 'bg-success' : 'bg-gradient-to-r from-gw2-accent to-blue-400'}`}
                 style={{ width: `${progress}%` }}
               />
             </div>
@@ -218,7 +218,7 @@ function MetaRewardCard({ title, progressCurrent, progressComplete, rewardAstral
 
         {isComplete && rewardAstral && (
           <div className="text-right">
-            <div className={`text-lg font-bold ${claimed ? 'text-success' : 'text-gw2-gold'}`}>+{rewardAstral}</div>
+            <div className={`text-lg font-bold ${claimed ? 'text-success' : 'text-gw2-accent'}`}>+{rewardAstral}</div>
             <div className="text-xs text-muted-foreground">Acclaim</div>
           </div>
         )}
@@ -280,26 +280,26 @@ export function Dailies() {
       {/* Page Header */}
       <div className="space-y-1">
         <div className="flex items-center gap-2">
-          <CalendarCheck className="h-6 w-6 text-gw2-gold" />
+          <CalendarCheck className="h-6 w-6 text-gw2-accent" />
           <div>
-            <h1 className="text-2xl font-bold text-gw2-gold">Wizard's Vault</h1>
+            <h1 className="text-2xl font-bold text-gw2-accent">Wizard's Vault</h1>
             <p className="text-xs text-muted-foreground">
-              Daily, weekly, and special objectives • Next reset: <span className="text-gw2-gold font-mono">{formatReset(dailyReset)}</span>
+              Daily, weekly, and special objectives • Next reset: <span className="text-gw2-accent font-mono">{formatReset(dailyReset)}</span>
             </p>
           </div>
         </div>
       </div>
 
       {/* Featured Reset Timer Card */}
-      <div className="p-3 rounded-lg border border-gw2-gold/30 bg-gradient-to-br from-gw2-gold/5 via-transparent to-gw2-gold/5">
+      <div className="p-3 rounded-lg border border-gw2-accent/30 bg-gradient-to-br from-gw2-accent/5 via-transparent to-gw2-gold/5">
         <div className="flex items-center justify-between">
           {/* Astral Acclaim */}
           <div className="flex items-center gap-2">
-            <div className="p-1.5 rounded-lg bg-gw2-gold/10 border border-gw2-gold/20">
-              <Sparkles className="h-4 w-4 text-gw2-gold" />
+            <div className="p-1.5 rounded-lg bg-gw2-accent/10 border border-gw2-accent/20">
+              <Sparkles className="h-4 w-4 text-gw2-accent" />
             </div>
             <div>
-              <div className="text-lg font-bold text-gw2-gold">{acclaim}</div>
+              <div className="text-lg font-bold text-gw2-accent">{acclaim}</div>
               <div className="text-[10px] text-muted-foreground">Astral Acclaim</div>
             </div>
           </div>
@@ -309,7 +309,7 @@ export function Dailies() {
 
           {/* Daily Reset */}
           <div className="text-center">
-            <div className="text-lg font-mono font-bold text-gw2-gold">{formatReset(dailyReset)}</div>
+            <div className="text-lg font-mono font-bold text-gw2-accent">{formatReset(dailyReset)}</div>
             <div className="text-[10px] text-muted-foreground">Daily Reset</div>
           </div>
 
@@ -356,21 +356,21 @@ export function Dailies() {
         <TabsList className="w-full grid grid-cols-3 h-auto bg-transparent gap-1 p-0">
           <TabsTrigger
             value="daily"
-            className="flex items-center justify-center gap-2 px-3 py-1.5 text-sm font-medium text-muted-foreground rounded-md border border-transparent hover:text-foreground data-[state=active]:bg-muted data-[state=active]:text-gw2-gold data-[state=active]:border-border transition-colors"
+            className="flex items-center justify-center gap-2 px-3 py-1.5 text-sm font-medium text-muted-foreground rounded-md border border-transparent hover:text-foreground data-[state=active]:bg-muted data-[state=active]:text-gw2-accent data-[state=active]:border-border transition-colors"
           >
             <Sun className="h-4 w-4" />
             <span>Daily</span>
           </TabsTrigger>
           <TabsTrigger
             value="weekly"
-            className="flex items-center justify-center gap-2 px-3 py-1.5 text-sm font-medium text-muted-foreground rounded-md border border-transparent hover:text-foreground data-[state=active]:bg-muted data-[state=active]:text-gw2-gold data-[state=active]:border-border transition-colors"
+            className="flex items-center justify-center gap-2 px-3 py-1.5 text-sm font-medium text-muted-foreground rounded-md border border-transparent hover:text-foreground data-[state=active]:bg-muted data-[state=active]:text-gw2-accent data-[state=active]:border-border transition-colors"
           >
             <Calendar className="h-4 w-4" />
             <span>Weekly</span>
           </TabsTrigger>
           <TabsTrigger
             value="special"
-            className="flex items-center justify-center gap-2 px-3 py-1.5 text-sm font-medium text-muted-foreground rounded-md border border-transparent hover:text-foreground data-[state=active]:bg-muted data-[state=active]:text-gw2-gold data-[state=active]:border-border transition-colors"
+            className="flex items-center justify-center gap-2 px-3 py-1.5 text-sm font-medium text-muted-foreground rounded-md border border-transparent hover:text-foreground data-[state=active]:bg-muted data-[state=active]:text-gw2-accent data-[state=active]:border-border transition-colors"
           >
             <Star className="h-4 w-4" />
             <span>Special</span>

@@ -99,7 +99,7 @@ export function RecipeCard({
               variant="ghost"
               size="icon-sm"
               onClick={handleToggleTrack}
-              className={cn(isTracked && 'text-gw2-gold')}
+              className={cn(isTracked && 'text-gw2-accent')}
               aria-label={isTracked ? 'Untrack recipe' : 'Track recipe'}
             >
               <Star className={cn('w-4 h-4', isTracked && 'fill-current')} />

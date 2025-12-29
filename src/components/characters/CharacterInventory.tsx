@@ -174,7 +174,7 @@ export function CharacterInventory({ character, searchTerm = '' }: CharacterInve
                         "item-slot w-full h-full overflow-hidden",
                         rarityClass,
                         "border-rarity",
-                        "hover:border-gw2-gold hover:glow-gold-sm"
+                        "hover:border-gw2-accent hover:glow-accent-sm"
                       )}
                     >
                       {itemData.icon && (

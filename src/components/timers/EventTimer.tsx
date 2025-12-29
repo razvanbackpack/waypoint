@@ -155,7 +155,7 @@ export function EventTimer({ favorites, toggleFavorite }: EventTimerProps) {
     // Add urgency styling for events starting soon
     const isUrgent = minutesUntil > 0 && minutesUntil <= 5;
     const isUpcoming = minutesUntil > 5 && minutesUntil <= 15;
-    const timeClass = isUrgent ? 'text-destructive font-bold' : isUpcoming ? 'text-warning' : 'text-gw2-gold';
+    const timeClass = isUrgent ? 'text-destructive font-bold' : isUpcoming ? 'text-warning' : 'text-gw2-accent';
 
     if (hours > 0) {
       return <span className={`font-mono tabular-nums ${timeClass}`}>{hours}h {minutes}m {seconds}s</span>;
@@ -226,7 +226,7 @@ export function EventTimer({ favorites, toggleFavorite }: EventTimerProps) {
     }
     // Urgent events (< 5 min) - gold glow with animation
     if (minutesUntil > 0 && minutesUntil <= 5) {
-      return 'bg-gw2-gold/20 hover:bg-gw2-gold/30 glow-gold-sm transition-colors duration-200';
+      return 'bg-gw2-accent/20 hover:bg-gw2-accent/30 glow-accent-sm transition-colors duration-200';
     }
     // Soon events (5-15 min) - warning highlight
     if (minutesUntil > 0 && minutesUntil <= 15) {
@@ -407,14 +407,14 @@ export function EventTimer({ favorites, toggleFavorite }: EventTimerProps) {
       </div>
 
       {/* Table */}
-      <div className="border border-gw2-gold/20 rounded-lg overflow-hidden shadow-lg overflow-x-auto">
+      <div className="border border-gw2-accent/20 rounded-lg overflow-hidden shadow-lg overflow-x-auto">
         <table className="w-full text-sm min-w-[700px]">
           <thead>
-            <tr className="sticky top-0 z-10 border-b-2 border-gw2-gold/30 bg-card/95 backdrop-blur-sm text-left">
-              <th className="py-2 px-3 font-medium text-xs text-gw2-gold/70 min-w-[200px]">Event ({filteredEvents.length})</th>
-              <th className="py-2 px-3 font-medium text-xs text-gw2-gold/70 min-w-[140px]">Map</th>
-              <th className="py-2 px-3 font-medium text-xs text-gw2-gold/70 min-w-[90px]">Time</th>
-              <th className="py-2 px-3 font-medium text-xs text-gw2-gold/70 w-20">Status</th>
+            <tr className="sticky top-0 z-10 border-b-2 border-gw2-accent/30 bg-card/95 backdrop-blur-sm text-left">
+              <th className="py-2 px-3 font-medium text-xs text-gw2-accent/70 min-w-[200px]">Event ({filteredEvents.length})</th>
+              <th className="py-2 px-3 font-medium text-xs text-gw2-accent/70 min-w-[140px]">Map</th>
+              <th className="py-2 px-3 font-medium text-xs text-gw2-accent/70 min-w-[90px]">Time</th>
+              <th className="py-2 px-3 font-medium text-xs text-gw2-accent/70 w-20">Status</th>
             </tr>
           </thead>
           <tbody>
@@ -433,11 +433,11 @@ export function EventTimer({ favorites, toggleFavorite }: EventTimerProps) {
                   return (
                     <>
                       <tr
-                        className="bg-gw2-gold/20 cursor-pointer hover:bg-gw2-gold/30 transition-colors duration-200 border-y border-gw2-gold/30"
+                        className="bg-gw2-accent/20 cursor-pointer hover:bg-gw2-accent/30 transition-colors duration-200 border-y border-gw2-accent/30"
                         onClick={() => setPinnedCollapsed(!pinnedCollapsed)}
                       >
                         <td colSpan={4} className="py-2 px-3">
-                          <div className="flex items-center gap-1.5 font-semibold text-gw2-gold text-xs">
+                          <div className="flex items-center gap-1.5 font-semibold text-gw2-accent text-xs">
                             <span className={`transition-transform duration-200 ${pinnedCollapsed ? '' : 'rotate-90'}`}>
                               <ChevronRight className="h-4 w-4" />
                             </span>
@@ -447,7 +447,7 @@ export function EventTimer({ favorites, toggleFavorite }: EventTimerProps) {
                         </td>
                       </tr>
                       {!pinnedCollapsed && pinnedEvents.map(({ event, nextSpawn, minutesUntil }, index) => (
-                        <tr key={`pinned-${event.id}`} className={`border-b border-gw2-gold/10 ${getRowClass(minutesUntil, event.duration, index)}`}>
+                        <tr key={`pinned-${event.id}`} className={`border-b border-gw2-accent/10 ${getRowClass(minutesUntil, event.duration, index)}`}>
                           <td className="py-2 px-3">
                             <div className="flex items-center gap-1.5">
                               <div className="flex flex-col gap-0.5">
@@ -457,7 +457,7 @@ export function EventTimer({ favorites, toggleFavorite }: EventTimerProps) {
                                     className="hover:scale-110 transition-transform"
                                     title="Unpin event"
                                   >
-                                    <Pin className="h-3.5 w-3.5 text-gw2-gold fill-current" />
+                                    <Pin className="h-3.5 w-3.5 text-gw2-accent fill-current" />
                                   </button>
                                   <span className="font-semibold text-sm text-foreground">{event.name}</span>
                                 </div>
@@ -527,7 +527,7 @@ export function EventTimer({ favorites, toggleFavorite }: EventTimerProps) {
                         </td>
                       </tr>
                       {!activeCollapsed && activeEvents.map(({ event, nextSpawn, minutesUntil }, index) => (
-                        <tr key={event.id} className={`border-b border-gw2-gold/10 ${getRowClass(minutesUntil, event.duration, index)}`}>
+                        <tr key={event.id} className={`border-b border-gw2-accent/10 ${getRowClass(minutesUntil, event.duration, index)}`}>
                           <td className="py-2 px-3">
                             <div className="flex items-center gap-1.5">
                               <span className="text-base">{event.icon}</span>
@@ -538,7 +538,7 @@ export function EventTimer({ favorites, toggleFavorite }: EventTimerProps) {
                                     className="hover:scale-110 transition-transform"
                                     title={favorites.has(event.id) ? 'Unpin event' : 'Pin event'}
                                   >
-                                    <Pin className={`h-3.5 w-3.5 ${favorites.has(event.id) ? 'text-gw2-gold fill-current' : 'text-muted-foreground'}`} />
+                                    <Pin className={`h-3.5 w-3.5 ${favorites.has(event.id) ? 'text-gw2-accent fill-current' : 'text-muted-foreground'}`} />
                                   </button>
                                   <span className="font-semibold text-sm text-foreground">{event.name}</span>
                                 </div>
@@ -609,7 +609,7 @@ export function EventTimer({ favorites, toggleFavorite }: EventTimerProps) {
                         </td>
                       </tr>
                       {!upcomingCollapsed && upcomingEvents.map(({ event, nextSpawn, minutesUntil }, index) => (
-                        <tr key={event.id} className={`border-b border-gw2-gold/10 ${getRowClass(minutesUntil, event.duration, index)}`}>
+                        <tr key={event.id} className={`border-b border-gw2-accent/10 ${getRowClass(minutesUntil, event.duration, index)}`}>
                           <td className="py-2 px-3">
                             <div className="flex items-center gap-1.5">
                               <span className="text-base">{event.icon}</span>
@@ -620,7 +620,7 @@ export function EventTimer({ favorites, toggleFavorite }: EventTimerProps) {
                                     className="hover:scale-110 transition-transform"
                                     title={favorites.has(event.id) ? 'Unpin event' : 'Pin event'}
                                   >
-                                    <Pin className={`h-3.5 w-3.5 ${favorites.has(event.id) ? 'text-gw2-gold fill-current' : 'text-muted-foreground'}`} />
+                                    <Pin className={`h-3.5 w-3.5 ${favorites.has(event.id) ? 'text-gw2-accent fill-current' : 'text-muted-foreground'}`} />
                                   </button>
                                   <span className="font-semibold text-sm text-foreground">{event.name}</span>
                                 </div>

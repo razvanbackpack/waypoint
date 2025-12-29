@@ -116,7 +116,7 @@ export function CategoryBrowser({ onSelectAchievements }: CategoryBrowserProps) 
                         key={category.id}
                         variant={selectedCategory === category.id ? 'secondary' : 'ghost'}
                         className={`w-full justify-start text-sm transition-colors ${
-                          selectedCategory === category.id ? 'text-gw2-gold' : 'hover:text-gw2-gold'
+                          selectedCategory === category.id ? 'text-gw2-accent' : 'hover:text-gw2-accent'
                         }`}
                         onClick={() => selectCategory(category)}
                       >

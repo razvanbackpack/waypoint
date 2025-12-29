@@ -75,7 +75,7 @@ export function Characters() {
     return (
       <div className="space-y-6 animate-fade-in">
         <div className="text-center space-y-3 py-8">
-          <h1 className="text-4xl font-bold text-gw2-gold">
+          <h1 className="text-4xl font-bold text-gw2-accent">
             Welcome to GW2 Companion
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
@@ -166,7 +166,7 @@ export function Characters() {
               </span>
               {/* Guild name with gold glow */}
               {guildName && (
-                <span className="px-2.5 py-1 rounded-full bg-gw2-gold/15 border border-gw2-gold/40 text-xs font-semibold text-gw2-gold glow-gold-sm">
+                <span className="px-2.5 py-1 rounded-full bg-gw2-accent/15 border border-gw2-accent/40 text-xs font-semibold text-gw2-accent glow-accent-sm">
                   {guildName}
                 </span>
               )}
@@ -195,29 +195,29 @@ export function Characters() {
         <div className="flex flex-wrap gap-1.5">
           {/* Gold */}
           {goldCurrency && (
-            <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-lg bg-gw2-gold/10 border border-gw2-gold/20">
-              <Coins className="h-3 w-3 text-gw2-gold" />
+            <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-lg bg-gw2-accent/10 border border-gw2-accent/20">
+              <Coins className="h-3 w-3 text-gw2-accent" />
               <span className="text-[11px] font-semibold">{formatGold(goldCurrency.value)}</span>
             </div>
           )}
           {/* WvW Rank */}
           {account?.wvw_rank && (
-            <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-lg bg-gw2-gold/10 border border-gw2-gold/20">
-              <Swords className="h-3 w-3 text-gw2-gold" />
+            <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-lg bg-gw2-accent/10 border border-gw2-accent/20">
+              <Swords className="h-3 w-3 text-gw2-accent" />
               <span className="text-[11px] font-semibold">WvW {account.wvw_rank}</span>
             </div>
           )}
           {/* Fractal Level */}
           {account?.fractal_level && (
-            <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-lg bg-gw2-gold/10 border border-gw2-gold/20">
-              <Star className="h-3 w-3 text-gw2-gold" />
+            <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-lg bg-gw2-accent/10 border border-gw2-accent/20">
+              <Star className="h-3 w-3 text-gw2-accent" />
               <span className="text-[11px] font-semibold">Fractal {account.fractal_level}</span>
             </div>
           )}
           {/* Mastery */}
           {totalMastery > 0 && (
-            <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-lg bg-gw2-gold/10 border border-gw2-gold/20">
-              <TrendingUp className="h-3 w-3 text-gw2-gold" />
+            <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-lg bg-gw2-accent/10 border border-gw2-accent/20">
+              <TrendingUp className="h-3 w-3 text-gw2-accent" />
               <span className="text-[11px] font-semibold">Mastery {totalMastery}</span>
             </div>
           )}
@@ -227,11 +227,11 @@ export function Characters() {
               key={craft.discipline}
               className={`flex items-center gap-1 px-1.5 py-0.5 rounded-lg border ${
                 craft.active
-                  ? 'bg-gw2-gold/10 border-gw2-gold/20'
+                  ? 'bg-gw2-accent/10 border-gw2-accent/20'
                   : 'bg-muted/30 border-border/40 opacity-60'
               }`}
             >
-              <Hammer className={`h-3 w-3 ${craft.active ? 'text-gw2-gold' : 'text-muted-foreground'}`} />
+              <Hammer className={`h-3 w-3 ${craft.active ? 'text-gw2-accent' : 'text-muted-foreground'}`} />
               <span className="text-[11px] font-semibold">{craft.discipline} {craft.rating}</span>
             </div>
           ))}
@@ -239,12 +239,12 @@ export function Characters() {
       )}
 
       {!selectedCharacter ? (
-        <Card variant="interactive" className="hover:border-gw2-gold/50 transition-all duration-300">
+        <Card variant="interactive" className="hover:border-gw2-accent/50 transition-all duration-300">
           <CardContent className="py-10">
             <div className="text-center space-y-3">
-              <User className="h-12 w-12 mx-auto text-gw2-gold/50" />
+              <User className="h-12 w-12 mx-auto text-gw2-accent/50" />
               <div>
-                <h3 className="text-xl font-bold mb-2 text-gw2-gold">Select a Character</h3>
+                <h3 className="text-xl font-bold mb-2 text-gw2-accent">Select a Character</h3>
                 <p className="text-muted-foreground max-w-md mx-auto">
                   Choose a character from the dropdown in the navigation bar to view their details, equipment, inventory, and achievements
                 </p>
@@ -254,7 +254,7 @@ export function Characters() {
         </Card>
       ) : characterLoading ? (
         <div className="flex flex-col items-center justify-center py-10 space-y-3">
-          <div className="animate-spin h-10 w-10 border-4 border-gw2-gold border-t-transparent rounded-full" />
+          <div className="animate-spin h-10 w-10 border-4 border-gw2-accent border-t-transparent rounded-full" />
           <p className="text-sm text-muted-foreground">Loading character data...</p>
         </div>
       ) : !character ? (
@@ -271,7 +271,7 @@ export function Characters() {
             <TabsList className="w-full grid grid-cols-3 h-auto bg-transparent gap-1 p-0">
               <TabsTrigger
                 value="overview"
-                className="flex items-center justify-center gap-2 px-3 py-1.5 text-sm font-medium text-muted-foreground rounded-md border border-transparent hover:text-foreground data-[state=active]:bg-muted data-[state=active]:text-gw2-gold data-[state=active]:border-border transition-colors"
+                className="flex items-center justify-center gap-2 px-3 py-1.5 text-sm font-medium text-muted-foreground rounded-md border border-transparent hover:text-foreground data-[state=active]:bg-muted data-[state=active]:text-gw2-accent data-[state=active]:border-border transition-colors"
               >
                 <User className="h-4 w-4" />
                 <span className="hidden sm:inline">Equipment</span>
@@ -279,14 +279,14 @@ export function Characters() {
               </TabsTrigger>
               <TabsTrigger
                 value="inventory"
-                className="flex items-center justify-center gap-2 px-3 py-1.5 text-sm font-medium text-muted-foreground rounded-md border border-transparent hover:text-foreground data-[state=active]:bg-muted data-[state=active]:text-gw2-gold data-[state=active]:border-border transition-colors"
+                className="flex items-center justify-center gap-2 px-3 py-1.5 text-sm font-medium text-muted-foreground rounded-md border border-transparent hover:text-foreground data-[state=active]:bg-muted data-[state=active]:text-gw2-accent data-[state=active]:border-border transition-colors"
               >
                 <Package className="h-4 w-4" />
                 <span>Inventory</span>
               </TabsTrigger>
               <TabsTrigger
                 value="bank"
-                className="flex items-center justify-center gap-2 px-3 py-1.5 text-sm font-medium text-muted-foreground rounded-md border border-transparent hover:text-foreground data-[state=active]:bg-muted data-[state=active]:text-gw2-gold data-[state=active]:border-border transition-colors"
+                className="flex items-center justify-center gap-2 px-3 py-1.5 text-sm font-medium text-muted-foreground rounded-md border border-transparent hover:text-foreground data-[state=active]:bg-muted data-[state=active]:text-gw2-accent data-[state=active]:border-border transition-colors"
               >
                 <Vault className="h-4 w-4" />
                 <span>Bank</span>
@@ -300,13 +300,13 @@ export function Characters() {
             <TabsContent value="inventory" className="space-y-2 animate-fade-in">
               <div className="flex items-center gap-2">
                 <div className="relative flex-1 max-w-sm">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gw2-gold" />
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gw2-accent" />
                   <Input
                     type="text"
                     placeholder="Search items..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-9 border-gw2-gold/20 focus:border-gw2-gold focus:ring-gw2-gold/20"
+                    className="pl-9 border-gw2-accent/20 focus:border-gw2-accent focus:ring-gw2-gold/20"
                   />
                 </div>
               </div>

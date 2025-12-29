@@ -52,7 +52,7 @@ export function DailyCategory({
             ) : (
               <ChevronRight className={`text-muted-foreground transition-transform duration-200 ${compact ? 'h-4 w-4' : 'h-5 w-5'}`} />
             )}
-            <span className="text-gw2-gold">{title}</span>
+            <span className="text-gw2-accent">{title}</span>
           </CardTitle>
           <span className="text-sm text-muted-foreground">
             {completedCount} / {categoryAchievements.length}

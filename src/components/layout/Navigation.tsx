@@ -88,7 +88,7 @@ export function Navigation() {
             >
               <img src="/favicon.svg" alt="Waypoint" className="h-8 w-8" />
               <div className="flex flex-col">
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-gw2-gold to-gw2-gold-light text-xl font-bold font-display tracking-wide drop-shadow-sm">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-gw2-accent to-gw2-accent-light text-xl font-bold font-display tracking-wide drop-shadow-sm">
                   Waypoint
                 </span>
                 {inGameTime && (
@@ -102,12 +102,12 @@ export function Navigation() {
             {/* Center: Navigation Links */}
             <div className="hidden md:flex items-center gap-1 lg:gap-2">
               {/* Events Button (Home) */}
-              <Button variant="ghost" size="sm" asChild className="h-9 w-9 md:w-auto md:px-2 lg:px-3 lg:gap-2 hover:bg-primary/10 hover:text-gw2-gold">
+              <Button variant="ghost" size="sm" asChild className="h-9 w-9 md:w-auto md:px-2 lg:px-3 lg:gap-2 hover:bg-primary/10 hover:text-gw2-accent">
                 <Link
                   to="/"
                   className={cn(
                     "transition-all duration-200 relative",
-                    isActive('/') && "text-gw2-gold bg-primary/5 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-gw2-gold after:shadow-[0_0_8px_rgba(59,130,246,0.6)]"
+                    isActive('/') && "text-gw2-accent bg-primary/5 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-gw2-accent after:shadow-[0_0_8px_rgba(59,130,246,0.6)]"
                   )}
                 >
                   <Clock className="h-4 w-4" />
@@ -116,12 +116,12 @@ export function Navigation() {
               </Button>
 
               {/* Characters Button */}
-              <Button variant="ghost" size="sm" asChild className="h-9 w-9 md:w-auto md:px-2 lg:px-3 lg:gap-2 hover:bg-primary/10 hover:text-gw2-gold">
+              <Button variant="ghost" size="sm" asChild className="h-9 w-9 md:w-auto md:px-2 lg:px-3 lg:gap-2 hover:bg-primary/10 hover:text-gw2-accent">
                 <Link
                   to="/characters"
                   className={cn(
                     "transition-all duration-200 relative",
-                    isActive('/characters') && "text-gw2-gold bg-primary/5 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-gw2-gold after:shadow-[0_0_8px_rgba(59,130,246,0.6)]"
+                    isActive('/characters') && "text-gw2-accent bg-primary/5 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-gw2-accent after:shadow-[0_0_8px_rgba(59,130,246,0.6)]"
                   )}
                 >
                   <Users className="h-4 w-4" />
@@ -130,12 +130,12 @@ export function Navigation() {
               </Button>
 
               {/* Recipes Button */}
-              <Button variant="ghost" size="sm" asChild className="h-9 w-9 md:w-auto md:px-2 lg:px-3 lg:gap-2 hover:bg-primary/10 hover:text-gw2-gold">
+              <Button variant="ghost" size="sm" asChild className="h-9 w-9 md:w-auto md:px-2 lg:px-3 lg:gap-2 hover:bg-primary/10 hover:text-gw2-accent">
                 <Link
                   to="/crafting"
                   className={cn(
                     "transition-all duration-200 relative",
-                    isActive('/crafting') && "text-gw2-gold bg-primary/5 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-gw2-gold after:shadow-[0_0_8px_rgba(59,130,246,0.6)]"
+                    isActive('/crafting') && "text-gw2-accent bg-primary/5 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-gw2-accent after:shadow-[0_0_8px_rgba(59,130,246,0.6)]"
                   )}
                 >
                   <Hammer className="h-4 w-4" />
@@ -144,12 +144,12 @@ export function Navigation() {
               </Button>
 
               {/* Objectives Button */}
-              <Button variant="ghost" size="sm" asChild className="h-9 w-9 md:w-auto md:px-2 lg:px-3 lg:gap-2 hover:bg-primary/10 hover:text-gw2-gold">
+              <Button variant="ghost" size="sm" asChild className="h-9 w-9 md:w-auto md:px-2 lg:px-3 lg:gap-2 hover:bg-primary/10 hover:text-gw2-accent">
                 <Link
                   to="/dailies"
                   className={cn(
                     "transition-all duration-200 relative",
-                    isActive('/dailies') && "text-gw2-gold bg-primary/5 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-gw2-gold after:shadow-[0_0_8px_rgba(59,130,246,0.6)]"
+                    isActive('/dailies') && "text-gw2-accent bg-primary/5 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-gw2-accent after:shadow-[0_0_8px_rgba(59,130,246,0.6)]"
                   )}
                 >
                   <CalendarCheck className="h-4 w-4" />
@@ -158,12 +158,12 @@ export function Navigation() {
               </Button>
 
               {/* Settings Button with Connection Status */}
-              <Button variant="ghost" size="sm" asChild className="h-9 w-9 md:w-auto md:px-2 lg:px-3 lg:gap-2 relative hover:bg-primary/10 hover:text-gw2-gold">
+              <Button variant="ghost" size="sm" asChild className="h-9 w-9 md:w-auto md:px-2 lg:px-3 lg:gap-2 relative hover:bg-primary/10 hover:text-gw2-accent">
                 <Link
                   to="/settings"
                   className={cn(
                     "transition-all duration-200 relative",
-                    isActive('/settings') && "text-gw2-gold bg-primary/5 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-gw2-gold after:shadow-[0_0_8px_rgba(59,130,246,0.6)]"
+                    isActive('/settings') && "text-gw2-accent bg-primary/5 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-gw2-accent after:shadow-[0_0_8px_rgba(59,130,246,0.6)]"
                   )}
                 >
                   <Database className="h-4 w-4" />
@@ -236,7 +236,7 @@ export function Navigation() {
                 className={cn(
                   "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors duration-200",
                   isActive('/')
-                    ? 'bg-primary/10 text-gw2-gold'
+                    ? 'bg-primary/10 text-gw2-accent'
                     : 'text-foreground/80 hover:bg-white/10'
                 )}
               >
@@ -249,7 +249,7 @@ export function Navigation() {
                 className={cn(
                   "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors duration-200",
                   isActive('/characters')
-                    ? 'bg-primary/10 text-gw2-gold'
+                    ? 'bg-primary/10 text-gw2-accent'
                     : 'text-foreground/80 hover:bg-white/10'
                 )}
               >
@@ -262,7 +262,7 @@ export function Navigation() {
                 className={cn(
                   "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors duration-200",
                   isActive('/crafting')
-                    ? 'bg-primary/10 text-gw2-gold'
+                    ? 'bg-primary/10 text-gw2-accent'
                     : 'text-foreground/80 hover:bg-white/10'
                 )}
               >
@@ -275,7 +275,7 @@ export function Navigation() {
                 className={cn(
                   "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors duration-200",
                   isActive('/dailies')
-                    ? 'bg-primary/10 text-gw2-gold'
+                    ? 'bg-primary/10 text-gw2-accent'
                     : 'text-foreground/80 hover:bg-white/10'
                 )}
               >
@@ -288,7 +288,7 @@ export function Navigation() {
                 className={cn(
                   "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors duration-200",
                   isActive('/settings')
-                    ? 'bg-primary/10 text-gw2-gold'
+                    ? 'bg-primary/10 text-gw2-accent'
                     : 'text-foreground/80 hover:bg-white/10'
                 )}
               >

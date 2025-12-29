@@ -75,7 +75,7 @@ export function Achievements() {
   return (
     <div className="space-y-6">
       <header className="mb-6 md:mb-8">
-        <h1 className="text-2xl md:text-3xl font-bold text-gw2-gold">
+        <h1 className="text-2xl md:text-3xl font-bold text-gw2-accent">
           Achievements
         </h1>
         <p className="text-muted-foreground mt-1">
@@ -91,7 +91,7 @@ export function Achievements() {
               <Trophy className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-gw2-gold">
+              <div className="text-2xl font-bold text-gw2-accent">
                 {totalAP.toLocaleString()}
               </div>
               <p className="text-xs text-muted-foreground">

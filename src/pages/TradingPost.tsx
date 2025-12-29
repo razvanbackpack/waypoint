@@ -61,8 +61,8 @@ export function TradingPost() {
       {/* Page Header */}
       <div className="space-y-1">
         <div className="flex items-center gap-2">
-          <div className="p-1.5 rounded-lg bg-gw2-gold/10 glow-gold-sm">
-            <Search className="h-5 w-5 text-gw2-gold" />
+          <div className="p-1.5 rounded-lg bg-gw2-accent/10 glow-accent-sm">
+            <Search className="h-5 w-5 text-gw2-accent" />
           </div>
           <h1 className="text-2xl font-bold heading-accent">Trading Post</h1>
         </div>
@@ -94,7 +94,7 @@ export function TradingPost() {
             <div className="flex items-start justify-between flex-wrap gap-4">
               <div className="flex items-center gap-4">
                 {selectedItem.icon && (
-                  <div className="glow-gold-sm">
+                  <div className="glow-accent-sm">
                     <img
                       src={selectedItem.icon}
                       alt={selectedItem.name}
@@ -118,7 +118,7 @@ export function TradingPost() {
                 variant="outline"
                 size="sm"
                 onClick={() => handleAddToWatchlist(selectedItem.id)}
-                className="hover:bg-gw2-gold/10 hover:text-gw2-gold hover:border-gw2-gold transition-colors"
+                className="hover:bg-gw2-accent/10 hover:text-gw2-accent hover:border-gw2-accent transition-colors"
               >
                 <Star className="h-4 w-4 mr-2" />
                 Add to Watchlist
@@ -142,7 +142,7 @@ export function TradingPost() {
                 {priceLoading ? (
                   <div className="flex items-center justify-center py-12">
                     <div className="space-y-3 text-center">
-                      <div className="animate-spin h-10 w-10 border-4 border-gw2-gold border-t-transparent rounded-full mx-auto" />
+                      <div className="animate-spin h-10 w-10 border-4 border-gw2-accent border-t-transparent rounded-full mx-auto" />
                       <p className="text-sm text-muted-foreground">Loading price data...</p>
                     </div>
                   </div>
@@ -151,7 +151,7 @@ export function TradingPost() {
                     <PriceDisplay price={price} />
 
                     {price.whitelisted && (
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-gw2-gold/20">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-gw2-accent/20">
                         <div className="space-y-2 p-4 rounded-lg bg-red-500/5 border border-red-500/20">
                           <div className="text-sm font-medium text-muted-foreground">Instant Buy Cost</div>
                           <div className="flex items-center gap-2">
@@ -193,7 +193,7 @@ export function TradingPost() {
                 {listingLoading ? (
                   <div className="flex items-center justify-center py-12">
                     <div className="space-y-3 text-center">
-                      <div className="animate-spin h-10 w-10 border-4 border-gw2-gold border-t-transparent rounded-full mx-auto" />
+                      <div className="animate-spin h-10 w-10 border-4 border-gw2-accent border-t-transparent rounded-full mx-auto" />
                       <p className="text-sm text-muted-foreground">Loading market depth...</p>
                     </div>
                   </div>
@@ -279,14 +279,14 @@ export function TradingPost() {
       {/* Tools Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="space-y-2">
-          <h2 className="text-2xl font-bold text-gw2-gold">Profit Calculator</h2>
+          <h2 className="text-2xl font-bold text-gw2-accent">Profit Calculator</h2>
           <p className="text-sm text-muted-foreground mb-4">
             Calculate potential profits after Trading Post fees
           </p>
           <ProfitCalculator />
         </div>
         <div className="space-y-2">
-          <h2 className="text-2xl font-bold text-gw2-gold">Watchlist</h2>
+          <h2 className="text-2xl font-bold text-gw2-accent">Watchlist</h2>
           <p className="text-sm text-muted-foreground mb-4">
             Monitor your favorite items and track price changes
           </p>
