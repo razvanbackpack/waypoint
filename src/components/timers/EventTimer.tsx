@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { GAME_EVENTS, getNextSpawn } from '@/data/eventSchedule';
 import type { GameEvent } from '@/data/eventSchedule';
 import { Badge } from '@/components/ui/badge';
@@ -6,7 +6,57 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { toast } from 'sonner';
-import { Copy, ChevronRight, ChevronDown, Check, Pin } from 'lucide-react';
+import { Copy, ChevronRight, ChevronDown, Check, Pin, CheckCircle } from 'lucide-react';
+import { useWorldBossesCompleted } from '@/api/hooks/useGW2Api';
+import { useApiKey } from '@/api/hooks/useApiKey';
+import { GW2_ICONS } from '@/lib/gw2Icons';
+
+// Reward icon and color mapping
+const getRewardDisplay = (rewardText: string): { icon: string; color: string; label: string } => {
+  const text = rewardText.toLowerCase().trim();
+
+  // Gold rewards
+  if (text.includes('g') && /\d+g/.test(text)) {
+    return { icon: GW2_ICONS.goldCoin, color: '#FFD700', label: text };
+  }
+  // Exotic items (orange rarity)
+  if (text.includes('exotic')) {
+    return { icon: GW2_ICONS.chest, color: '#FFA500', label: 'Exotic' };
+  }
+  // Rare items (yellow rarity)
+  if (text.includes('rare')) {
+    return { icon: GW2_ICONS.chest, color: '#FFE135', label: 'Rare' };
+  }
+  // Karma
+  if (text.includes('karma')) {
+    return { icon: GW2_ICONS.karma, color: '#DA70D6', label: 'Karma' };
+  }
+  // Bags/loot
+  if (text.includes('bag')) {
+    return { icon: GW2_ICONS.chest, color: '#87CEEB', label: 'Bags' };
+  }
+  // Currency (generic) - no icon for currency rewards
+  if (text.includes('currency') || text.includes('favor') || text.includes('jade') || text.includes('rift') || text.includes('contract')) {
+    return { icon: '', color: '#9370DB', label: 'Currency' };
+  }
+  // Default: chest with gray
+  return { icon: GW2_ICONS.chest, color: '#9CA3AF', label: text };
+};
+
+// Mapping from event schedule IDs to GW2 API boss IDs
+const EVENT_TO_API_BOSS: Record<string, string> = {
+  'tequatl': 'tequatl',
+  'jungle_wurm': 'jungle_wurm',
+  'megadestroyer': 'megadestroyer',
+  'fire_elemental': 'fire_elemental',
+  'shadow_behemoth': 'shadow_behemoth',
+  'claw_jormag': 'claw_of_jormag',
+  'shatterer': 'shatterer',
+  'modniir': 'modniir_ulgoth',
+  'golem_mark_ii': 'golem_mark_ii',
+  'taidha': 'admiral_taidha_covington',
+  'karka_queen': 'karka_queen',
+};
 
 interface EventWithSpawn {
   event: GameEvent;
@@ -25,6 +75,26 @@ export function EventTimer({ favorites, toggleFavorite }: EventTimerProps) {
   const [typeFilters, setTypeFilters] = useState<string[]>([]);
   const [categoryFilters, setCategoryFilters] = useState<string[]>([]);
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [pinnedCollapsed, setPinnedCollapsed] = useState(false);
+  const [sortColumn] = useState<'name' | 'map' | 'time' | null>(null);
+  const [sortDirection] = useState<'asc' | 'desc'>('asc');
+  const [hideCompleted, setHideCompleted] = useState(false);
+  const [activeSearch, setActiveSearch] = useState('');
+  const [upcomingSearch, setUpcomingSearch] = useState('');
+
+  // API-based world boss completion tracking
+  const { hasApiKey } = useApiKey();
+  const { data: worldBossesCompleted = [] } = useWorldBossesCompleted();
+
+  // Helper to check if a boss event is completed via API
+  const isBossCompleted = useCallback((eventId: string, eventType: string): boolean | null => {
+    if (eventType !== 'boss') return null; // Don't track metas
+    const apiBossId = EVENT_TO_API_BOSS[eventId];
+    if (!apiBossId) return null; // Unknown boss
+    if (!hasApiKey) return null; // Not authenticated
+    return worldBossesCompleted.includes(apiBossId);
+  }, [hasApiKey, worldBossesCompleted]);
 
   // Color definitions for filter options
   const typeColors: Record<string, string> = {
@@ -63,10 +133,24 @@ export function EventTimer({ favorites, toggleFavorite }: EventTimerProps) {
         : [...prev, category]
     );
   };
-  const [searchQuery, setSearchQuery] = useState<string>('');
-  const [pinnedCollapsed, setPinnedCollapsed] = useState(false);
-  const [activeCollapsed, setActiveCollapsed] = useState(false);
-  const [upcomingCollapsed, setUpcomingCollapsed] = useState(false);
+
+  const sortEvents = (events: EventWithSpawn[]) => {
+    if (!sortColumn) return events;
+
+    return [...events].sort((a, b) => {
+      let compareValue = 0;
+
+      if (sortColumn === 'name') {
+        compareValue = a.event.name.localeCompare(b.event.name);
+      } else if (sortColumn === 'map') {
+        compareValue = a.event.map.localeCompare(b.event.map);
+      } else if (sortColumn === 'time') {
+        compareValue = a.minutesUntil - b.minutesUntil;
+      }
+
+      return sortDirection === 'asc' ? compareValue : -compareValue;
+    });
+  };
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -136,12 +220,26 @@ export function EventTimer({ favorites, toggleFavorite }: EventTimerProps) {
         return false;
       }
 
+      // Hide completed filter (only applies to bosses with API data)
+      if (hideCompleted && isBossCompleted(event.id, event.type) === true) {
+        return false;
+      }
+
       return true;
     });
-  }, [eventsWithSpawns, typeFilters, categoryFilters, statusFilter, searchQuery]);
+  }, [eventsWithSpawns, typeFilters, categoryFilters, statusFilter, searchQuery, hideCompleted, isBossCompleted]);
 
   const formatCountdown = (minutesUntil: number, nextSpawn: Date, duration: number) => {
     if (minutesUntil <= 0 && minutesUntil > -duration) {
+      const remainingMinutes = duration + minutesUntil;
+      if (remainingMinutes > 0) {
+        return (
+          <div className="flex flex-col items-end">
+            <span className="font-bold text-success text-base">NOW</span>
+            <span className="text-xs text-muted-foreground">{remainingMinutes}m left</span>
+          </div>
+        );
+      }
       return <span className="font-bold text-success text-base">NOW</span>;
     }
 
@@ -152,10 +250,7 @@ export function EventTimer({ favorites, toggleFavorite }: EventTimerProps) {
     const minutes = Math.floor((totalSeconds % 3600) / 60);
     const seconds = totalSeconds % 60;
 
-    // Add urgency styling for events starting soon
-    const isUrgent = minutesUntil > 0 && minutesUntil <= 5;
-    const isUpcoming = minutesUntil > 5 && minutesUntil <= 15;
-    const timeClass = isUrgent ? 'text-destructive font-bold' : isUpcoming ? 'text-warning' : 'text-gw2-accent';
+    const timeClass = 'text-foreground';
 
     if (hours > 0) {
       return <span className={`font-mono tabular-nums ${timeClass}`}>{hours}h {minutes}m {seconds}s</span>;
@@ -163,24 +258,14 @@ export function EventTimer({ favorites, toggleFavorite }: EventTimerProps) {
     return <span className={`font-mono tabular-nums ${timeClass}`}>{minutes}m {seconds}s</span>;
   };
 
-  const getStatusBadge = (minutesUntil: number, duration: number) => {
-    if (minutesUntil <= 0 && minutesUntil > -duration) {
-      return <Badge className="bg-success/10 text-success border-success/50 font-bold text-xs py-0 px-1.5">Active</Badge>;
-    }
-    if (minutesUntil > 0 && minutesUntil <= 15) {
-      return <Badge className="bg-warning/10 text-warning border-warning/50 text-xs py-0 px-1.5">Soon</Badge>;
-    }
-    return <Badge variant="outline" className="text-muted-foreground text-xs py-0 px-1.5">Upcoming</Badge>;
-  };
-
   const getTypeBadge = (type: 'boss' | 'meta' | 'invasion') => {
     if (type === 'boss') {
-      return <Badge className="bg-red-700/20 text-red-700 border-red-700/50 dark:bg-red-500/20 dark:text-red-500 dark:border-red-500/50 text-xs py-0 px-1.5">Boss</Badge>;
+      return <Badge className="bg-red-700/20 text-red-700 border-red-700/50 dark:bg-red-500/20 dark:text-red-500 dark:border-red-500/50 text-[10px] py-0 px-1"><span className="flex items-center gap-0.5"><img src={GW2_ICONS.boss} alt="" className="h-3 w-3" />Boss</span></Badge>;
     }
     if (type === 'invasion') {
-      return <Badge className="bg-rose-700/20 text-rose-700 border-rose-700/50 dark:bg-rose-500/20 dark:text-rose-500 dark:border-rose-500/50 text-xs py-0 px-1.5">Invasion</Badge>;
+      return <Badge className="bg-rose-700/20 text-rose-700 border-rose-700/50 dark:bg-rose-500/20 dark:text-rose-500 dark:border-rose-500/50 text-[10px] py-0 px-1"><span className="flex items-center gap-0.5"><img src={GW2_ICONS.invasion} alt="" className="h-3 w-3" />Invasion</span></Badge>;
     }
-    return <Badge className="bg-blue-700/20 text-blue-700 border-blue-700/50 dark:bg-blue-500/20 dark:text-blue-500 dark:border-blue-500/50 text-xs py-0 px-1.5">Meta</Badge>;
+    return <Badge className="bg-blue-700/20 text-blue-700 border-blue-700/50 dark:bg-blue-500/20 dark:text-blue-500 dark:border-blue-500/50 text-[10px] py-0 px-1"><span className="flex items-center gap-0.5"><img src={GW2_ICONS.meta} alt="" className="h-3 w-3" />Meta</span></Badge>;
   };
 
   const getCategoryBadge = (category: string) => {
@@ -213,7 +298,7 @@ export function EventTimer({ favorites, toggleFavorite }: EventTimerProps) {
     };
 
     return (
-      <Badge className={`${categoryColors[category]} text-xs py-0 px-1.5`}>
+      <Badge className={`${categoryColors[category]} text-[10px] py-0 px-1`}>
         {categoryLabels[category]}
       </Badge>
     );
@@ -224,14 +309,7 @@ export function EventTimer({ favorites, toggleFavorite }: EventTimerProps) {
     if (minutesUntil <= 0 && minutesUntil > -duration) {
       return 'bg-success/10 hover:bg-success/15 transition-colors duration-200';
     }
-    // Urgent events (< 5 min) - gold glow with animation
-    if (minutesUntil > 0 && minutesUntil <= 5) {
-      return 'bg-gw2-accent/20 hover:bg-gw2-accent/30 glow-accent-sm transition-colors duration-200';
-    }
-    // Soon events (5-15 min) - warning highlight
-    if (minutesUntil > 0 && minutesUntil <= 15) {
-      return 'bg-warning/10 hover:bg-warning/15 transition-colors duration-200';
-    }
+    // Alternating row colors for everything else
     return index % 2 === 0 ? 'bg-muted/20 hover:bg-muted/50 transition-colors duration-200' : 'bg-background hover:bg-muted/50 transition-colors duration-200';
   };
 
@@ -406,275 +484,475 @@ export function EventTimer({ favorites, toggleFavorite }: EventTimerProps) {
         </div>
       </div>
 
-      {/* Table */}
-      <div className="border border-gw2-accent/20 rounded-lg overflow-hidden shadow-lg overflow-x-auto">
-        <table className="w-full text-sm min-w-[700px]">
-          <thead>
-            <tr className="sticky top-0 z-10 border-b-2 border-gw2-accent/30 bg-card/95 backdrop-blur-sm text-left">
-              <th className="py-2 px-3 font-medium text-xs text-gw2-accent/70 min-w-[200px]">Event ({filteredEvents.length})</th>
-              <th className="py-2 px-3 font-medium text-xs text-gw2-accent/70 min-w-[140px]">Map</th>
-              <th className="py-2 px-3 font-medium text-xs text-gw2-accent/70 min-w-[90px]">Time</th>
-              <th className="py-2 px-3 font-medium text-xs text-gw2-accent/70 w-20">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredEvents.length === 0 ? (
-              <tr>
-                <td colSpan={4} className="py-8 text-center text-muted-foreground text-xs">
-                  No events match your filters
-                </td>
-              </tr>
-            ) : (
-              <>
-                {/* Pinned Events Section */}
-                {(() => {
-                  const pinnedEvents = filteredEvents.filter(({ event }) => favorites.has(event.id));
-                  if (pinnedEvents.length === 0) return null;
-                  return (
-                    <>
-                      <tr
-                        className="bg-gw2-accent/20 cursor-pointer hover:bg-gw2-accent/30 transition-colors duration-200 border-y border-gw2-accent/30"
-                        onClick={() => setPinnedCollapsed(!pinnedCollapsed)}
-                      >
-                        <td colSpan={4} className="py-2 px-3">
-                          <div className="flex items-center gap-1.5 font-semibold text-gw2-accent text-xs">
-                            <span className={`transition-transform duration-200 ${pinnedCollapsed ? '' : 'rotate-90'}`}>
-                              <ChevronRight className="h-4 w-4" />
-                            </span>
-                            <Pin className="h-3.5 w-3.5" />
-                            Pinned ({pinnedEvents.length})
-                          </div>
-                        </td>
-                      </tr>
-                      {!pinnedCollapsed && pinnedEvents.map(({ event, nextSpawn, minutesUntil }, index) => (
-                        <tr key={`pinned-${event.id}`} className={`border-b border-gw2-accent/10 ${getRowClass(minutesUntil, event.duration, index)}`}>
-                          <td className="py-2 px-3">
-                            <div className="flex items-center gap-1.5">
-                              <div className="flex flex-col gap-0.5">
-                                <div className="flex items-center gap-1.5">
-                                  <button
-                                    onClick={(e) => { e.stopPropagation(); toggleFavorite(event.id); }}
-                                    className="hover:scale-110 transition-transform"
-                                    title="Unpin event"
-                                  >
-                                    <Pin className="h-3.5 w-3.5 text-gw2-accent fill-current" />
-                                  </button>
-                                  <span className="font-semibold text-sm text-foreground">{event.name}</span>
-                                </div>
-                                <div className="flex gap-0.5">
-                                  {getTypeBadge(event.type)}
-                                  {getCategoryBadge(event.category)}
-                                </div>
-                              </div>
-                            </div>
-                          </td>
-                          <td
-                            className="py-2 px-3 text-muted-foreground cursor-pointer hover:text-foreground transition-colors"
-                            onClick={() => {
-                              if (event.waypoint) {
-                                navigator.clipboard.writeText(event.waypoint);
-                                toast.success('Waypoint copied!');
-                              }
-                            }}
-                            title={event.waypoint ? `Click to copy: ${event.waypoint}` : undefined}
-                          >
-                            <div className="flex flex-col gap-0.5">
-                              <div className="flex items-center gap-1">
-                                <span className="text-xs">{event.map}</span>
-                                {event.waypoint && <Copy className="h-2.5 w-2.5 opacity-50" />}
-                              </div>
-                              {event.waypoint && (
-                                <code className="text-[10px] text-muted-foreground/70 font-mono">{event.waypoint}</code>
-                              )}
-                            </div>
-                          </td>
-                          <td className="py-2 px-3">
-                            <div className="font-mono text-xs">
-                              {formatCountdown(minutesUntil, nextSpawn, event.duration)}
-                            </div>
-                            {minutesUntil > 0 && (
-                              <div className="text-[10px] text-muted-foreground">
-                                {nextSpawn.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}
-                              </div>
-                            )}
-                          </td>
-                          <td className="py-2 px-3">{getStatusBadge(minutesUntil, event.duration)}</td>
-                        </tr>
-                      ))}
-                    </>
-                  );
-                })()}
-
-                {/* Active Events Section */}
-                {(() => {
-                  const activeEvents = filteredEvents.filter(
-                    ({ event, minutesUntil }) => !favorites.has(event.id) && minutesUntil <= 0 && minutesUntil > -event.duration
-                  );
-                  if (activeEvents.length === 0) return null;
-                  return (
-                    <>
-                      <tr
-                        className="bg-success/20 cursor-pointer hover:bg-success/30 transition-colors duration-200 border-y border-success/30"
-                        onClick={() => setActiveCollapsed(!activeCollapsed)}
-                      >
-                        <td colSpan={4} className="py-2 px-3">
-                          <div className="flex items-center gap-1.5 font-semibold text-success text-xs">
-                            <span className={`transition-transform duration-200 ${activeCollapsed ? '' : 'rotate-90'}`}>
-                              <ChevronRight className="h-4 w-4" />
-                            </span>
-                            Active Now ({activeEvents.length})
-                          </div>
-                        </td>
-                      </tr>
-                      {!activeCollapsed && activeEvents.map(({ event, nextSpawn, minutesUntil }, index) => (
-                        <tr key={event.id} className={`border-b border-gw2-accent/10 ${getRowClass(minutesUntil, event.duration, index)}`}>
-                          <td className="py-2 px-3">
-                            <div className="flex items-center gap-1.5">
-                              <span className="text-base">{event.icon}</span>
-                              <div className="flex flex-col gap-0.5">
-                                <div className="flex items-center gap-1.5">
-                                  <button
-                                    onClick={(e) => { e.stopPropagation(); toggleFavorite(event.id); }}
-                                    className="hover:scale-110 transition-transform"
-                                    title={favorites.has(event.id) ? 'Unpin event' : 'Pin event'}
-                                  >
-                                    <Pin className={`h-3.5 w-3.5 ${favorites.has(event.id) ? 'text-gw2-accent fill-current' : 'text-muted-foreground'}`} />
-                                  </button>
-                                  <span className="font-semibold text-sm text-foreground">{event.name}</span>
-                                </div>
-                                <div className="flex gap-0.5">
-                                  {getTypeBadge(event.type)}
-                                  {getCategoryBadge(event.category)}
-                                </div>
-                              </div>
-                            </div>
-                          </td>
-                          <td
-                            className="py-2 px-3 text-muted-foreground cursor-pointer hover:text-foreground transition-colors"
-                            onClick={() => {
-                              if (event.waypoint) {
-                                navigator.clipboard.writeText(event.waypoint);
-                                toast.success('Waypoint copied!');
-                              }
-                            }}
-                            title={event.waypoint ? `Click to copy: ${event.waypoint}` : undefined}
-                          >
-                            <div className="flex flex-col gap-0.5">
-                              <div className="flex items-center gap-1">
-                                <span className="text-xs">{event.map}</span>
-                                {event.waypoint && <Copy className="h-2.5 w-2.5 opacity-50" />}
-                              </div>
-                              {event.waypoint && (
-                                <code className="text-[10px] text-muted-foreground/70 font-mono">{event.waypoint}</code>
-                              )}
-                            </div>
-                          </td>
-                          <td className="py-2 px-3">
-                            <div className="font-mono text-xs">
-                              {formatCountdown(minutesUntil, nextSpawn, event.duration)}
-                            </div>
-                            {minutesUntil > 0 && (
-                              <div className="text-[10px] text-muted-foreground">
-                                {nextSpawn.toLocaleTimeString([], {
-                                  hour: 'numeric',
-                                  minute: '2-digit',
-                                })}
-                              </div>
-                            )}
-                          </td>
-                          <td className="py-2 px-3">{getStatusBadge(minutesUntil, event.duration)}</td>
-                        </tr>
-                      ))}
-                    </>
-                  );
-                })()}
-
-                {/* Upcoming Events Section */}
-                {(() => {
-                  const upcomingEvents = filteredEvents.filter(({ event, minutesUntil }) => !favorites.has(event.id) && minutesUntil > 0);
-                  if (upcomingEvents.length === 0) return null;
-                  return (
-                    <>
-                      <tr
-                        className="bg-info/20 cursor-pointer hover:bg-info/30 transition-colors duration-200 border-y border-info/30"
-                        onClick={() => setUpcomingCollapsed(!upcomingCollapsed)}
-                      >
-                        <td colSpan={4} className="py-2 px-3">
-                          <div className="flex items-center gap-1.5 font-semibold text-info text-xs">
-                            <span className={`transition-transform duration-200 ${upcomingCollapsed ? '' : 'rotate-90'}`}>
-                              <ChevronRight className="h-4 w-4" />
-                            </span>
-                            Upcoming ({upcomingEvents.length})
-                          </div>
-                        </td>
-                      </tr>
-                      {!upcomingCollapsed && upcomingEvents.map(({ event, nextSpawn, minutesUntil }, index) => (
-                        <tr key={event.id} className={`border-b border-gw2-accent/10 ${getRowClass(minutesUntil, event.duration, index)}`}>
-                          <td className="py-2 px-3">
-                            <div className="flex items-center gap-1.5">
-                              <span className="text-base">{event.icon}</span>
-                              <div className="flex flex-col gap-0.5">
-                                <div className="flex items-center gap-1.5">
-                                  <button
-                                    onClick={(e) => { e.stopPropagation(); toggleFavorite(event.id); }}
-                                    className="hover:scale-110 transition-transform"
-                                    title={favorites.has(event.id) ? 'Unpin event' : 'Pin event'}
-                                  >
-                                    <Pin className={`h-3.5 w-3.5 ${favorites.has(event.id) ? 'text-gw2-accent fill-current' : 'text-muted-foreground'}`} />
-                                  </button>
-                                  <span className="font-semibold text-sm text-foreground">{event.name}</span>
-                                </div>
-                                <div className="flex gap-0.5">
-                                  {getTypeBadge(event.type)}
-                                  {getCategoryBadge(event.category)}
-                                </div>
-                              </div>
-                            </div>
-                          </td>
-                          <td
-                            className="py-2 px-3 text-muted-foreground cursor-pointer hover:text-foreground transition-colors"
-                            onClick={() => {
-                              if (event.waypoint) {
-                                navigator.clipboard.writeText(event.waypoint);
-                                toast.success('Waypoint copied!');
-                              }
-                            }}
-                            title={event.waypoint ? `Click to copy: ${event.waypoint}` : undefined}
-                          >
-                            <div className="flex flex-col gap-0.5">
-                              <div className="flex items-center gap-1">
-                                <span className="text-xs">{event.map}</span>
-                                {event.waypoint && <Copy className="h-2.5 w-2.5 opacity-50" />}
-                              </div>
-                              {event.waypoint && (
-                                <code className="text-[10px] text-muted-foreground/70 font-mono">{event.waypoint}</code>
-                              )}
-                            </div>
-                          </td>
-                          <td className="py-2 px-3">
-                            <div className="font-mono text-xs">
-                              {formatCountdown(minutesUntil, nextSpawn, event.duration)}
-                            </div>
-                            {minutesUntil > 0 && (
-                              <div className="text-[10px] text-muted-foreground">
-                                {nextSpawn.toLocaleTimeString([], {
-                                  hour: 'numeric',
-                                  minute: '2-digit',
-                                })}
-                              </div>
-                            )}
-                          </td>
-                          <td className="py-2 px-3">{getStatusBadge(minutesUntil, event.duration)}</td>
-                        </tr>
-                      ))}
-                    </>
-                  );
-                })()}
-              </>
-            )}
-          </tbody>
-        </table>
+      {/* Hide completed toggle */}
+      <div className="flex items-center gap-2">
+        <button
+          onClick={() => setHideCompleted(!hideCompleted)}
+          className={`flex items-center gap-2 px-3 py-1.5 rounded-md border text-sm transition-colors ${
+            hideCompleted
+              ? 'bg-green-500/10 border-green-500/50 text-green-500'
+              : 'bg-background border-input text-muted-foreground hover:bg-muted/50'
+          }`}
+        >
+          <CheckCircle className={`h-4 w-4 ${hideCompleted ? 'fill-green-500/20' : ''}`} />
+          Hide completed
+        </button>
+        {hasApiKey && worldBossesCompleted.length > 0 && (
+          <span className="text-xs text-muted-foreground">
+            ({worldBossesCompleted.length} bosses completed today)
+          </span>
+        )}
+        {!hasApiKey && (
+          <span className="text-xs text-muted-foreground">
+            (Login to track boss kills)
+          </span>
+        )}
       </div>
+
+      {/* Pinned Events Section */}
+      {(() => {
+        const pinnedEvents = sortEvents(filteredEvents.filter(({ event }) => favorites.has(event.id)));
+        if (pinnedEvents.length === 0) return null;
+        return (
+          <div className="border border-gw2-accent/30 rounded-lg overflow-hidden shadow-lg">
+            <button
+              className="w-full bg-gw2-accent/20 hover:bg-gw2-accent/30 transition-colors duration-200 py-2 px-3"
+              onClick={() => setPinnedCollapsed(!pinnedCollapsed)}
+            >
+              <div className="flex items-center gap-1.5 font-semibold text-gw2-accent text-xs">
+                <span className={`transition-transform duration-200 ${pinnedCollapsed ? '' : 'rotate-90'}`}>
+                  <ChevronRight className="h-4 w-4" />
+                </span>
+                <Pin className="h-3.5 w-3.5" />
+                Pinned ({pinnedEvents.length})
+              </div>
+            </button>
+            {!pinnedCollapsed && (
+              <table className="w-full text-sm table-fixed">
+                <tbody>
+                  {pinnedEvents.map(({ event, nextSpawn, minutesUntil }) => {
+                    const isCompleted = isBossCompleted(event.id, event.type) === true;
+                    return (
+                      <>
+                      <tr key={`pinned-${event.id}`} className={`border-b border-gw2-accent/10 last:border-b-0 ${getRowClass(minutesUntil, event.duration, 0)} ${isCompleted ? 'opacity-50' : ''}`}>
+                        <td className="py-2 px-3" style={{ width: '55%' }}>
+                          <div className="flex items-center gap-1.5">
+                            {(event.type === 'boss' || event.type === 'meta' || event.type === 'invasion') ? (
+                              <img src={event.type === 'boss' ? GW2_ICONS.boss : event.type === 'invasion' ? GW2_ICONS.invasion : GW2_ICONS.meta} alt="" className="h-5 w-5 shrink-0" />
+                            ) : (
+                              <span className="text-base shrink-0">{event.icon}</span>
+                            )}
+                            <div className="flex flex-col gap-0.5 min-w-0">
+                              <div className="flex items-center gap-1.5">
+                                <button
+                                  onClick={(e) => { e.stopPropagation(); toggleFavorite(event.id); }}
+                                  className="hover:scale-110 transition-transform shrink-0"
+                                  title="Unpin event"
+                                >
+                                  <Pin className="h-3.5 w-3.5 text-gw2-accent fill-current" />
+                                </button>
+                                <span className={`font-semibold text-sm text-foreground truncate ${isCompleted ? 'line-through' : ''}`}>{event.name}</span>
+                                {isCompleted && <CheckCircle className="h-3.5 w-3.5 text-green-500 fill-green-500/20 shrink-0" />}
+                              </div>
+                              <div className="flex gap-0.5">
+                                {getTypeBadge(event.type)}
+                                {getCategoryBadge(event.category)}
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="py-2 px-3 text-right" style={{ width: '80px' }}>
+                          <div className="font-mono text-xs">
+                            {formatCountdown(minutesUntil, nextSpawn, event.duration)}
+                          </div>
+                          {minutesUntil > 0 && (
+                            <div className="text-[10px] text-muted-foreground">
+                              {nextSpawn.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}
+                            </div>
+                          )}
+                        </td>
+                        <td className="py-2 px-3 text-muted-foreground" style={{ width: '120px' }}>
+                          {event.locations && event.locations.length > 0 ? (
+                            <Popover>
+                              <PopoverTrigger asChild>
+                                <button className="flex items-center gap-1.5 hover:bg-muted/50 rounded px-1.5 -mx-1.5 text-muted-foreground hover:text-foreground transition-colors">
+                                  <img src={GW2_ICONS.waypoint} alt="" className="h-4 w-4 shrink-0" />
+                                  <span className="text-sm truncate max-w-[80px]">{event.map}</span>
+                                  <ChevronDown className="h-3 w-3 shrink-0" />
+                                </button>
+                              </PopoverTrigger>
+                              <PopoverContent className="w-48 p-1">
+                                <div className="space-y-0.5">
+                                  {event.locations.map((loc, i) => (
+                                    <button
+                                      key={i}
+                                      className="flex items-center gap-2 w-full px-2 py-1.5 text-sm rounded hover:bg-muted/50 transition-colors"
+                                      onClick={() => {
+                                        navigator.clipboard.writeText(loc.waypoint);
+                                        toast.success(loc.name + ' waypoint copied!');
+                                      }}
+                                    >
+                                      <img src={GW2_ICONS.waypoint} alt="" className="h-3.5 w-3.5" />
+                                      <span className="flex-1 text-left">{loc.name}</span>
+                                      <Copy className="h-3 w-3 text-muted-foreground" />
+                                    </button>
+                                  ))}
+                                </div>
+                              </PopoverContent>
+                            </Popover>
+                          ) : (
+                            <div
+                              className="flex items-center gap-1.5 hover:bg-muted/50 rounded px-1.5 -mx-1.5 cursor-pointer hover:text-foreground transition-colors"
+                              onClick={() => {
+                                if (event.waypoint) {
+                                  navigator.clipboard.writeText(event.waypoint);
+                                  toast.success('Waypoint copied!');
+                                }
+                              }}
+                              title={event.waypoint ? 'Click to copy waypoint' : undefined}
+                            >
+                              {event.waypoint && <img src={GW2_ICONS.waypoint} alt="" className="h-4 w-4 shrink-0" />}
+                              <span className="text-sm truncate max-w-[100px]" title={event.map}>{event.map}</span>
+                              {event.waypoint && <Copy className="h-3.5 w-3.5 text-muted-foreground shrink-0" />}
+                            </div>
+                          )}
+                        </td>
+                      </tr>
+                      {event.reward && (
+                        <tr key={`${event.id}-reward`}>
+                          <td colSpan={3} className="py-0.5 px-3 border-b border-border/10">
+                            <div className="flex items-center gap-2 pl-5">
+                              {event.reward.split(' + ').map((r, i) => {
+                                const { icon, color, label } = getRewardDisplay(r);
+                                return (
+                                  <div key={i} className="flex items-center gap-1">
+                                    {icon && <img src={icon} alt="" className="h-3.5 w-3.5" />}
+                                    <span className="text-[11px]" style={{ color }}>{label}</span>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </td>
+                        </tr>
+                      )}
+                    </>
+                    );
+                  })}
+                </tbody>
+              </table>
+            )}
+          </div>
+        );
+      })()}
+
+      {/* No events message */}
+      {filteredEvents.length === 0 && (
+        <div className="py-8 text-center text-muted-foreground text-xs border border-border rounded-lg">
+          No events match your filters
+        </div>
+      )}
+
+      {/* Two-column layout for Upcoming and Active Now */}
+      {filteredEvents.length > 0 && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+          {/* Upcoming Column (LEFT) */}
+          <div>
+            <div className="flex items-center gap-2 mb-2 text-muted-foreground font-semibold text-sm">
+              Upcoming
+            </div>
+            <div className="rounded-lg border border-border overflow-hidden max-h-[calc(100vh-120px)] overflow-y-auto">
+              {(() => {
+                const upcomingEvents = sortEvents(filteredEvents.filter(({ event, minutesUntil }) => !favorites.has(event.id) && minutesUntil > 0))
+                  .filter(({ event }) => event.name.toLowerCase().includes(upcomingSearch.toLowerCase()) || event.map.toLowerCase().includes(upcomingSearch.toLowerCase()));
+                return (
+                  <>
+                    <table className="w-full text-sm table-fixed">
+                      <thead className="bg-muted/50 sticky top-0">
+                        <tr className="border-b border-border">
+                          <th className="py-2 px-3 text-left text-xs font-medium text-muted-foreground w-[55%]">
+                            <input
+                              type="text"
+                              placeholder="Filter events..."
+                              value={upcomingSearch}
+                              onChange={(e) => setUpcomingSearch(e.target.value)}
+                              className="w-full bg-transparent border-none outline-none text-xs placeholder:text-muted-foreground/60"
+                            />
+                          </th>
+                          <th className="py-2 px-2 text-right text-xs font-medium text-muted-foreground whitespace-nowrap w-[80px]">Time</th>
+                          <th className="py-2 px-2 text-left text-xs font-medium text-muted-foreground whitespace-nowrap w-[120px]">Location</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {upcomingEvents.length === 0 ? (
+                          <tr>
+                            <td colSpan={3} className="py-6 text-center text-muted-foreground text-xs">
+                              No upcoming events
+                            </td>
+                          </tr>
+                        ) : (
+                          upcomingEvents.map(({ event, nextSpawn, minutesUntil }) => {
+                            const isCompleted = isBossCompleted(event.id, event.type) === true;
+                            return (
+                              <>
+                              <tr key={event.id} className={`border-b border-border/50 last:border-b-0 ${getRowClass(minutesUntil, event.duration, 0)} ${isCompleted ? 'opacity-50' : ''}`}>
+                                <td className="py-2 px-3">
+                                  <div className="flex items-center gap-1.5">
+                                    {(event.type === 'boss' || event.type === 'meta' || event.type === 'invasion') ? (
+                                      <img src={event.type === 'boss' ? GW2_ICONS.boss : event.type === 'invasion' ? GW2_ICONS.invasion : GW2_ICONS.meta} alt="" className="h-4 w-4 shrink-0" />
+                                    ) : (
+                                      <span className="text-sm shrink-0">{event.icon}</span>
+                                    )}
+                                    <div className="flex flex-col gap-0.5 min-w-0">
+                                      <div className="flex items-center gap-1">
+                                        <button
+                                          onClick={(e) => { e.stopPropagation(); toggleFavorite(event.id); }}
+                                          className="hover:scale-110 transition-transform shrink-0"
+                                          title={favorites.has(event.id) ? 'Unpin event' : 'Pin event'}
+                                        >
+                                          <Pin className={`h-3 w-3 ${favorites.has(event.id) ? 'text-gw2-accent fill-current' : 'text-muted-foreground'}`} />
+                                        </button>
+                                        <span className={`font-medium text-xs text-foreground truncate ${isCompleted ? 'line-through' : ''}`}>{event.name}</span>
+                                        {isCompleted && <CheckCircle className="h-3 w-3 text-green-500 fill-green-500/20 shrink-0" />}
+                                      </div>
+                                      <div className="flex gap-0.5">
+                                        {getTypeBadge(event.type)}
+                                        {getCategoryBadge(event.category)}
+                                      </div>
+                                    </div>
+                                  </div>
+                                </td>
+                                <td className="py-2 px-2 text-right whitespace-nowrap">
+                                  <div className="font-mono text-xs">
+                                    {formatCountdown(minutesUntil, nextSpawn, event.duration)}
+                                  </div>
+                                  <div className="text-[10px] text-muted-foreground">
+                                    {nextSpawn.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}
+                                  </div>
+                                </td>
+                                <td className="py-2 px-2 text-muted-foreground max-w-[120px]">
+                                  {event.locations && event.locations.length > 0 ? (
+                                    <Popover>
+                                      <PopoverTrigger asChild>
+                                        <button className="flex items-center gap-1.5 hover:bg-muted/50 rounded px-1.5 -mx-1.5 text-muted-foreground hover:text-foreground transition-colors">
+                                          <img src={GW2_ICONS.waypoint} alt="" className="h-4 w-4 shrink-0" />
+                                          <span className="text-sm truncate max-w-[80px]">{event.map}</span>
+                                          <ChevronDown className="h-3 w-3 shrink-0" />
+                                        </button>
+                                      </PopoverTrigger>
+                                      <PopoverContent className="w-48 p-1">
+                                        <div className="space-y-0.5">
+                                          {event.locations.map((loc, i) => (
+                                            <button
+                                              key={i}
+                                              className="flex items-center gap-2 w-full px-2 py-1.5 text-sm rounded hover:bg-muted/50 transition-colors"
+                                              onClick={() => {
+                                                navigator.clipboard.writeText(loc.waypoint);
+                                                toast.success(loc.name + ' waypoint copied!');
+                                              }}
+                                            >
+                                              <img src={GW2_ICONS.waypoint} alt="" className="h-3.5 w-3.5" />
+                                              <span className="flex-1 text-left">{loc.name}</span>
+                                              <Copy className="h-3 w-3 text-muted-foreground" />
+                                            </button>
+                                          ))}
+                                        </div>
+                                      </PopoverContent>
+                                    </Popover>
+                                  ) : (
+                                    <div
+                                      className="flex items-center gap-1.5 hover:bg-muted/50 rounded px-1.5 -mx-1.5 cursor-pointer hover:text-foreground transition-colors"
+                                      onClick={() => {
+                                        if (event.waypoint) {
+                                          navigator.clipboard.writeText(event.waypoint);
+                                          toast.success('Waypoint copied!');
+                                        }
+                                      }}
+                                      title={event.waypoint ? 'Click to copy waypoint' : undefined}
+                                    >
+                                      {event.waypoint && <img src={GW2_ICONS.waypoint} alt="" className="h-4 w-4 shrink-0" />}
+                                      <span className="text-sm truncate max-w-[100px]" title={event.map}>{event.map}</span>
+                                      {event.waypoint && <Copy className="h-3.5 w-3.5 text-muted-foreground shrink-0" />}
+                                    </div>
+                                  )}
+                                </td>
+                              </tr>
+                              {event.reward && (
+                                <tr key={`${event.id}-reward`}>
+                                  <td colSpan={3} className="py-0.5 px-3 border-b border-border/10">
+                                    <div className="flex items-center gap-2 pl-5">
+                                      {event.reward.split(' + ').map((r, i) => {
+                                        const { icon, color, label } = getRewardDisplay(r);
+                                        return (
+                                          <div key={i} className="flex items-center gap-1">
+                                            {icon && <img src={icon} alt="" className="h-3.5 w-3.5" />}
+                                            <span className="text-[11px]" style={{ color }}>{label}</span>
+                                          </div>
+                                        );
+                                      })}
+                                    </div>
+                                  </td>
+                                </tr>
+                              )}
+                              </>
+                            );
+                          })
+                        )}
+                      </tbody>
+                    </table>
+                  </>
+                );
+              })()}
+            </div>
+          </div>
+
+          {/* Active Now Column (RIGHT) */}
+          <div>
+            <div className="flex items-center gap-2 mb-2 text-success font-semibold text-sm">
+              <span className="h-2 w-2 rounded-full bg-success animate-pulse" />
+              Active Now
+            </div>
+            <div className="rounded-lg border border-success/30 overflow-hidden">
+              {(() => {
+                const activeEvents = sortEvents(filteredEvents.filter(
+                  ({ event, minutesUntil }) => !favorites.has(event.id) && minutesUntil <= 0 && minutesUntil > -event.duration
+                )).filter(({ event }) => event.name.toLowerCase().includes(activeSearch.toLowerCase()) || event.map.toLowerCase().includes(activeSearch.toLowerCase()));
+                return (
+                  <table className="w-full text-sm table-fixed">
+                    <thead className="bg-success/10 sticky top-0">
+                      <tr className="border-b border-success/20">
+                        <th className="py-2 px-3 text-left text-xs font-medium text-muted-foreground w-[55%]">
+                          <input
+                            type="text"
+                            placeholder="Filter events..."
+                            value={activeSearch}
+                            onChange={(e) => setActiveSearch(e.target.value)}
+                            className="w-full bg-transparent border-none outline-none text-xs placeholder:text-muted-foreground/60"
+                          />
+                        </th>
+                        <th className="py-2 px-2 text-right text-xs font-medium text-muted-foreground whitespace-nowrap w-[80px]">Time</th>
+                        <th className="py-2 px-2 text-left text-xs font-medium text-muted-foreground whitespace-nowrap w-[120px]">Location</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {activeEvents.length === 0 ? (
+                        <tr>
+                          <td colSpan={3} className="py-6 text-center text-muted-foreground text-xs bg-success/5">
+                            No active events
+                          </td>
+                        </tr>
+                      ) : (
+                        activeEvents.map(({ event, nextSpawn, minutesUntil }) => {
+                          const isCompleted = isBossCompleted(event.id, event.type) === true;
+                          return (
+                            <>
+                            <tr key={event.id} className={`border-b border-success/10 last:border-b-0 bg-success/5 hover:bg-success/10 transition-colors ${isCompleted ? 'opacity-50' : ''}`}>
+                              <td className="py-2 px-3">
+                                <div className="flex items-center gap-1.5">
+                                  {(event.type === 'boss' || event.type === 'meta' || event.type === 'invasion') ? (
+                                    <img src={event.type === 'boss' ? GW2_ICONS.boss : event.type === 'invasion' ? GW2_ICONS.invasion : GW2_ICONS.meta} alt="" className="h-4 w-4 shrink-0" />
+                                  ) : (
+                                    <span className="text-sm shrink-0">{event.icon}</span>
+                                  )}
+                                  <div className="flex flex-col gap-0.5 min-w-0">
+                                    <div className="flex items-center gap-1">
+                                      <button
+                                        onClick={(e) => { e.stopPropagation(); toggleFavorite(event.id); }}
+                                        className="hover:scale-110 transition-transform shrink-0"
+                                        title={favorites.has(event.id) ? 'Unpin event' : 'Pin event'}
+                                      >
+                                        <Pin className={`h-3 w-3 ${favorites.has(event.id) ? 'text-gw2-accent fill-current' : 'text-muted-foreground'}`} />
+                                      </button>
+                                      <span className={`font-medium text-xs text-foreground truncate ${isCompleted ? 'line-through' : ''}`}>{event.name}</span>
+                                      {isCompleted && <CheckCircle className="h-3 w-3 text-green-500 fill-green-500/20 shrink-0" />}
+                                    </div>
+                                    <div className="flex gap-0.5">
+                                      {getTypeBadge(event.type)}
+                                      {getCategoryBadge(event.category)}
+                                    </div>
+                                  </div>
+                                </div>
+                              </td>
+                              <td className="py-2 px-2 text-right whitespace-nowrap">
+                                <div className="font-mono text-xs">
+                                  {formatCountdown(minutesUntil, nextSpawn, event.duration)}
+                                </div>
+                              </td>
+                              <td className="py-2 px-2 text-muted-foreground max-w-[120px]">
+                                {event.locations && event.locations.length > 0 ? (
+                                  <Popover>
+                                    <PopoverTrigger asChild>
+                                      <button className="flex items-center gap-1.5 hover:bg-muted/50 rounded px-1.5 -mx-1.5 text-muted-foreground hover:text-foreground transition-colors">
+                                        <img src={GW2_ICONS.waypoint} alt="" className="h-4 w-4 shrink-0" />
+                                        <span className="text-sm truncate max-w-[80px]">{event.map}</span>
+                                        <ChevronDown className="h-3 w-3 shrink-0" />
+                                      </button>
+                                    </PopoverTrigger>
+                                    <PopoverContent className="w-48 p-1">
+                                      <div className="space-y-0.5">
+                                        {event.locations.map((loc, i) => (
+                                          <button
+                                            key={i}
+                                            className="flex items-center gap-2 w-full px-2 py-1.5 text-sm rounded hover:bg-muted/50 transition-colors"
+                                            onClick={() => {
+                                              navigator.clipboard.writeText(loc.waypoint);
+                                              toast.success(loc.name + ' waypoint copied!');
+                                            }}
+                                          >
+                                            <img src={GW2_ICONS.waypoint} alt="" className="h-3.5 w-3.5" />
+                                            <span className="flex-1 text-left">{loc.name}</span>
+                                            <Copy className="h-3 w-3 text-muted-foreground" />
+                                          </button>
+                                        ))}
+                                      </div>
+                                    </PopoverContent>
+                                  </Popover>
+                                ) : (
+                                  <div
+                                    className="flex items-center gap-1.5 hover:bg-muted/50 rounded px-1.5 -mx-1.5 cursor-pointer hover:text-foreground transition-colors"
+                                    onClick={() => {
+                                      if (event.waypoint) {
+                                        navigator.clipboard.writeText(event.waypoint);
+                                        toast.success('Waypoint copied!');
+                                      }
+                                    }}
+                                    title={event.waypoint ? 'Click to copy waypoint' : undefined}
+                                  >
+                                    {event.waypoint && <img src={GW2_ICONS.waypoint} alt="" className="h-4 w-4 shrink-0" />}
+                                    <span className="text-sm truncate max-w-[100px]" title={event.map}>{event.map}</span>
+                                    {event.waypoint && <Copy className="h-3.5 w-3.5 text-muted-foreground shrink-0" />}
+                                  </div>
+                                )}
+                              </td>
+                            </tr>
+                            {event.reward && (
+                              <tr key={`${event.id}-reward`}>
+                                <td colSpan={3} className="py-0.5 px-3 border-b border-border/10">
+                                  <div className="flex items-center gap-2 pl-5">
+                                    {event.reward.split(' + ').map((r, i) => {
+                                      const { icon, color, label } = getRewardDisplay(r);
+                                      return (
+                                        <div key={i} className="flex items-center gap-1">
+                                          {icon && <img src={icon} alt="" className="h-3.5 w-3.5" />}
+                                          <span className="text-[11px]" style={{ color }}>{label}</span>
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
+                                </td>
+                              </tr>
+                            )}
+                            </>
+                          );
+                        })
+                      )}
+                    </tbody>
+                  </table>
+                );
+              })()}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Results count */}
       <div className="text-xs text-muted-foreground">

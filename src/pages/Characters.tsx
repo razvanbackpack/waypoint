@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useApiKey } from '@/api/hooks/useApiKey';
-import { useCharacter, useWallet, useMasteryPoints, useAccount } from '@/api/hooks/useGW2Api';
+import { useCharacter, useWallet, useMasteryPoints, useAccount, useCharacterSpecializations } from '@/api/hooks/useGW2Api';
+import { PROFESSION_ICONS, DISCIPLINE_ICONS, ELITE_SPEC_ICONS, ELITE_SPEC_IDS } from '@/lib/gw2Icons';
 import { useViewMode } from '@/hooks/useViewMode';
 import { ApiKeySetup } from '@/components/inventory/ApiKeySetup';
 import { CharacterInventory } from '@/components/characters/CharacterInventory';
@@ -9,17 +10,11 @@ import { CharacterBank } from '@/components/characters/CharacterBank';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
-import { Search, Coins, Star, Swords, Hammer, TrendingUp, User, Package, Vault } from 'lucide-react';
+import { Search, Star, Swords, Hammer, TrendingUp, User, Package, Vault } from 'lucide-react';
 import { getProfessionColor } from '@/lib/professionColors';
 import { getApiClient } from '@/api/client';
 import { guildEndpoints } from '@/api/endpoints';
-
-const formatGold = (copper: number) => {
-  const gold = Math.floor(copper / 10000);
-  const silver = Math.floor((copper % 10000) / 100);
-  const copperRem = copper % 100;
-  return `${gold.toLocaleString()}g ${silver}s ${copperRem}c`;
-};
+import { CoinDisplay } from '@/components/trading-post/PriceDisplay';
 
 const formatCharacterAge = (createdDate: string): string => {
   const created = new Date(createdDate);
@@ -54,6 +49,22 @@ export function Characters() {
   const { data: wallet } = useWallet();
   const { data: account } = useAccount();
   const { data: masteryPoints } = useMasteryPoints();
+  const { data: characterSpecs } = useCharacterSpecializations(selectedCharacter || '', {
+    enabled: hasApiKey && !!selectedCharacter,
+  });
+
+  // Get active elite spec from PvE specializations
+  const activeEliteSpec = useMemo(() => {
+    if (!characterSpecs?.specializations?.pve) return null;
+
+    // Find the elite spec (check all 3 spec slots for an elite spec ID)
+    for (const spec of characterSpecs.specializations.pve) {
+      if (spec?.id && ELITE_SPEC_IDS[spec.id]) {
+        return ELITE_SPEC_IDS[spec.id];
+      }
+    }
+    return null;
+  }, [characterSpecs]);
 
   const goldCurrency = wallet?.find(c => c.id === 1);
   const totalMastery = masteryPoints?.totals?.reduce((sum, t) => sum + t.spent, 0) || 0;
@@ -91,98 +102,80 @@ export function Characters() {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      {/* Page Header - Enhanced with profession-colored accents */}
+      {/* Page Header - Compact hero section */}
       <div
-        className="relative rounded-xl p-4 overflow-hidden backdrop-blur-sm"
+        className="relative rounded-xl p-3 overflow-hidden"
         style={{
-          background: `linear-gradient(135deg, ${professionColor}15 0%, ${professionColor}08 50%, transparent 100%)`,
-          borderLeft: `4px solid ${professionColor}`,
-          boxShadow: `0 4px 20px ${professionColor}15, inset 0 1px 0 rgba(255,255,255,0.1)`,
+          background: `linear-gradient(135deg, ${professionColor}12 0%, transparent 60%)`,
+          borderLeft: `3px solid ${professionColor}`,
         }}
       >
-        {/* Subtle radial accent in corner */}
-        <div
-          className="absolute top-0 right-0 w-32 h-32 opacity-30 pointer-events-none"
-          style={{
-            background: `radial-gradient(circle at 100% 0%, ${professionColor}40 0%, transparent 70%)`,
-          }}
-        />
-
-        <div className="relative z-10 space-y-3">
-          <div className="flex items-center gap-3">
-            {/* Icon with glow container */}
-            <div
-              className="p-2 rounded-lg"
-              style={{
-                backgroundColor: `${professionColor}20`,
-                boxShadow: `0 0 12px ${professionColor}40`,
-              }}
-            >
-              <User className="h-6 w-6" style={{ color: professionColor }} />
-            </div>
-            {/* Character name - larger with text shadow glow */}
-            <h1
-              className="text-3xl font-bold tracking-tight"
-              style={{
-                color: professionColor,
-                textShadow: `0 0 20px ${professionColor}50, 0 0 40px ${professionColor}30`,
-              }}
-            >
-              {character?.name || 'Character Viewer'}
-            </h1>
+        <div className="flex items-center gap-4">
+          {/* Large spec icon */}
+          <div className="shrink-0">
+            {activeEliteSpec && ELITE_SPEC_ICONS[activeEliteSpec] ? (
+              <img
+                src={ELITE_SPEC_ICONS[activeEliteSpec]}
+                alt={activeEliteSpec}
+                className="h-20 w-20"
+                style={{ filter: `drop-shadow(0 0 12px ${professionColor}50)` }}
+              />
+            ) : character?.profession && PROFESSION_ICONS[character.profession] ? (
+              <img
+                src={PROFESSION_ICONS[character.profession]}
+                alt={character.profession}
+                className="h-20 w-20"
+                style={{ filter: `drop-shadow(0 0 12px ${professionColor}50)` }}
+              />
+            ) : (
+              <User className="h-20 w-20" style={{ color: professionColor }} />
+            )}
           </div>
 
-          {character && (
-            <div className="flex flex-wrap items-center gap-2">
-              {/* Level badge with profession accent */}
-              <span
-                className="px-2.5 py-1 rounded-full text-xs font-bold"
-                style={{
-                  backgroundColor: `${professionColor}20`,
-                  color: professionColor,
-                  border: `1px solid ${professionColor}40`,
-                  boxShadow: `0 0 8px ${professionColor}20`,
-                }}
+          {/* Character info */}
+          <div className="flex-1 min-w-0">
+            {/* Name row */}
+            <div className="flex items-center gap-3 flex-wrap">
+              <h1
+                className="text-2xl font-bold tracking-tight truncate"
+                style={{ color: professionColor }}
               >
-                Level {character.level}
-              </span>
-              {/* Race badge */}
-              <span className="px-2.5 py-1 rounded-full bg-background/80 border border-border text-xs font-semibold">
-                {character.race}
-              </span>
-              {/* Profession badge with enhanced glow */}
-              <span
-                className="px-2.5 py-1 rounded-full text-xs font-bold"
-                style={{
-                  borderWidth: '2px',
-                  borderStyle: 'solid',
-                  borderColor: professionColor,
-                  color: professionColor,
-                  backgroundColor: `${professionColor}25`,
-                  boxShadow: `0 0 12px ${professionColor}40, inset 0 0 8px ${professionColor}20`,
-                }}
-              >
-                {character.profession}
-              </span>
-              {/* Guild name with gold glow */}
+                {character?.name || 'Character Viewer'}
+              </h1>
               {guildName && (
-                <span className="px-2.5 py-1 rounded-full bg-gw2-accent/15 border border-gw2-accent/40 text-xs font-semibold text-gw2-accent glow-accent-sm">
-                  {guildName}
+                <span className="text-sm text-gw2-accent font-medium">
+                  &lt;{guildName}&gt;
                 </span>
               )}
-              {/* Age info pushed to right */}
-              {(character.created || account?.created) && (
-                <div className="flex flex-col gap-0.5 ml-auto text-right">
-                  {character.created && (
-                    <span className="text-xs text-muted-foreground font-medium">
-                      {formatCharacterAge(character.created)} old ({new Date(character.created).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })})
-                    </span>
-                  )}
-                  {account?.created && (
-                    <span className="text-xs text-muted-foreground font-medium">
-                      Account: {formatCharacterAge(account.created)} ({new Date(account.created).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })})
-                    </span>
-                  )}
+            </div>
+
+            {/* Info row */}
+            {character && (
+              <div className="flex items-center gap-x-3 gap-y-1 flex-wrap mt-1 text-sm">
+                <span className="text-muted-foreground">
+                  Level <span className="font-semibold text-foreground">{character.level}</span>
+                </span>
+                <span className="text-muted-foreground">{character.race}</span>
+                <span style={{ color: professionColor }} className="font-medium">
+                  {character.profession}{activeEliteSpec ? ` / ${activeEliteSpec}` : ''}
+                </span>
+              </div>
+            )}
+          </div>
+
+          {/* Age info - far right */}
+          {(character?.created || account?.created) && (
+            <div className="hidden sm:flex flex-col gap-0.5 text-right shrink-0 pl-4 border-l border-border/50">
+              {character?.created && (
+                <div className="flex items-center justify-end gap-1.5 text-xs">
+                  <span className="text-muted-foreground">Character</span>
+                  <span className="font-semibold text-foreground">{formatCharacterAge(character.created)}</span>
+                </div>
+              )}
+              {account?.created && (
+                <div className="flex items-center justify-end gap-1.5 text-xs">
+                  <span className="text-muted-foreground">Account</span>
+                  <span className="font-semibold text-foreground">{formatCharacterAge(account.created)}</span>
                 </div>
               )}
             </div>
@@ -192,49 +185,56 @@ export function Characters() {
 
       {/* Stats Bar */}
       {character && (
-        <div className="flex flex-wrap gap-1.5">
+        <div className="flex items-center gap-4 text-sm text-muted-foreground flex-wrap">
           {/* Gold */}
           {goldCurrency && (
-            <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-lg bg-gw2-accent/10 border border-gw2-accent/20">
-              <Coins className="h-3 w-3 text-gw2-accent" />
-              <span className="text-[11px] font-semibold">{formatGold(goldCurrency.value)}</span>
+            <div className="flex items-center gap-1.5">
+              <CoinDisplay copper={goldCurrency.value} />
             </div>
+          )}
+          {/* Separator */}
+          {goldCurrency && (account?.wvw_rank || account?.fractal_level || totalMastery > 0) && (
+            <span className="text-border">•</span>
           )}
           {/* WvW Rank */}
           {account?.wvw_rank && (
-            <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-lg bg-gw2-accent/10 border border-gw2-accent/20">
-              <Swords className="h-3 w-3 text-gw2-accent" />
-              <span className="text-[11px] font-semibold">WvW {account.wvw_rank}</span>
+            <div className="flex items-center gap-1.5">
+              <Swords className="h-4 w-4 text-red-400" />
+              <span>WvW <span className="text-foreground font-medium">{account.wvw_rank}</span></span>
             </div>
           )}
           {/* Fractal Level */}
           {account?.fractal_level && (
-            <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-lg bg-gw2-accent/10 border border-gw2-accent/20">
-              <Star className="h-3 w-3 text-gw2-accent" />
-              <span className="text-[11px] font-semibold">Fractal {account.fractal_level}</span>
+            <div className="flex items-center gap-1.5">
+              <Star className="h-4 w-4 text-purple-400" />
+              <span>Fractal <span className="text-foreground font-medium">{account.fractal_level}</span></span>
             </div>
           )}
           {/* Mastery */}
           {totalMastery > 0 && (
-            <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-lg bg-gw2-accent/10 border border-gw2-accent/20">
-              <TrendingUp className="h-3 w-3 text-gw2-accent" />
-              <span className="text-[11px] font-semibold">Mastery {totalMastery}</span>
+            <div className="flex items-center gap-1.5">
+              <TrendingUp className="h-4 w-4 text-yellow-400" />
+              <span>Mastery <span className="text-foreground font-medium">{totalMastery}</span></span>
             </div>
           )}
-          {/* Crafting Disciplines */}
-          {character?.crafting?.map((craft) => (
-            <div
-              key={craft.discipline}
-              className={`flex items-center gap-1 px-1.5 py-0.5 rounded-lg border ${
-                craft.active
-                  ? 'bg-gw2-accent/10 border-gw2-accent/20'
-                  : 'bg-muted/30 border-border/40 opacity-60'
-              }`}
-            >
-              <Hammer className={`h-3 w-3 ${craft.active ? 'text-gw2-accent' : 'text-muted-foreground'}`} />
-              <span className="text-[11px] font-semibold">{craft.discipline} {craft.rating}</span>
-            </div>
-          ))}
+          {/* Crafting - show on separate line if many */}
+          {character?.crafting && character.crafting.length > 0 && (
+            <>
+              <span className="text-border">•</span>
+              <div className="flex items-center gap-2">
+                {character.crafting.filter(c => c.active).map((craft) => (
+                  <div key={craft.discipline} className="flex items-center gap-1" title={`${craft.discipline} ${craft.rating}`}>
+                    {DISCIPLINE_ICONS[craft.discipline] ? (
+                      <img src={DISCIPLINE_ICONS[craft.discipline]} alt={craft.discipline} className="h-5 w-5" />
+                    ) : (
+                      <Hammer className="h-5 w-5 text-muted-foreground" />
+                    )}
+                    <span className="text-foreground font-medium">{craft.rating}</span>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
         </div>
       )}
 

@@ -41,26 +41,6 @@ export function Navigation() {
     }
   }, [characters, selectedCharacter, setSelectedCharacter]);
 
-  // In-game time state (updates every 5 seconds for efficiency)
-  const [inGameTime, setInGameTime] = useState('');
-
-  useEffect(() => {
-    const calculateInGameTime = () => {
-      const now = new Date();
-      const utcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
-      const inGameMinutes = (utcMinutes * 12) % 1440; // 1440 = 24 * 60
-      const hours = Math.floor(inGameMinutes / 60);
-      const minutes = Math.floor(inGameMinutes % 60);
-      return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
-    };
-
-    setInGameTime(calculateInGameTime());
-    const interval = setInterval(() => {
-      setInGameTime(calculateInGameTime());
-    }, 5000); // Update every 5 seconds
-
-    return () => clearInterval(interval);
-  }, []);
 
   // Handle character selection
   const handleViewChange = (value: string) => {
@@ -87,16 +67,9 @@ export function Navigation() {
               className="flex items-center gap-2 text-xl font-bold hover:opacity-80 transition-opacity"
             >
               <img src="/favicon.svg" alt="Waypoint" className="h-8 w-8" />
-              <div className="flex flex-col">
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-gw2-accent to-gw2-accent-light text-xl font-bold font-display tracking-wide drop-shadow-sm">
-                  Waypoint
-                </span>
-                {inGameTime && (
-                  <span className="text-[10px] text-muted-foreground font-mono -mt-1">
-                    Tyria {inGameTime}
-                  </span>
-                )}
-              </div>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-gw2-accent to-gw2-accent-light text-xl font-bold font-display tracking-wide drop-shadow-sm">
+                Waypoint
+              </span>
             </Link>
 
             {/* Center: Navigation Links */}
