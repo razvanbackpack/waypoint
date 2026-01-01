@@ -9,8 +9,10 @@ export interface GameEvent {
     | { type: 'fixed'; timesUTC: string[] };
   icon: string;
   waypoint?: string;
+  locations?: Array<{ name: string; waypoint: string }>;
   difficulty: 'open' | 'group' | 'squad';
   duration: number;
+  reward?: string; // e.g., "2g + rare", "exotic chance", "guaranteed exotic"
 }
 
 export interface NextSpawn {
@@ -34,7 +36,8 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '',
     waypoint: '[&BKgBAAA=]',
     difficulty: 'open',
-    duration: 15
+    duration: 15,
+    reward: '2g + rare'
   },
   {
     id: 'svanir',
@@ -46,7 +49,8 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '',
     waypoint: '[&BMIDAAA=]',
     difficulty: 'open',
-    duration: 15
+    duration: 15,
+    reward: '2g + rare'
   },
   {
     id: 'megadestroyer',
@@ -58,7 +62,8 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '',
     waypoint: '[&BM0CAAA=]',
     difficulty: 'group',
-    duration: 15
+    duration: 15,
+    reward: '2g + rare'
   },
   {
     id: 'fire_elemental',
@@ -70,7 +75,8 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '',
     waypoint: '[&BEcAAAA=]',
     difficulty: 'open',
-    duration: 15
+    duration: 15,
+    reward: '2g + rare'
   },
   {
     id: 'shatterer',
@@ -82,7 +88,8 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '',
     waypoint: '[&BE4DAAA=]',
     difficulty: 'group',
-    duration: 15
+    duration: 15,
+    reward: '2g + rare'
   },
   {
     id: 'jungle_wurm',
@@ -94,7 +101,8 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '',
     waypoint: '[&BEEFAAA=]',
     difficulty: 'open',
-    duration: 15
+    duration: 15,
+    reward: '2g + rare'
   },
   {
     id: 'modniir',
@@ -106,7 +114,8 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '',
     waypoint: '[&BLAAAAA=]',
     difficulty: 'open',
-    duration: 15
+    duration: 15,
+    reward: '2g + rare'
   },
   {
     id: 'shadow_behemoth',
@@ -118,7 +127,8 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '',
     waypoint: '[&BPcAAAA=]',
     difficulty: 'open',
-    duration: 15
+    duration: 15,
+    reward: '2g + rare'
   },
   {
     id: 'golem_mark_ii',
@@ -130,7 +140,8 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '',
     waypoint: '[&BNQCAAA=]',
     difficulty: 'open',
-    duration: 15
+    duration: 15,
+    reward: '2g + rare'
   },
   {
     id: 'claw_jormag',
@@ -142,7 +153,8 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '',
     waypoint: '[&BHoCAAA=]',
     difficulty: 'group',
-    duration: 15
+    duration: 15,
+    reward: '2g + rare'
   },
 
   // Irregular hardcore bosses
@@ -156,7 +168,8 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '',
     waypoint: '[&BNABAAA=]',
     difficulty: 'squad',
-    duration: 15
+    duration: 15,
+    reward: '2g + rare'
   },
   {
     id: 'triple_trouble',
@@ -168,7 +181,8 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '',
     waypoint: '[&BKoBAAA=]',
     difficulty: 'squad',
-    duration: 15
+    duration: 15,
+    reward: '2g + rare'
   },
   {
     id: 'karka_queen',
@@ -180,7 +194,8 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '',
     waypoint: '[&BNUGAAA=]',
     difficulty: 'group',
-    duration: 15
+    duration: 15,
+    reward: '2g + rare'
   },
 
   // Ley-Line Anomaly (6-hour cycle: @100 Timberline, @220 Iron Marches, @340 Gendarran)
@@ -194,7 +209,8 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '',
     waypoint: '[&BEwCAAA=]',
     difficulty: 'group',
-    duration: 20
+    duration: 20,
+    reward: '2g + rare'
   },
 
   // Invasions (120-min cycle from wiki)
@@ -208,8 +224,17 @@ export const GAME_EVENTS: GameEvent[] = [
     type: 'invasion',
     schedule: { type: 'cycle', cycleMinutes: 120, offsetMinutes: 0 },
     icon: '',
+    locations: [
+      { name: 'Queensdale', waypoint: '[&BPoAAAA=]' },
+      { name: 'Kessex Hills', waypoint: '[&BBABAAA=]' },
+      { name: 'Gendarran Fields', waypoint: '[&BOQAAAA=]' },
+      { name: 'Harathi Hinterlands', waypoint: '[&BLAAAAA=]' },
+      { name: 'Blazeridge Steppes', waypoint: '[&BFMBAAA=]' },
+      { name: 'Iron Marches', waypoint: '[&BOcBAAA=]' },
+    ],
     difficulty: 'group',
-    duration: 15
+    duration: 15,
+    reward: 'bags + karma'
   },
   {
     id: 'awakened_invasion_2',
@@ -219,8 +244,17 @@ export const GAME_EVENTS: GameEvent[] = [
     type: 'invasion',
     schedule: { type: 'cycle', cycleMinutes: 120, offsetMinutes: 60 },
     icon: '',
+    locations: [
+      { name: 'Queensdale', waypoint: '[&BPoAAAA=]' },
+      { name: 'Kessex Hills', waypoint: '[&BBABAAA=]' },
+      { name: 'Gendarran Fields', waypoint: '[&BOQAAAA=]' },
+      { name: 'Harathi Hinterlands', waypoint: '[&BLAAAAA=]' },
+      { name: 'Blazeridge Steppes', waypoint: '[&BFMBAAA=]' },
+      { name: 'Iron Marches', waypoint: '[&BOcBAAA=]' },
+    ],
     difficulty: 'group',
-    duration: 15
+    duration: 15,
+    reward: 'bags + karma'
   },
   {
     id: 'scarlets_minions',
@@ -230,8 +264,17 @@ export const GAME_EVENTS: GameEvent[] = [
     type: 'invasion',
     schedule: { type: 'cycle', cycleMinutes: 120, offsetMinutes: 30 },
     icon: '',
+    locations: [
+      { name: 'Queensdale', waypoint: '[&BPoAAAA=]' },
+      { name: 'Kessex Hills', waypoint: '[&BBABAAA=]' },
+      { name: 'Gendarran Fields', waypoint: '[&BOQAAAA=]' },
+      { name: 'Harathi Hinterlands', waypoint: '[&BLAAAAA=]' },
+      { name: 'Blazeridge Steppes', waypoint: '[&BFMBAAA=]' },
+      { name: 'Iron Marches', waypoint: '[&BOcBAAA=]' },
+    ],
     difficulty: 'group',
-    duration: 15
+    duration: 15,
+    reward: 'bags + karma'
   },
 
   // Fractal Incursions (240-min cycle from wiki)
@@ -246,7 +289,8 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '',
     waypoint: '[&BLoAAAA=]',
     difficulty: 'group',
-    duration: 15
+    duration: 15,
+    reward: 'bags + karma'
   },
   {
     id: 'fractal_diessa',
@@ -258,7 +302,8 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '',
     waypoint: '[&BPoBAAA=]',
     difficulty: 'group',
-    duration: 15
+    duration: 15,
+    reward: 'bags + karma'
   },
   {
     id: 'fractal_brisban',
@@ -270,7 +315,8 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '',
     waypoint: '[&BGMAAAA=]',
     difficulty: 'group',
-    duration: 15
+    duration: 15,
+    reward: 'bags + karma'
   },
   {
     id: 'fractal_snowden',
@@ -282,7 +328,8 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '',
     waypoint: '[&BLcAAAA=]',
     difficulty: 'group',
-    duration: 15
+    duration: 15,
+    reward: 'bags + karma'
   },
 
   // Heart of Thorns Metas (2-hour cycles based on wiki)
@@ -300,7 +347,8 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '',
     waypoint: '[&BAgIAAA=]',
     difficulty: 'group',
-    duration: 20
+    duration: 20,
+    reward: 'exotic chance + map currency'
   },
   {
     id: 'auric_basin_challenges',
@@ -312,7 +360,8 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '',
     waypoint: '[&BGwIAAA=]',
     difficulty: 'group',
-    duration: 15
+    duration: 15,
+    reward: 'exotic chance + map currency'
   },
   {
     id: 'auric_basin',
@@ -324,7 +373,8 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '',
     waypoint: '[&BAIIAAA=]',
     difficulty: 'group',
-    duration: 20
+    duration: 20,
+    reward: 'exotic chance + map currency'
   },
   {
     id: 'tangled_depths',
@@ -336,7 +386,8 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '',
     waypoint: '[&BPUHAAA=]',
     difficulty: 'squad',
-    duration: 20
+    duration: 20,
+    reward: 'exotic chance + map currency'
   },
   {
     id: 'dragons_stand',
@@ -348,7 +399,8 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '',
     waypoint: '[&BBAIAAA=]',
     difficulty: 'squad',
-    duration: 120
+    duration: 120,
+    reward: 'exotic chance + map currency'
   },
 
   // Living World Season 2 Metas
@@ -362,7 +414,8 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '',
     waypoint: '[&BIAHAAA=]',
     difficulty: 'open',
-    duration: 20
+    duration: 20,
+    reward: 'exotic chance + currency'
   },
 
   // Living World Season 3 Metas
@@ -377,7 +430,8 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '',
     waypoint: '[&BK8JAAA=]',
     difficulty: 'group',
-    duration: 30
+    duration: 30,
+    reward: 'exotic chance + currency'
   },
   {
     id: 'lake_doric_saidras',
@@ -389,7 +443,8 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '',
     waypoint: '[&BK0JAAA=]',
     difficulty: 'group',
-    duration: 45
+    duration: 45,
+    reward: 'exotic chance + currency'
   },
   {
     id: 'lake_doric_loamhurst',
@@ -401,7 +456,8 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '',
     waypoint: '[&BLQJAAA=]',
     difficulty: 'group',
-    duration: 45
+    duration: 45,
+    reward: 'exotic chance + currency'
   },
 
   // Living World Season 4 Metas
@@ -415,7 +471,8 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '',
     waypoint: '[&BAkLAAA=]',
     difficulty: 'group',
-    duration: 30
+    duration: 30,
+    reward: 'exotic chance + currency'
   },
   {
     id: 'jahai_escorts',
@@ -427,7 +484,8 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '',
     waypoint: '[&BIMLAAA=]',
     difficulty: 'group',
-    duration: 15
+    duration: 15,
+    reward: 'exotic chance + currency'
   },
   {
     id: 'death_branded_shatterer',
@@ -439,7 +497,8 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '',
     waypoint: '[&BJMLAAA=]',
     difficulty: 'group',
-    duration: 15
+    duration: 15,
+    reward: 'exotic chance + currency'
   },
   {
     id: 'thunderhead_keep',
@@ -451,7 +510,8 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '',
     waypoint: '[&BLsLAAA=]',
     difficulty: 'group',
-    duration: 20
+    duration: 20,
+    reward: 'exotic chance + currency'
   },
   {
     id: 'oil_floes',
@@ -463,7 +523,8 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '',
     waypoint: '[&BKYLAAA=]',
     difficulty: 'group',
-    duration: 15
+    duration: 15,
+    reward: 'exotic chance + currency'
   },
   // Path of Fire Metas (120-min cycles based on wiki)
   {
@@ -476,7 +537,8 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '',
     waypoint: '[&BLsKAAA=]',
     difficulty: 'open',
-    duration: 16
+    duration: 16,
+    reward: 'exotic chance + trade contracts'
   },
   {
     id: 'pinata',
@@ -488,7 +550,8 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '',
     waypoint: '[&BLsKAAA=]',
     difficulty: 'open',
-    duration: 9
+    duration: 9,
+    reward: 'exotic chance + trade contracts'
   },
   {
     id: 'buried_treasure',
@@ -500,7 +563,8 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '',
     waypoint: '[&BGsKAAA=]',
     difficulty: 'open',
-    duration: 20
+    duration: 20,
+    reward: 'exotic chance + trade contracts'
   },
   {
     id: 'path_ascension',
@@ -512,7 +576,8 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '',
     waypoint: '[&BFMKAAA=]',
     difficulty: 'open',
-    duration: 25
+    duration: 25,
+    reward: 'exotic chance + trade contracts'
   },
   {
     id: 'doppelganger',
@@ -524,7 +589,8 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '',
     waypoint: '[&BFMKAAA=]',
     difficulty: 'open',
-    duration: 20
+    duration: 20,
+    reward: 'exotic chance + trade contracts'
   },
   {
     id: 'maws_of_torment',
@@ -536,7 +602,8 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '',
     waypoint: '[&BKMKAAA=]',
     difficulty: 'open',
-    duration: 20
+    duration: 20,
+    reward: 'exotic chance + trade contracts'
   },
   {
     id: 'junundu_1',
@@ -548,7 +615,8 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '',
     waypoint: '[&BMEKAAA=]',
     difficulty: 'open',
-    duration: 20
+    duration: 20,
+    reward: 'exotic chance + trade contracts'
   },
   {
     id: 'junundu_2',
@@ -560,7 +628,8 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '',
     waypoint: '[&BMEKAAA=]',
     difficulty: 'open',
-    duration: 20
+    duration: 20,
+    reward: 'exotic chance + trade contracts'
   },
   {
     id: 'serpents_ire',
@@ -572,7 +641,8 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '',
     waypoint: '[&BHQKAAA=]',
     difficulty: 'group',
-    duration: 30
+    duration: 30,
+    reward: 'exotic chance + trade contracts'
   },
   {
     id: 'forged_fire_1',
@@ -584,7 +654,8 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '',
     waypoint: '[&BO0KAAA=]',
     difficulty: 'group',
-    duration: 30
+    duration: 30,
+    reward: 'exotic chance + trade contracts'
   },
   {
     id: 'forged_fire_2',
@@ -596,7 +667,8 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '',
     waypoint: '[&BO0KAAA=]',
     difficulty: 'group',
-    duration: 30
+    duration: 30,
+    reward: 'exotic chance + trade contracts'
   },
 
   // Icebrood Saga Metas (Grothmar Valley - 120-min cycle based on wiki)
@@ -611,7 +683,8 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '',
     waypoint: '[&BA4MAAA=]',
     difficulty: 'open',
-    duration: 15
+    duration: 15,
+    reward: 'exotic chance + currency'
   },
   {
     id: 'grothmar_doomlore',
@@ -623,7 +696,8 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '',
     waypoint: '[&BA4MAAA=]',
     difficulty: 'open',
-    duration: 22
+    duration: 22,
+    reward: 'exotic chance + currency'
   },
   {
     id: 'grothmar_ooze',
@@ -635,7 +709,8 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '',
     waypoint: '[&BPgLAAA=]',
     difficulty: 'open',
-    duration: 20
+    duration: 20,
+    reward: 'exotic chance + currency'
   },
   {
     id: 'grothmar_concert',
@@ -647,7 +722,8 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '',
     waypoint: '[&BPgLAAA=]',
     difficulty: 'open',
-    duration: 15
+    duration: 15,
+    reward: 'exotic chance + currency'
   },
   // Bjora Marches events based on wiki
   // Drakkar 45-80, Defend Jora's Keep 85-100, Shards/Construct 100-105, Icebrood Champions 105-120
@@ -661,7 +737,8 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '',
     waypoint: '[&BDkMAAA=]',
     difficulty: 'squad',
-    duration: 35
+    duration: 35,
+    reward: 'exotic chance + currency'
   },
   {
     id: 'bjora_joras_keep',
@@ -673,7 +750,8 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '',
     waypoint: '[&BCcMAAA=]',
     difficulty: 'group',
-    duration: 15
+    duration: 15,
+    reward: 'exotic chance + currency'
   },
   {
     id: 'bjora_shards',
@@ -685,7 +763,8 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '',
     waypoint: '[&BCcMAAA=]',
     difficulty: 'group',
-    duration: 5
+    duration: 5,
+    reward: 'exotic chance + currency'
   },
   {
     id: 'bjora_champions',
@@ -697,7 +776,8 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '',
     waypoint: '[&BCcMAAA=]',
     difficulty: 'group',
-    duration: 15
+    duration: 15,
+    reward: 'exotic chance + currency'
   },
   {
     id: 'drizzlewood',
@@ -709,7 +789,8 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '',
     waypoint: '[&BGQMAAA=]',
     difficulty: 'group',
-    duration: 60
+    duration: 60,
+    reward: 'exotic chance + currency'
   },
   // Eye of the North (public-eotn) - 120-min cycle based on wiki
   // Twisted Marionette 0-20, Battle for Lion's Arch 30-45, Dragonstorm 60-80, Tower of Nightmares 90-105
@@ -723,7 +804,8 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '',
     waypoint: '[&BAkMAAA=]',
     difficulty: 'squad',
-    duration: 20
+    duration: 20,
+    reward: 'exotic chance + currency'
   },
   {
     id: 'battle_lions_arch',
@@ -735,7 +817,8 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '',
     waypoint: '[&BAkMAAA=]',
     difficulty: 'squad',
-    duration: 15
+    duration: 15,
+    reward: 'exotic chance + currency'
   },
   {
     id: 'dragonstorm',
@@ -747,7 +830,8 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '',
     waypoint: '[&BAkMAAA=]',
     difficulty: 'squad',
-    duration: 20
+    duration: 20,
+    reward: 'exotic chance + currency'
   },
   {
     id: 'tower_nightmares',
@@ -759,7 +843,8 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '',
     waypoint: '[&BAkMAAA=]',
     difficulty: 'squad',
-    duration: 15
+    duration: 15,
+    reward: 'exotic chance + currency'
   },
 
   // End of Dragons Metas (120-min cycles based on wiki)
@@ -777,7 +862,8 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '',
     waypoint: '[&BGUNAAA=]',
     difficulty: 'group',
-    duration: 30
+    duration: 30,
+    reward: 'imperial favor + jade'
   },
   {
     id: 'kaineng',
@@ -789,7 +875,8 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '',
     waypoint: '[&BBkNAAA=]',
     difficulty: 'group',
-    duration: 40
+    duration: 40,
+    reward: 'imperial favor + jade'
   },
   {
     id: 'echovald_gang',
@@ -801,7 +888,8 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '',
     waypoint: '[&BMwMAAA=]',
     difficulty: 'group',
-    duration: 35
+    duration: 35,
+    reward: 'imperial favor + jade'
   },
   {
     id: 'echovald_aspenwood',
@@ -813,7 +901,8 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '',
     waypoint: '[&BPkMAAA=]',
     difficulty: 'group',
-    duration: 20
+    duration: 20,
+    reward: 'imperial favor + jade'
   },
   {
     id: 'dragons_end_meta',
@@ -825,7 +914,8 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '',
     waypoint: '[&BKIMAAA=]',
     difficulty: 'squad',
-    duration: 120
+    duration: 120,
+    reward: 'imperial favor + jade'
   },
 
   // Secrets of the Obscure Metas (120-min cycles based on wiki)
@@ -842,7 +932,8 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '',
     waypoint: '[&BL4NAAA=]',
     difficulty: 'open',
-    duration: 25
+    duration: 25,
+    reward: 'rift currency + exotic chance'
   },
   {
     id: 'amnytas',
@@ -854,7 +945,8 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '',
     waypoint: '[&BDQOAAA=]',
     difficulty: 'group',
-    duration: 25
+    duration: 25,
+    reward: 'rift currency + exotic chance'
   },
   {
     id: 'target_practice',
@@ -866,7 +958,8 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '',
     waypoint: '[&BB4OAAA=]',
     difficulty: 'open',
-    duration: 40
+    duration: 40,
+    reward: 'rift currency + exotic chance'
   },
   {
     id: 'wizard_combined',
@@ -878,7 +971,8 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '',
     waypoint: '[&BB4OAAA=]',
     difficulty: 'open',
-    duration: 15
+    duration: 15,
+    reward: 'rift currency + exotic chance'
   },
   {
     id: 'fly_by_night',
@@ -890,7 +984,8 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '',
     waypoint: '[&BB4OAAA=]',
     difficulty: 'open',
-    duration: 25
+    duration: 25,
+    reward: 'rift currency + exotic chance'
   },
   {
     id: 'convergence_balrior',
@@ -902,7 +997,8 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '',
     waypoint: '[&BK4OAAA=]',
     difficulty: 'squad',
-    duration: 10
+    duration: 10,
+    reward: 'rift currency + exotic chance'
   },
   {
     id: 'convergence_nayos',
@@ -914,7 +1010,8 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '',
     waypoint: '[&BB4OAAA=]',
     difficulty: 'squad',
-    duration: 10
+    duration: 10,
+    reward: 'rift currency + exotic chance'
   },
   // Janthir Wilds Metas
   {
@@ -927,7 +1024,8 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '',
     waypoint: '[&BCoPAAA=]',
     difficulty: 'squad',
-    duration: 25
+    duration: 25,
+    reward: 'rift currency + exotic chance'
   },
   {
     id: 'titanic_voyage',
@@ -939,7 +1037,8 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '',
     waypoint: '[&BGEPAAA=]',
     difficulty: 'group',
-    duration: 25
+    duration: 25,
+    reward: 'rift currency + exotic chance'
   },
 
   // Visions of Eternity Metas
@@ -953,7 +1052,8 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '',
     waypoint: '[&BJEPAAA=]',
     difficulty: 'group',
-    duration: 20
+    duration: 20,
+    reward: 'rift currency + exotic chance'
   },
   {
     id: 'secrets_weald',
@@ -965,7 +1065,8 @@ export const GAME_EVENTS: GameEvent[] = [
     icon: '',
     waypoint: '[&BJ4PAAA=]',
     difficulty: 'squad',
-    duration: 35
+    duration: 35,
+    reward: 'rift currency + exotic chance'
   },
 ];
 

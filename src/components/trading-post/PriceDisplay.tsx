@@ -1,4 +1,5 @@
 import type { CommercePrice } from '@/api/types/commerce';
+import { GW2_ICONS } from '@/lib/gw2Icons';
 
 interface PriceDisplayProps {
   price: CommercePrice;
@@ -22,9 +23,7 @@ export function CoinDisplay({ copper, className = '' }: CoinDisplayProps) {
           <span className="font-semibold font-mono">
             {gold}
           </span>
-          <span className="text-xs ml-0.5">
-            g
-          </span>
+          <img src={GW2_ICONS.goldCoin} alt="g" className="h-3.5 w-3.5 ml-0.5" />
         </span>
       )}
       {silver > 0 && (
@@ -32,9 +31,7 @@ export function CoinDisplay({ copper, className = '' }: CoinDisplayProps) {
           <span className="font-semibold font-mono">
             {silver}
           </span>
-          <span className="text-xs ml-0.5">
-            s
-          </span>
+          <img src={GW2_ICONS.silverCoin} alt="s" className="h-3.5 w-3.5 ml-0.5" />
         </span>
       )}
       {(remainingCopper > 0 || (gold === 0 && silver === 0)) && (
@@ -42,9 +39,7 @@ export function CoinDisplay({ copper, className = '' }: CoinDisplayProps) {
           <span className="font-semibold font-mono">
             {remainingCopper}
           </span>
-          <span className="text-xs ml-0.5">
-            c
-          </span>
+          <img src={GW2_ICONS.copperCoin} alt="c" className="h-3.5 w-3.5 ml-0.5" />
         </span>
       )}
     </span>

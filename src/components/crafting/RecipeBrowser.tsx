@@ -3,13 +3,14 @@ import { useQueries } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Search, Loader2, X, HelpCircle, ChevronLeft, ChevronRight, ChevronDown, Check, Pin } from 'lucide-react';
+import { Search, Loader2, X, HelpCircle, ChevronLeft, ChevronRight, ChevronDown, ChevronUp, Check, Pin } from 'lucide-react';
 import { useMaterials, useBank, useCharacters, queryKeys } from '@/api/hooks/useGW2Api';
 import { useApiKey } from '@/api/hooks/useApiKey';
 import { getApiClient } from '@/api/client';
 import { accountEndpoints } from '@/api/endpoints';
 import { getRarityColor, getProfessionColor } from '@/lib/professionColors';
 import { slugify } from '@/lib/utils';
+import { DISCIPLINE_ICONS } from '@/lib/gw2Icons';
 import {
   HoverCard,
   HoverCardContent,
@@ -360,6 +361,8 @@ export function RecipeBrowser() {
 
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [page, setPage] = useState(0);
+  const [sortColumn, setSortColumn] = useState<'name' | 'discipline' | 'level' | null>(null);
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
 
   // Debounce search input
   useEffect(() => {
@@ -530,12 +533,41 @@ export function RecipeBrowser() {
     }));
   }, [debouncedSearch, recipes, items, getItem, filters, hasApiKey, craftableMap]);
 
-  // Paginate results
+  // Sort and paginate results
+  const sortedRecipes = useMemo(() => {
+    if (!sortColumn) return filteredRecipes;
+
+    return [...filteredRecipes].sort((a, b) => {
+      let comparison = 0;
+
+      switch (sortColumn) {
+        case 'name': {
+          const nameA = a.outputItem?.name || '';
+          const nameB = b.outputItem?.name || '';
+          comparison = nameA.localeCompare(nameB);
+          break;
+        }
+        case 'discipline': {
+          const discA = a.disciplines[0] || '';
+          const discB = b.disciplines[0] || '';
+          comparison = discA.localeCompare(discB);
+          break;
+        }
+        case 'level': {
+          comparison = a.min_rating - b.min_rating;
+          break;
+        }
+      }
+
+      return sortDirection === 'asc' ? comparison : -comparison;
+    });
+  }, [filteredRecipes, sortColumn, sortDirection]);
+
   const paginatedRecipes = useMemo(() => {
     const start = page * PAGE_SIZE;
     const end = start + PAGE_SIZE;
-    return filteredRecipes.slice(start, end);
-  }, [filteredRecipes, page]);
+    return sortedRecipes.slice(start, end);
+  }, [sortedRecipes, page]);
 
   const totalPages = Math.ceil(filteredRecipes.length / PAGE_SIZE);
 
@@ -543,6 +575,15 @@ export function RecipeBrowser() {
     setFilters(prev => ({ ...prev, [key]: value }));
     setPage(0); // Reset to first page on filter change
   }, []);
+
+  const handleSort = (column: 'name' | 'discipline' | 'level') => {
+    if (sortColumn === column) {
+      setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortColumn(column);
+      setSortDirection('asc');
+    }
+  };
 
   // Render a single recipe row
   const renderRecipeRow = useCallback((recipe: RecipeWithItem) => {
@@ -583,7 +624,7 @@ export function RecipeBrowser() {
             <HoverCardTrigger asChild>
               <div className="cursor-help">
                 <Link
-                  to="/crafting/$recipeId"
+                  to="/recipes/$recipeId"
                   params={{ recipeId: `${recipe.id}-${slugify(outputItem?.name || 'recipe')}` }}
                   className="font-medium text-xs hover:underline"
                   style={{ color: rarityColor }}
@@ -624,8 +665,9 @@ export function RecipeBrowser() {
             {recipe.disciplines.map(disc => (
               <span
                 key={disc}
-                className={`text-[10px] px-1.5 py-0.5 rounded ${DISCIPLINE_CLASSES[disc]} bg-discipline/20 text-discipline`}
+                className={`inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded ${DISCIPLINE_CLASSES[disc]} bg-discipline/20 text-discipline`}
               >
+                {DISCIPLINE_ICONS[disc] && <img src={DISCIPLINE_ICONS[disc]} alt="" className="h-3 w-3" />}
                 {disc}
               </span>
             ))}
@@ -797,7 +839,10 @@ export function RecipeBrowser() {
                     <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
                       {filters.disciplines.includes(disc) && <Check className="h-4 w-4" />}
                     </span>
-                    <span className={`${DISCIPLINE_CLASSES[disc]} text-discipline`}>{disc}</span>
+                    <div className="flex items-center gap-1.5">
+                      {DISCIPLINE_ICONS[disc] && <img src={DISCIPLINE_ICONS[disc]} alt="" className="h-4 w-4" />}
+                      <span className={`${DISCIPLINE_CLASSES[disc]} text-discipline`}>{disc}</span>
+                    </div>
                   </div>
                 ))}
                 {filters.disciplines.length > 0 && (
@@ -1062,7 +1107,7 @@ export function RecipeBrowser() {
                               </td>
                               <td className="py-2 px-3">
                                 <Link
-                                  to="/crafting/$recipeId"
+                                  to="/recipes/$recipeId"
                                   params={{ recipeId: `${recipe.id}-${slugify(outputItem?.name || 'recipe')}` }}
                                   className="font-semibold text-sm hover:underline"
                                   style={{ color: rarityColor }}
@@ -1073,7 +1118,8 @@ export function RecipeBrowser() {
                               <td className="py-2 px-3">
                                 <div className="flex flex-wrap gap-1">
                                   {recipe.disciplines.map(disc => (
-                                    <span key={disc} className={`text-[10px] px-1.5 py-0.5 rounded ${DISCIPLINE_CLASSES[disc]} bg-discipline/20 text-discipline`}>
+                                    <span key={disc} className={`inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded ${DISCIPLINE_CLASSES[disc]} bg-discipline/20 text-discipline`}>
+                                      {DISCIPLINE_ICONS[disc] && <img src={DISCIPLINE_ICONS[disc]} alt="" className="h-3 w-3" />}
                                       {disc}
                                     </span>
                                   ))}
@@ -1171,9 +1217,39 @@ export function RecipeBrowser() {
                 <tr className="sticky top-0 z-10 border-b border-gw2-accent/30 bg-card/95 backdrop-blur-sm text-left">
                   <th className="py-1 px-2 font-medium text-xs text-gw2-accent/70 w-8"></th>
                   <th className="py-1 px-2 font-medium text-xs text-gw2-accent/70 w-10"></th>
-                  <th className="py-1 px-2 font-medium text-xs text-gw2-accent/70">Item Name</th>
-                  <th className="py-1 px-2 font-medium text-xs text-gw2-accent/70">Discipline</th>
-                  <th className="py-1 px-2 font-medium text-xs text-gw2-accent/70">Level</th>
+                  <th
+                    className="py-1 px-2 font-medium text-xs text-gw2-accent/70 cursor-pointer hover:text-gw2-accent select-none"
+                    onClick={() => handleSort('name')}
+                  >
+                    <span className="inline-flex items-center gap-1">
+                      Item Name
+                      {sortColumn === 'name' && (
+                        sortDirection === 'asc' ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />
+                      )}
+                    </span>
+                  </th>
+                  <th
+                    className="py-1 px-2 font-medium text-xs text-gw2-accent/70 cursor-pointer hover:text-gw2-accent select-none"
+                    onClick={() => handleSort('discipline')}
+                  >
+                    <span className="inline-flex items-center gap-1">
+                      Discipline
+                      {sortColumn === 'discipline' && (
+                        sortDirection === 'asc' ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />
+                      )}
+                    </span>
+                  </th>
+                  <th
+                    className="py-1 px-2 font-medium text-xs text-gw2-accent/70 cursor-pointer hover:text-gw2-accent select-none"
+                    onClick={() => handleSort('level')}
+                  >
+                    <span className="inline-flex items-center gap-1">
+                      Level
+                      {sortColumn === 'level' && (
+                        sortDirection === 'asc' ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />
+                      )}
+                    </span>
+                  </th>
                   <th className="py-1 px-2 font-medium text-xs text-gw2-accent/70">Ingredients</th>
                   {hasApiKey && (
                     <th className="py-1 px-2 font-medium text-xs text-gw2-accent/70">Can Craft</th>

@@ -16,6 +16,7 @@ export const accountEndpoints = {
   equipmenttabs: (name: string) => `/characters/${encodeURIComponent(name)}/equipmenttabs`,
   crafting: (name: string) => `/characters/${encodeURIComponent(name)}/crafting`,
   dungeons: () => '/account/dungeons',
+  dailycrafting: () => '/account/dailycrafting',
   dyes: () => '/account/dyes',
   finishers: () => '/account/finishers',
   gliders: () => '/account/gliders',

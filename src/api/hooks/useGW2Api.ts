@@ -1,6 +1,6 @@
 import { useQuery, type UseQueryOptions, type UseQueryResult } from '@tanstack/react-query';
 import { getApiClient } from '../client';
-import { accountEndpoints, commerceEndpoints, itemsEndpoints, achievementsEndpoints, miscEndpoints } from '../endpoints';
+import { accountEndpoints, commerceEndpoints, itemsEndpoints, achievementsEndpoints, miscEndpoints, gameEndpoints } from '../endpoints';
 import type {
   Account,
   Character,
@@ -26,6 +26,25 @@ import type {
 } from '../types';
 import type { Recipe, CharacterCrafting } from '../types/crafting';
 
+// Type definitions for daily content
+interface Dungeon {
+  id: string;
+  paths: { id: string; type: string }[];
+}
+
+interface MapChest {
+  id: string;
+}
+
+interface DailyCrafting {
+  id: string;
+}
+
+interface Raid {
+  id: string;
+  wings: { id: string; events: { id: string; type: string }[] }[];
+}
+
 // Query key factory for consistent cache key generation
 export const queryKeys = {
   account: ['account'] as const,
@@ -44,6 +63,7 @@ export const queryKeys = {
   skills: (ids: number[]) => ['skills', ...ids] as const,
   traits: (ids: number[]) => ['traits', ...ids] as const,
   specializations: (ids: number[]) => ['specializations', ...ids] as const,
+  characterSpecializations: (name: string) => ['character', name, 'specializations'] as const,
   buildtabs: (name: string) => ['character', name, 'buildtabs'] as const,
   equipmenttabs: (name: string) => ['character', name, 'equipmenttabs'] as const,
   worldbosses: ['worldbosses'] as const,
@@ -55,6 +75,14 @@ export const queryKeys = {
   accountRecipes: ['accountRecipes'] as const,
   characterCrafting: (name: string) => ['character', name, 'crafting'] as const,
   legendaryArmory: ['legendaryArmory'] as const,
+  dungeons: ['dungeons'] as const,
+  dungeonsCompleted: ['dungeonsCompleted'] as const,
+  mapchests: ['mapchests'] as const,
+  mapchestsCompleted: ['mapchestsCompleted'] as const,
+  dailycrafting: ['dailycrafting'] as const,
+  dailycraftingCompleted: ['dailycraftingCompleted'] as const,
+  raids: ['raids'] as const,
+  raidsCompleted: ['raidsCompleted'] as const,
 } as const;
 
 // Default cache configuration
@@ -513,6 +541,36 @@ export function useCharacterBuildTabs(
 }
 
 /**
+ * Character specializations response
+ */
+interface CharacterSpecializationsResponse {
+  specializations: {
+    pve: Array<{ id: number; traits: number[] } | null>;
+    pvp: Array<{ id: number; traits: number[] } | null>;
+    wvw: Array<{ id: number; traits: number[] } | null>;
+  };
+}
+
+/**
+ * Fetch character specializations (active specs for PvE/PvP/WvW)
+ * Requires authentication and characters scope
+ */
+export function useCharacterSpecializations(
+  name: string,
+  options?: Omit<UseQueryOptions<CharacterSpecializationsResponse>, 'queryKey' | 'queryFn'>
+): UseQueryResult<CharacterSpecializationsResponse> {
+  const client = getApiClient();
+
+  return useQuery({
+    queryKey: queryKeys.characterSpecializations(name),
+    queryFn: () => client.get<CharacterSpecializationsResponse>(accountEndpoints.specializations(name)),
+    staleTime: DEFAULT_STALE_TIME,
+    enabled: client.isAuthenticated() && !!name,
+    ...options,
+  });
+}
+
+/**
  * Fetch character equipment tabs (equipment templates)
  * Requires authentication and characters scope
  */
@@ -691,6 +749,146 @@ export function useLegendaryArmory(
   return useQuery({
     queryKey: queryKeys.legendaryArmory,
     queryFn: () => client.get<{ id: number; count: number }[]>(accountEndpoints.legendaryarmory()),
+    staleTime: DEFAULT_STALE_TIME,
+    enabled: client.isAuthenticated(),
+    ...options,
+  });
+}
+
+/**
+ * Fetch dungeon definitions
+ * Does not require authentication
+ */
+export function useDungeons(
+  options?: Omit<UseQueryOptions<Dungeon[]>, 'queryKey' | 'queryFn'>
+): UseQueryResult<Dungeon[]> {
+  const client = getApiClient();
+
+  return useQuery({
+    queryKey: queryKeys.dungeons,
+    queryFn: () => client.get<Dungeon[]>(gameEndpoints.dungeons() + '?ids=all'),
+    staleTime: LONG_STALE_TIME,
+    ...options,
+  });
+}
+
+/**
+ * Fetch completed dungeon paths for today
+ * Requires authentication
+ */
+export function useDungeonsCompleted(
+  options?: Omit<UseQueryOptions<string[]>, 'queryKey' | 'queryFn'>
+): UseQueryResult<string[]> {
+  const client = getApiClient();
+
+  return useQuery({
+    queryKey: queryKeys.dungeonsCompleted,
+    queryFn: () => client.get<string[]>(accountEndpoints.dungeons()),
+    staleTime: SHORT_STALE_TIME,
+    enabled: client.isAuthenticated(),
+    ...options,
+  });
+}
+
+/**
+ * Fetch map chest definitions
+ * Does not require authentication
+ */
+export function useMapChests(
+  options?: Omit<UseQueryOptions<MapChest[]>, 'queryKey' | 'queryFn'>
+): UseQueryResult<MapChest[]> {
+  const client = getApiClient();
+
+  return useQuery({
+    queryKey: queryKeys.mapchests,
+    queryFn: () => client.get<MapChest[]>(miscEndpoints.mapchests() + '?ids=all'),
+    staleTime: LONG_STALE_TIME,
+    ...options,
+  });
+}
+
+/**
+ * Fetch completed map chests for today
+ * Requires authentication
+ */
+export function useMapChestsCompleted(
+  options?: Omit<UseQueryOptions<string[]>, 'queryKey' | 'queryFn'>
+): UseQueryResult<string[]> {
+  const client = getApiClient();
+
+  return useQuery({
+    queryKey: queryKeys.mapchestsCompleted,
+    queryFn: () => client.get<string[]>(accountEndpoints.mapchests()),
+    staleTime: SHORT_STALE_TIME,
+    enabled: client.isAuthenticated(),
+    ...options,
+  });
+}
+
+/**
+ * Fetch daily crafting item definitions
+ * Does not require authentication
+ */
+export function useDailyCrafting(
+  options?: Omit<UseQueryOptions<DailyCrafting[]>, 'queryKey' | 'queryFn'>
+): UseQueryResult<DailyCrafting[]> {
+  const client = getApiClient();
+
+  return useQuery({
+    queryKey: queryKeys.dailycrafting,
+    queryFn: () => client.get<DailyCrafting[]>(miscEndpoints.dailycrafting() + '?ids=all'),
+    staleTime: LONG_STALE_TIME,
+    ...options,
+  });
+}
+
+/**
+ * Fetch completed daily crafting items for today
+ * Requires authentication
+ */
+export function useDailyCraftingCompleted(
+  options?: Omit<UseQueryOptions<string[]>, 'queryKey' | 'queryFn'>
+): UseQueryResult<string[]> {
+  const client = getApiClient();
+
+  return useQuery({
+    queryKey: queryKeys.dailycraftingCompleted,
+    queryFn: () => client.get<string[]>(accountEndpoints.dailycrafting()),
+    staleTime: SHORT_STALE_TIME,
+    enabled: client.isAuthenticated(),
+    ...options,
+  });
+}
+
+/**
+ * Fetch raid definitions
+ * Does not require authentication
+ */
+export function useRaids(
+  options?: Omit<UseQueryOptions<Raid[]>, 'queryKey' | 'queryFn'>
+): UseQueryResult<Raid[]> {
+  const client = getApiClient();
+
+  return useQuery({
+    queryKey: queryKeys.raids,
+    queryFn: () => client.get<Raid[]>('/raids?ids=all'),
+    staleTime: LONG_STALE_TIME,
+    ...options,
+  });
+}
+
+/**
+ * Fetch completed raid encounters for this week
+ * Requires authentication
+ */
+export function useRaidsCompleted(
+  options?: Omit<UseQueryOptions<string[]>, 'queryKey' | 'queryFn'>
+): UseQueryResult<string[]> {
+  const client = getApiClient();
+
+  return useQuery({
+    queryKey: queryKeys.raidsCompleted,
+    queryFn: () => client.get<string[]>(accountEndpoints.raids()),
     staleTime: DEFAULT_STALE_TIME,
     enabled: client.isAuthenticated(),
     ...options,

@@ -41,26 +41,6 @@ export function Navigation() {
     }
   }, [characters, selectedCharacter, setSelectedCharacter]);
 
-  // In-game time state (updates every 5 seconds for efficiency)
-  const [inGameTime, setInGameTime] = useState('');
-
-  useEffect(() => {
-    const calculateInGameTime = () => {
-      const now = new Date();
-      const utcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
-      const inGameMinutes = (utcMinutes * 12) % 1440; // 1440 = 24 * 60
-      const hours = Math.floor(inGameMinutes / 60);
-      const minutes = Math.floor(inGameMinutes % 60);
-      return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
-    };
-
-    setInGameTime(calculateInGameTime());
-    const interval = setInterval(() => {
-      setInGameTime(calculateInGameTime());
-    }, 5000); // Update every 5 seconds
-
-    return () => clearInterval(interval);
-  }, []);
 
   // Handle character selection
   const handleViewChange = (value: string) => {
@@ -87,16 +67,9 @@ export function Navigation() {
               className="flex items-center gap-2 text-xl font-bold hover:opacity-80 transition-opacity"
             >
               <img src="/favicon.svg" alt="Waypoint" className="h-8 w-8" />
-              <div className="flex flex-col">
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-gw2-accent to-gw2-accent-light text-xl font-bold font-display tracking-wide drop-shadow-sm">
-                  Waypoint
-                </span>
-                {inGameTime && (
-                  <span className="text-[10px] text-muted-foreground font-mono -mt-1">
-                    Tyria {inGameTime}
-                  </span>
-                )}
-              </div>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-gw2-accent to-gw2-accent-light text-xl font-bold font-display tracking-wide drop-shadow-sm">
+                Waypoint
+              </span>
             </Link>
 
             {/* Center: Navigation Links */}
@@ -132,10 +105,10 @@ export function Navigation() {
               {/* Recipes Button */}
               <Button variant="ghost" size="sm" asChild className="h-9 w-9 md:w-auto md:px-2 lg:px-3 lg:gap-2 hover:bg-primary/10 hover:text-gw2-accent">
                 <Link
-                  to="/crafting"
+                  to="/recipes"
                   className={cn(
                     "transition-all duration-200 relative",
-                    isActive('/crafting') && "text-gw2-accent bg-primary/5 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-gw2-accent after:shadow-[0_0_8px_rgba(59,130,246,0.6)]"
+                    isActive('/recipes') && "text-gw2-accent bg-primary/5 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-gw2-accent after:shadow-[0_0_8px_rgba(59,130,246,0.6)]"
                   )}
                 >
                   <Hammer className="h-4 w-4" />
@@ -257,11 +230,11 @@ export function Navigation() {
                 <span>Character</span>
               </Link>
               <Link
-                to="/crafting"
+                to="/recipes"
                 onClick={() => setIsMobileMenuOpen(false)}
                 className={cn(
                   "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors duration-200",
-                  isActive('/crafting')
+                  isActive('/recipes')
                     ? 'bg-primary/10 text-gw2-accent'
                     : 'text-foreground/80 hover:bg-white/10'
                 )}

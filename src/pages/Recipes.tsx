@@ -1,14 +1,14 @@
 import { Hammer } from 'lucide-react';
 import { RecipeBrowser } from '@/components/crafting/RecipeBrowser';
 
-export function Crafting() {
+export function Recipes() {
   return (
     <div className="space-y-6 animate-fade-in">
       {/* Page Header */}
       <div className="space-y-1">
         <div className="flex items-center gap-2">
           <Hammer className="h-6 w-6 text-gw2-accent" />
-          <h1 className="text-2xl font-bold text-gw2-accent">Crafting</h1>
+          <h1 className="text-2xl font-bold text-gw2-accent">Recipes</h1>
         </div>
         <p className="text-muted-foreground text-sm">
           Search and explore all crafting recipes in Guild Wars 2
