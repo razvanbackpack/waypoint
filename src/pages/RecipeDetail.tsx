@@ -74,7 +74,7 @@ function formatTypeName(type: string): string {
 }
 
 export function RecipeDetailPage() {
-  const { recipeId } = useParams({ from: '/crafting/$recipeId' });
+  const { recipeId } = useParams({ from: '/recipes/$recipeId' });
   const { getRecipe, getItem, getRecipeByOutput, isLoading: isGameDataLoading } = useGameData();
   const { hasApiKey } = useApiKey();
   const { data: materials = [] } = useMaterials({ enabled: hasApiKey });
@@ -206,9 +206,9 @@ export function RecipeDetailPage() {
   if (!recipe) {
     return (
       <div className="space-y-6 animate-fade-in">
-        <Link to="/crafting" className="inline-flex items-center gap-2 text-muted-foreground hover:text-gw2-accent transition-colors">
+        <Link to="/recipes" className="inline-flex items-center gap-2 text-muted-foreground hover:text-gw2-accent transition-colors">
           <ArrowLeft className="h-4 w-4" />
-          Back to Crafting
+          Back to Recipes
         </Link>
 
         <Card>
@@ -229,9 +229,9 @@ export function RecipeDetailPage() {
   return (
     <div className="space-y-6 animate-fade-in max-w-4xl mx-auto">
       {/* Back Link */}
-      <Link to="/crafting" className="inline-flex items-center gap-2 text-muted-foreground hover:text-gw2-accent transition-colors">
+      <Link to="/recipes" className="inline-flex items-center gap-2 text-muted-foreground hover:text-gw2-accent transition-colors">
         <ArrowLeft className="h-4 w-4" />
-        Back to Crafting
+        Back to Recipes
       </Link>
 
       {/* Main Recipe Card */}
@@ -401,7 +401,7 @@ export function RecipeDetailPage() {
                         <td className="py-2 px-3 text-right">
                           {ing.recipe && (
                             <Link
-                              to="/crafting/$recipeId"
+                              to="/recipes/$recipeId"
                               params={{ recipeId: `${ing.recipe.id}-${slugify(ing.item?.name || 'recipe')}` }}
                               className="inline-flex items-center gap-1 text-xs text-gw2-accent hover:text-gw2-accent/80 transition-colors"
                             >

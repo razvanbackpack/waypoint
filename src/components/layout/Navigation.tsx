@@ -105,10 +105,10 @@ export function Navigation() {
               {/* Recipes Button */}
               <Button variant="ghost" size="sm" asChild className="h-9 w-9 md:w-auto md:px-2 lg:px-3 lg:gap-2 hover:bg-primary/10 hover:text-gw2-accent">
                 <Link
-                  to="/crafting"
+                  to="/recipes"
                   className={cn(
                     "transition-all duration-200 relative",
-                    isActive('/crafting') && "text-gw2-accent bg-primary/5 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-gw2-accent after:shadow-[0_0_8px_rgba(59,130,246,0.6)]"
+                    isActive('/recipes') && "text-gw2-accent bg-primary/5 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-gw2-accent after:shadow-[0_0_8px_rgba(59,130,246,0.6)]"
                   )}
                 >
                   <Hammer className="h-4 w-4" />
@@ -230,11 +230,11 @@ export function Navigation() {
                 <span>Character</span>
               </Link>
               <Link
-                to="/crafting"
+                to="/recipes"
                 onClick={() => setIsMobileMenuOpen(false)}
                 className={cn(
                   "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors duration-200",
-                  isActive('/crafting')
+                  isActive('/recipes')
                     ? 'bg-primary/10 text-gw2-accent'
                     : 'text-foreground/80 hover:bg-white/10'
                 )}

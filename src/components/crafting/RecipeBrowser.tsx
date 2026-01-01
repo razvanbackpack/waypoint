@@ -624,7 +624,7 @@ export function RecipeBrowser() {
             <HoverCardTrigger asChild>
               <div className="cursor-help">
                 <Link
-                  to="/crafting/$recipeId"
+                  to="/recipes/$recipeId"
                   params={{ recipeId: `${recipe.id}-${slugify(outputItem?.name || 'recipe')}` }}
                   className="font-medium text-xs hover:underline"
                   style={{ color: rarityColor }}
@@ -1107,7 +1107,7 @@ export function RecipeBrowser() {
                               </td>
                               <td className="py-2 px-3">
                                 <Link
-                                  to="/crafting/$recipeId"
+                                  to="/recipes/$recipeId"
                                   params={{ recipeId: `${recipe.id}-${slugify(outputItem?.name || 'recipe')}` }}
                                   className="font-semibold text-sm hover:underline"
                                   style={{ color: rarityColor }}

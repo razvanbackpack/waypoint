@@ -3,7 +3,7 @@ import { Layout } from './components/layout/Layout'
 import { Dailies } from './pages/Dailies'
 import { Characters } from './pages/Characters'
 import { Timers } from './pages/Timers'
-import { Crafting } from './pages/Crafting'
+import { Recipes } from './pages/Recipes'
 import { RecipeDetailPage } from './pages/RecipeDetail'
 import { Settings } from './pages/Settings'
 
@@ -43,17 +43,17 @@ const dailiesRoute = createRoute({
 })
 
 
-// Crafting route
-const craftingRoute = createRoute({
+// Recipes route
+const recipesRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: '/crafting',
-  component: Crafting,
+  path: '/recipes',
+  component: Recipes,
 })
 
 // Recipe detail route
 const recipeDetailRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: '/crafting/$recipeId',
+  path: '/recipes/$recipeId',
   component: RecipeDetailPage,
 })
 
@@ -69,7 +69,7 @@ const routeTree = rootRoute.addChildren([
   indexRoute,
   charactersRoute,
   dailiesRoute,
-  craftingRoute,
+  recipesRoute,
   recipeDetailRoute,
   settingsRoute,
 ])
