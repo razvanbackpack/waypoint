@@ -228,10 +228,6 @@ export function EventTimer({ favorites, toggleFavorite }: EventTimerProps) {
     });
   }, [eventsWithSpawns, typeFilters, categoryFilters, statusFilter, searchQuery, hideCompleted, isBossCompleted]);
 
-  const isEventActive = (minutesUntil: number, duration: number): boolean => {
-    return minutesUntil <= 0 && minutesUntil > -duration;
-  };
-
   const formatCountdown = (minutesUntil: number, nextSpawn: Date, duration: number) => {
     if (minutesUntil <= 0 && minutesUntil > -duration) {
       const remainingMinutes = duration + minutesUntil;
